@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+	<title>VTT 2 DATA</title>
+	<style>
+		.instructions {
+			width: 90%;
+			padding: 10px;
+			/*border: 2px solid blue;*/
+		}
+		.reader {
+			width: 20%;
+			padding: 5px;
+			float: left;
+			/*border: 2px solid red;*/
+		}
+		pre {
+			white-space: pre-wrap;
+			background: hsl(30,80%,90%);
+		}
+		#output {
+			width: 70%;
+			float: left;
+			/*border: 2px solid red;*/
+		}
+		#data-output {
+			width: 90%;
+			clear: both;
+			padding: 10px;
+			border: 2px solid black;
+		}
+	</style>
+</head>
+<body>
+	<div class="instructions">
+		Instructions: Open a vtt file. It will be converted to a data object. Copy and paste the data into your scene.
+	</div>
+	<div class="reader">
+		<input type="file" id="file" name="file">
+	</div>
+	<div id="output"></div>
+	<div id="data-output"></div>
+	<script>
+		var debug = true;
+		var output = document.querySelector('#output');
+		var dataOutput = document.querySelector('#data-output');
+		var dataObjs = [];
+		var count = 0;// 3 lines / dataItem
+		var dataItem = {
+			start: 0,// seconds
+			end: 0,//
+			type: '',
+			useBlur: false,
+			useOverlay: false,
+			animateIn: false,
+			animateOut: false,
+			animateTo: '35%',// hardcoded
+			pauseVideo: false,
+			resumePlayback: false,
+		};
+
+		document.getElementById('file').onchange = function() {
+			output.innerHTML = '';
+			dataOutput.innerHTML = '';// clear existing data
+
+			var file = this.files[0];
+			var reader = new FileReader();
+			reader.onload = function(progressEvent) {
+				// Entire file for debugging
+				if (debug) {
+					console.log(this.result);
+					output.innerHTML = this.result;
+				}
+
+				// By lines
+				var lines = this.result.split('\n');
+				for(var line = 0; line < lines.length; line++) {
+
+					var txt = lines[line].replace('\r', '');
+					//console.log('line:', txt.length, txt);
+					if (txt.length === 0) {
+						continue;
+					}
+					if (txt.substring(0,6) === 'WEBVTT') {
+						continue;
+					}
+					if (txt.substring(0,4) === 'kind') {
+						continue;
+					}
+
+					var ln = txt.split(' -->');
+					var data = null;
+
+					if (txt.substring(0,1) === '{') {
+						try {
+							// extract cue.text
+							data = JSON.parse(txt);
+							if (debug) {
+								console.log('parsed:', data);
+							}
+						} catch(err) { console.log('ERROR: '+err.toString()); }
+						
+						count += 1;
+						// add to dataItem
+						for (item in data) {
+							dataItem[item] = data[item];
+						}
+					} else if (ln.length === 2) {
+						// cue.start convert timecode to seconds
+						var a = ln[0].split(':'); // split at colons
+						//console.log('time array:', a);
+						// minutes are worth 60 seconds. Hours are worth 60 minutes.
+						var seconds = (+ parseFloat(a[0])) * 60 * 60 + (+ parseFloat(a[1])) * 60 + (+ parseFloat(a[2]));
+
+						// cue.end ???
+						count += 1;
+						dataItem.start = seconds;
+
+						a = ln[1].split(':'); // split at colons
+						//console.log('time array:', a);
+						// minutes are worth 60 seconds. Hours are worth 60 minutes.
+						seconds = (+ parseFloat(a[0])) * 60 * 60 + (+ parseFloat(a[1])) * 60 + (+ parseFloat(a[2]));
+						dataItem.end = seconds;// + 0.2;
+					} else {
+						count += 1;
+						dataItem.type = txt;
+					}
+					if (count === 3) {
+						count = 0;
+						console.log('dataItem:', dataItem);
+						var obj = Object.assign({}, dataItem);// push a copy
+						dataObjs.push(obj);
+						// display in html
+						var htmlObj = document.createElement('pre');
+						htmlObj.innerHTML = JSON.stringify(obj);
+						dataOutput.appendChild(htmlObj);
+					}
+
+				}
+				if (debug) {
+					console.log('dataObjects:', dataObjs.length, dataObjs);
+				}
+			};
+			reader.readAsText(file);
+		};
+	</script>
+</body>
+</html>

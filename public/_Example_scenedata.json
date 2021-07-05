@@ -1,0 +1,314 @@
+{
+	"introContent": [
+		{
+			"_comment": "data for English",
+			"titleText": "EN Slide Title",
+			"text": "Introduction for Interactive Video.<br><br>(define what to put here, the viewer may need to click before the video can play.)",
+			"audio": "",
+			"image": "images/allergen_platter.png"
+		},
+		{
+			"_comment": "data for Spanish",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for Mandarin",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for Korean",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for Vietnamese",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for ASL",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for Tagalog",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		},
+		{
+			"_comment": "data for Serbo-Croatian",
+			"titleText": "",
+			"text": "",
+			"audio": ""
+		}
+	],
+
+	"sceneLanguage": [
+		{
+			"sceneData": [
+				{
+					"_comment": "data for English",
+					"videoBackground": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+					"captionsFile": "",
+					"ccEnabled": false,
+					"returnTime": 0,
+					"branchCount": 0,
+					"played": false,
+					"cueData": [
+						{
+							"start": 1.5,
+							"type": "TitleScreen",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "10%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"textBig": "This is the Title",
+							"textBigColor": "#2299ee",
+							"textSmall": "This is the information to display.",
+							"textSmallColor": "#333333",
+							"textSmallWidth": "30%",
+							"textSmallBkgColor": "rgba(174,234,236,0.6)",
+							"btnText": "CONTINUE",
+							"btnTextColor": "#333333",
+							"btnBkgColor": "#aeeaec"
+						},
+						{
+							"start": 2.12,
+							"type": "AnimatedMessage",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": false,
+							"animateTo": "35%",
+							"pauseVideo": false,
+							"resumePlayback": true,
+							"removeMessage": true,
+							"messageText": "This is a message from",
+							"duration": 4
+						},
+						{
+							"start": 8.8,
+							"type": "InfoPanel",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "25%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"panelWidth": "40%",
+							"panelBkgColor": "rgba(3,117,163, 0.6)",
+							"infoTitle": "This is an info panel Title",
+							"titleColor": "#ffffff",
+							"infoText": "This is the information to display. This is the information to display. This is the information to display.",
+							"buttonText": "I Agree"
+						},
+						{
+							"start": 10.2,
+							"type": "DragImage",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": false,
+							"animateOut": false,
+							"animateTo": "",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"location": {"top":110, "left":210, "width":217, "height":132},
+							"imageFile": "images/hamburger_patties.png",
+							"textColor": "#3023ba",
+							"messageTop": "15%",
+							"message": "Drop the image onto the the word Open.",
+							"feedback": "<b>Correct</b> <p>Good Job</p>",
+							"wrongFeedback": "Sorry, you didn't find it.",
+							"points": 5,
+							"oneChance": false,
+							"dropzone": {
+								"dropzone": true,
+								"hotspots": [
+									{
+										"location": {
+											"top": 300,
+											"left": 500,
+											"width": 360,
+											"height": 150
+										}
+									}
+								]
+							}
+						},
+						{
+							"start": 14.2,
+							"type": "FlashCard",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "15%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"cardWidth": "30%",
+							"buttonText": "Continue",
+							"textFront": "What temperature kills pathogens in Poultry?",
+							"textBack": "Poultry should be cooked to 165° F",
+							"imgFront": "",
+							"imgBack": "",
+							"colorFront": "#0375A3",
+							"colorBack": "#7bc277",
+							"colorTextFront": "#ffffff",
+							"colorTextBack": "#333333",
+							"headerFront": "Question",
+							"headerBack": "Answer",
+							"footerFront": "Click to show the answer",
+							"footerBack": "Click the continue button"
+						},
+						{
+							"start": 18.8,
+							"type": "ImageButton",
+							"useOverlay": false,
+							"animateIn": false,
+							"animateOut": false,
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"DONT-branchTo": 0,
+							"imagePath": "images/physical_btn.png",
+							"location": {
+								"top": 160,
+								"left": 200,
+								"width": 223,
+								"height": 154
+							}
+						},
+						{
+							"start": 20.0,
+							"type": "MultipleAnswer",
+							"useOverlay": true,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "18%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"questionText": "What should you look for?",
+							"questionAudio": "audio/what_next.mp3",
+							"correctFeedbackText": " Well done. Food hazards come in many forms.",
+							"correctFeedbackAudio": "audio/feedback.mp3",
+							"wrongFeedbackText": "Sorry, you should be looking for Physical, Chemical and Biological hazards.",
+							"wrongFeedbackAudio": "audio/nope.mp3",
+							"randomizeAnswers": true,
+							"answers": [
+								{
+									"id": 0,
+									"answerText": "Ingredients",
+									"answerAudio": "audio/foundit.mp3",
+									"correct": false
+								},
+								{
+									"id": 1,
+									"answerText": "Pesticides",
+									"answerAudio": "audio/foundit.mp3",
+									"correct": true
+								},
+								{
+									"id": 2,
+									"answerText": "Dirty dishes",
+									"answerAudio": "audio/foundit.mp3",
+									"correct": true
+								},
+								{
+									"id": 3,
+									"answerText": "Broken Glass",
+									"answerAudio": "audio/foundit.mp3",
+									"correct": true
+								}
+							]
+						},
+						{
+							"start": 25.510,
+							"type": "MultipleChoice",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "25%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"questionText": "So what do you think happened?<br>How did E. coli bacteria get into the cake?",
+							"questionAudio": "",
+							"questionInstructions": "Choose one of the possible solutions to find the true culprit.",
+							"hintButtonText": "Need a hint?",
+							"hintButtonTextColor": "",
+							"hintButtonBackgroundColor": "",
+							"hintText": "E. coli bacteria naturally occur in meat products, like raw pork sausage.",
+							"hintAudio": "audio/english/hint.mp3",
+							"randomizeAnswers": true,
+							"answers": [
+								{
+									"id": 0,
+									"correct": true,
+									"answerText": "An electric mixer spread germs from the sausage to the cake.",
+									"answerAudio": "",
+									"feedbackText": "Correct. E. coli bacteria naturally occur in meat products, like raw pork sausage. The bakery workers used the same mixer as the meat department employees.",
+									"feedbackAudio": "audio/english/hint.mp3"
+								},
+								{
+									"id": 1,
+									"correct": false,
+									"answerText": "An employee didn’t wash their hands after preparing pork sausage.",
+									"answerAudio": "",
+									"feedbackText": "Sorry. E. coli bacteria naturally occur in meat products, like raw pork sausage. Did you notice that the bakery workers used the same mixer as the meat department employees?",
+									"feedbackAudio": "audio/english/hint.mp3"
+								},
+								{
+									"id": 2,
+									"correct": false,
+									"answerText": "The chocolate powder was contaminated by pests in the dry storage room.",
+									"answerAudio": "",
+									"feedbackText": "Sorry. E. coli bacteria naturally occur in meat products, like raw pork sausage. Did you notice that the bakery workers used the same mixer as the meat department employees?",
+									"feedbackAudio": "audio/english/hint.mp3"
+								}
+							]
+						}
+					]
+				}
+			]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Spanish"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Mandarin"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Korean"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Vietnamese"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for ASL"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Tagalog"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Serbo-Croatian"
+			}]
+		}
+	]
+}

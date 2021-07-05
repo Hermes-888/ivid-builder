@@ -1,0 +1,152 @@
+{
+	"introContent": [
+		{
+			"_comment": "data for English",
+			"titleText": "EN Slide Title",
+			"text": "Introduction for Interactive Video.<br><br>(define what to put here, the viewer may need to click before the video can play.)",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Spanish",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Mandarin",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Korean",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Vietnamese",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for ASL",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Tagalog",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		},
+		{
+			"_comment": "data for Serbo-Croatian",
+			"titleText": "",
+			"text": "",
+			"audio": "",
+			"image": ""
+		}
+	],
+
+	"sceneLanguage": [
+		{
+			"sceneData": [
+				{
+					"_comment": "data for English",
+					"videoBackground": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+					"captionsFile": "",
+					"ccEnabled": false,
+					"returnTime": 0,
+					"branchCount": 0,
+					"played": false,
+					"cueData": [
+						{
+							"start": 15.510,
+							"type": "MultipleChoice",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "25%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"questionText": "So what do you think happened?<br>How did E. coli bacteria get into the cake?",
+							"questionAudio": "",
+							"questionInstructions": "Choose one of the possible solutions to find the true culprit.",
+							"hintButtonText": "Need a hint?",
+							"hintButtonTextColor": "",
+							"hintButtonBackgroundColor": "",
+							"hintText": "E. coli bacteria naturally occur in meat products, like raw pork sausage.",
+							"hintAudio": "",
+							"randomizeAnswers": true,
+							"answers": [
+								{
+									"id": 0,
+									"correct": true,
+									"answerText": "An electric mixer spread germs from the sausage to the cake.",
+									"answerAudio": "",
+									"feedbackText": "Correct. E. coli bacteria naturally occur in meat products, like raw pork sausage. The bakery workers used the same mixer as the meat department employees.",
+									"feedbackAudio": ""
+								},
+								{
+									"id": 1,
+									"correct": false,
+									"answerText": "An employee didn’t wash their hands after preparing pork sausage.",
+									"answerAudio": "",
+									"feedbackText": "Sorry. E. coli bacteria naturally occur in meat products, like raw pork sausage. Did you notice that the bakery workers used the same mixer as the meat department employees?",
+									"feedbackAudio": ""
+								},
+								{
+									"id": 2,
+									"correct": false,
+									"answerText": "The chocolate powder was contaminated by pests in the dry storage room.",
+									"answerAudio": "",
+									"feedbackText": "Sorry. E. coli bacteria naturally occur in meat products, like raw pork sausage. Did you notice that the bakery workers used the same mixer as the meat department employees?",
+									"feedbackAudio": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Spanish"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Mandarin"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Korean"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Vietnamese"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for ASL"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Tagalog"
+			}]
+		}, {
+			"sceneData": [{
+				"_comment": "data for Serbo-Croatian"
+			}]
+		}
+	]
+}
