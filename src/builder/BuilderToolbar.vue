@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       headerVisible: true,// toggle editor?
-      contentVisible: false,// drag image and text
+      contentVisible: false,// drag image and text UNUSED
       selectedSlide: 0,// Faked, type: 'slide'
       // rawData
       rowIndex: 0,// itemData[rowIndex] = IntroContent[lang] or SceneData.cueData[rowIndex]
@@ -112,6 +112,7 @@ export default {
     }
   },
   mounted() {
+    // ToDo: move editor to DialogModal
     this.$nextTick(function () {
       let comp = this;// scope for addEventListener
 
@@ -183,7 +184,7 @@ export default {
     },
     // Edit Data btn opens dialog to edit the currentData
     editCurrentData: function() {
-      console.log('editCurrentData:');//, this.itemData);
+      // console.log('editCurrentData:');//, this.itemData);
       this.$emit('editCurrentData');
     },
     selectCell: function(cell) {

@@ -26,7 +26,6 @@
         <dialog-modal
           v-show="showModal"
           :dialogHeader="'Dialog Modal Header'"
-          :dialogBody="JSON.stringify(currentData)"
           :currentData="currentData"
           @closeModal="showModal=false"
           @saveChanges="updateItemData"
@@ -135,10 +134,13 @@ export default {
         immediate: true,
         handler(newstate) {
           if (newstate) {
-            // console.log('-- watch Builder sceneVisible:', newstate);
-            this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-            console.log('sceneVisible currentData:', this.currentData);
-            //this.$nextTick(function () {});
+            console.log('-- watch Builder sceneVisible:', newstate);
+            if (this.allData.hasOwnProperty('sceneLanguage')) {
+              this.currentData = this.allData.sceneLanguage[this.language].sceneData;
+              console.log('sceneVisible currentData:', this.currentData);
+              // this.$forceUpdate();
+            }
+            //this.$nextTick(function() {});
           }
         }
       },
@@ -169,6 +171,7 @@ export default {
         },
         editCurrentData: function() {
           this.showModal = true;
+          //
           console.log('editCurrentData', this.currentData);
         },
         /**
@@ -177,26 +180,23 @@ export default {
          * text has changed
          * NOTE: table itemData gets changed
          *
-         * @param item - Object itemData[row]
-         * @param rowIndex - Int which row
+         * @param item - Object currentData XitemData[row]
+         * @param rowIndex - Int which sceneData[index]
          */
         updateItemData: function (item, rowIndex) {
             console.log('Builder updateItemData:', item, rowIndex);
+            console.log('$refs:', this.$refs);
             this.showModal = false;
             if (rowIndex) {
                 // this.itemData[rowIndex] = item;
-                console.log('$refs:', this.$refs);
-
                 // editPanel.options.propsData.itemData
                 // rawdata
                 console.log('editPanel');//, this.$refs.editPanel.itemData[rowIndex]);
                 // this.$refs.editPanel.itemData[rowIndex] = item;
                 // this.$refs.editPanel.$options.propsData.itemData[rowIndex] = item;
-                // still doesnt trigger the watch in panel
-                // this.$refs.panelView.$forceUpdate();// nope
 
                 // for App rawdata
-                this.$emit('updateData', allData);
+                this.$emit('updateData', this.allData);
                 // this.$forceUpdate();
             }
         },

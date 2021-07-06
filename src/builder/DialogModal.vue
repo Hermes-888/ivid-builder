@@ -13,13 +13,13 @@
         >X</span>
       </div>
       <div class="dialog-body">
-        <span v-html="dialogBody"></span>
+        <span v-html="dialogBodyContent"></span>
       </div>
       <div class="dialog-footer">
         <div class="dialog-footer-buttons">
           <button role="button" class="icon-button"
             title="Save changes"
-            @click="$emit('saveChanges')"
+            @click="$emit('saveChanges',updatedData)"
           >
             Save Changes <icon-save-file/>
           </button>
@@ -32,6 +32,7 @@
 <script>
 /**
  * dialog header and body can contain HTML
+ * construct 
  */
 	export default {
 		name: 'DialogModal',
@@ -40,27 +41,49 @@
 				type: String,
 				default: ''
 			},
-			dialogBody: {
-				type: String,
-				default: ''
-			},
+			// dialogBody: {
+			// 	type: String,
+			// 	default: ''
+			// },
 			dialogStyle: {
 				type: Object,
-				default() {}
+				default() {
+          return {}
+        }
 			},
-      // currentData for modal content
       currentData: {
-        type: Object,
-				default() {}
+        type: [Object, Array]
       }
 		},
     // watch currentData, construct form from keys?
     data () {
         return {
-          dialogBodyContent: ''// construct form
+          dialogBodyContent: 'change me',// construct form
+          updatedData: 'new object to return'// 
         }
     },
-    //mounted () {},
+    // mounted () {
+    //   this.$nextTick(function() {});
+    // },
+    watch: {
+      /**
+       * set currentData to introContent, when allData is ready
+       */
+      currentData: {
+        immediate: true,
+        handler(newstate, oldstate) {
+          console.log('-- watch Dialog currentData:', this.currentData);
+          if (newstate === null) { return; }
+          if (newstate.hasOwnProperty('titleText')) {
+            this.dialogBodyContent = JSON.stringify(this.currentData);
+          }
+          if (Array.isArray(newstate)) {
+            this.dialogBodyContent = JSON.stringify(this.currentData);
+            // Array of scenes w/cueData
+          }
+        }
+      },
+    },
     methods: {}
 	}
 </script>
