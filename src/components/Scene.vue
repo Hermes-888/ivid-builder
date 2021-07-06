@@ -25,12 +25,12 @@
 				v-bind:css="false"
 			>
 				<SpeechBubble
-						v-show="showFeedback"
-						class="feedback-bubble"
-						ref="feedbackBubble"
-						:bubbleText="feedbackText"
-						:bubbleStyle="feedbackStyle"
-						@click.native="checkASL"
+					v-show="showFeedback"
+					class="feedback-bubble"
+					ref="feedbackBubble"
+					:bubbleText="feedbackText"
+					:bubbleStyle="feedbackStyle"
+					@click.native="checkASL"
 				/>
 			</transition>
 		</div>
@@ -40,11 +40,9 @@
 
 <script>
 	import ActiveVideo from '@/components/ActiveVideo.vue';
-	import ActiveInteractions from "@/components/ActiveInteractions";
+	import ActiveInteractions from "@/components/ActiveInteractions.vue";
 	import SpeechBubble from './SpeechBubble.vue';
 	// import Velocity from 'velocity-animate';// anime.js
-
-	//import rawdata from '../../public/scenedata.json';// ToDo: adjust template
 
 	export default {
 		name: 'ActiveVideoScene',
@@ -58,7 +56,6 @@
 				type: Boolean,
 				default: false
 			},
-			// filled by App Todo: add to template
 			sceneData: {
 				type: Array,
 				default() {
@@ -109,15 +106,10 @@
 				stepNum: 0,// current sceneData[index]
 				currentStep: {},// the data to display
 				/**
-				 * sceneData is an array of scene objects		ToDo: adjust template
+				 * sceneData is an array of scene objects
 				 * each scene object describes what is visible on the screen
 				 * set currentStep to the this.sceneData[this.stepNum];
 				 * bind the template elements to currentStep
-				 *
-				 * Languages: [1 English, 2 Spanish, 7 Mandarin, 8 Korean, 9 Vietnamese, 10 ASL, 12 Tagalog, 13 Serbo-Croatian]
-				 * language = indexOf(languageId)
-				 * App calculates the language index and passes it to Scene
-				 * Scene must include the same languages as App
 				 */
 				isASL: false,// if true, there is no audio
 
@@ -147,9 +139,6 @@
 						if (this.debug) {
 							console.log('currentScene:', this.currentScene, 'stepNum:', this.stepNum);
 						}
-
-						// load the data 	ToDo: adjust template
-						//this.sceneLanguage = rawdata.sceneLanguage;
 
 						this.$nextTick(function () {
 							/**
@@ -181,8 +170,7 @@
 						 * set currentStep to the desired sceneData to display
 						 * bind the template elements to currentStep
 						 */
-						//this.currentStep = sceneData[num];
-						this.currentStep = this.sceneData[num];// ToDo: adjust template AND activity template!
+						this.currentStep = this.sceneData[num];
 						this.currentScene = num;// stepNum
 						if (this.debug) {
 							console.log('--- watch stepNum:', num);
@@ -236,28 +224,6 @@
 						// this.playAudioFile(this.currentStep.questionAudio);
 						// this.showAnswers = this.showQuestion = true;
 					});
-				}
-			},
-			/**
-			 * if the LMS sends a postMessage for volume or playbackRate,
-			 * the listener in App will update the props.
-			 * watch the props to update the audio element in Scene
-			 * OBSOLETE: DONT NEED TO WATCH IN SCENE
-			 */
-			audioVolume: {
-				immediate: true,
-				handler(n) {
-					// if (this.audioplayer) {
-					// 	this.audioplayer.volume = n;
-					// }
-				}
-			},
-			audioPlaybackRate: {
-				immediate: true,
-				handler(n) {
-					// if (this.audioplayer) {
-					// 	this.audioplayer.playbackRate = n;
-					// }
 				}
 			}
 		},

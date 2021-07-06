@@ -5,17 +5,17 @@
     >
       <div class="dialog-header">
         <span class="dialog-title"
-            v-html="dialogHeader"
+            v-text="dialogHeader"
         ></span>
         <span class="close-btn"
           title="Cancel and close modal"
           @click="$emit('closeModal')"
         >X</span>
       </div>
-      <div class="dialog-body">
-        <span v-html="dialogBodyContent"></span>
+      <div class="dialog-body" ref="dialogbody">
+        <!-- <span v-text="dialogBodyContent"></span> -->
       </div>
-      <div class="dialog-footer">
+      <!-- <div class="dialog-footer">
         <div class="dialog-footer-buttons">
           <button role="button" class="icon-button"
             title="Save changes"
@@ -24,7 +24,7 @@
             Save Changes <icon-save-file/>
           </button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -32,8 +32,11 @@
 <script>
 /**
  * dialog header and body can contain HTML
- * construct 
+ * construct form from keys? or instance forms for each type of content
  */
+import FormIntroduction from './FormIntroduction.vue';
+import Vue from 'vue';
+
 	export default {
 		name: 'DialogModal',
 		props: {
@@ -59,7 +62,8 @@
     data () {
         return {
           dialogBodyContent: 'change me',// construct form
-          updatedData: 'new object to return'// 
+          updatedData: 'new object to return',
+          mcInstance: null
         }
     },
     // mounted () {
@@ -67,15 +71,29 @@
     // },
     watch: {
       /**
-       * set currentData to introContent, when allData is ready
+       * set dialogBodyContent when allData is ready
        */
       currentData: {
         immediate: true,
         handler(newstate, oldstate) {
+          var comp = this;
           console.log('-- watch Dialog currentData:', this.currentData);
-          if (newstate === null) { return; }
+          if (!newstate) { return; }
           if (newstate.hasOwnProperty('titleText')) {
-            this.dialogBodyContent = JSON.stringify(this.currentData);
+            // this.dialogBodyContent = JSON.stringify(this.currentData);
+            var mcClass = Vue.extend(FormIntroduction);
+						this.mcInstance = new mcClass({
+							propsData: {
+								formData: this.currentData
+							}
+						});
+            this.mcInstance.$mount();
+            this.$refs.dialogbody.appendChild(this.mcInstance.$el);
+            this.mcInstance.$on('updateChanges', function(data) {
+              console.log('Modal saveChanges:', data);
+              comp.$emit('closeModal');
+              comp.$emit('saveChanges', data);
+            });
           }
           if (Array.isArray(newstate)) {
             this.dialogBodyContent = JSON.stringify(this.currentData);
@@ -90,6 +108,9 @@
 
 <style scoped>
   .dialog-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.6);

@@ -25,7 +25,7 @@
         /> -->
         <dialog-modal
           v-show="showModal"
-          :dialogHeader="'Dialog Modal Header'"
+          :dialogHeader="currentType"
           :currentData="currentData"
           @closeModal="showModal=false"
           @saveChanges="updateItemData"
@@ -106,8 +106,16 @@ export default {
             }
         ],
         // = allData.introContent[language] || allData.sceneLanguage[language].sceneData
+        actualData: null,// modified allData
+        currentType: 'Dialog Modal Header',
         currentData: null
       }
+    },
+    mounted () {
+        this.$nextTick(function() {
+            this.actualData = JSON.parse(JSON.stringify(this.allData));// deep
+            //console.log('Form:', this.updatedData);
+        });
     },
     watch: {
       /**
@@ -120,6 +128,7 @@ export default {
           if (newstate.hasOwnProperty('introContent')) {
             if (!this.sceneVisible) {
               this.currentData = this.allData.introContent[this.language];
+              this.currentType = 'Introduction Data';
               console.log('-- watch Builder currentData:', this.currentData);
             }
           }
@@ -137,10 +146,9 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
+              this.currentType = 'Scene Data';
               console.log('sceneVisible currentData:', this.currentData);
-              // this.$forceUpdate();
             }
-            //this.$nextTick(function() {});
           }
         }
       },
@@ -171,8 +179,7 @@ export default {
         },
         editCurrentData: function() {
           this.showModal = true;
-          //
-          console.log('editCurrentData', this.currentData);
+          // console.log('editCurrentData', this.currentData);
         },
         /**
          * called from: Table / Panel, separate instances of itemData
@@ -180,23 +187,23 @@ export default {
          * text has changed
          * NOTE: table itemData gets changed
          *
-         * @param item - Object currentData XitemData[row]
+         * @param data - Object currentData
          * @param rowIndex - Int which sceneData[index]
          */
-        updateItemData: function (item, rowIndex) {
-            console.log('Builder updateItemData:', item, rowIndex);
-            console.log('$refs:', this.$refs);
-            this.showModal = false;
+        updateItemData: function (data, rowIndex) {
+            console.log('Builder updateItemData:', data, rowIndex);
+            // console.log('$refs:', this.$refs);
+            // this.showModal = false;
             if (rowIndex) {
-                // this.itemData[rowIndex] = item;
+                // this.itemData[rowIndex] = data;
                 // editPanel.options.propsData.itemData
                 // rawdata
                 console.log('editPanel');//, this.$refs.editPanel.itemData[rowIndex]);
-                // this.$refs.editPanel.itemData[rowIndex] = item;
-                // this.$refs.editPanel.$options.propsData.itemData[rowIndex] = item;
+                // this.$refs.editPanel.itemData[rowIndex] = data;
+                // this.$refs.editPanel.$options.propsData.itemData[rowIndex] = data;
 
                 // for App rawdata
-                this.$emit('updateData', this.allData);
+                this.$emit('updateData', this.actualData);
                 // this.$forceUpdate();
             }
         },

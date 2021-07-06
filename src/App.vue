@@ -16,8 +16,10 @@
 		</div>
 		<Introduction
 			v-if="showIntroduction"
+			:introData="introContent"
 			:introductionText="introContent.text"
 			:introductionAudio="introContent.audio"
+			:introductionImage="introContent.image"
 			:audioVolume="audioVolume"
 			:audioPlaybackRate="audioPlaybackRate"
 			@startClicked="displayScene"
@@ -105,11 +107,11 @@
 				/**
 				 * App titleText,
 				 * Introduction text, audio and image for this language
-         * Scene sceneData[scenes] cueData
+        		 * Scene sceneData[scenes] cueData
 				 * fill at mounted()
 				 */
 				introContent: {},
-				sceneData: [],// ToDo: update template
+				sceneData: [],
 				allData: {}// rawdata for Builder
 			}
 		},
@@ -143,7 +145,7 @@
 								me.audioVolume = e.data.volume;
 
 								// set data from external json file
-								me.updateData();// ToDo: update template
+								me.updateData();
 								me.displayIntro();
 								break;
 							case 'volumeUpdated':
@@ -175,25 +177,27 @@
 				}
 
 				// set data from external json file
-				this.updateData();// ToDo: update template
+				this.updateData();
 				this.displayIntro();
 			}
 		},
 		methods: {
 			/**
-			 * set data from external json file// ToDo: update template
-			 * or from Builder
+			 * set data from external json file or from Builder
 			 */
 			updateData: function(_data) {
-				console.log('rawdata:', rawdata, ' data:', _data);
-        if (_data) {
-          // use updated _data
-        }
-				// console.log('introData:', rawdata.introContent[this.language]);
-				// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData[0]);
-				this.introContent = rawdata.introContent[this.language];// Introduction data
-				this.sceneData = rawdata.sceneLanguage[this.language].sceneData;
-				this.allData = rawdata;
+				//console.log('rawdata:', rawdata, ' data:', _data);
+				if (_data) {
+					this.introContent = _data.introContent[this.language];
+					this.sceneData = _data.sceneLanguage[this.language].sceneData;
+					this.allData = _data;
+				} else {
+					// console.log('introData:', rawdata.introContent[this.language]);
+					// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData);
+					this.introContent = rawdata.introContent[this.language];
+					this.sceneData = rawdata.sceneLanguage[this.language].sceneData;
+					this.allData = rawdata;
+				}
 			},
 			/**
 			 * if screen is not tall enough to display content
@@ -274,7 +278,7 @@
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
 		color: #000000;
-		padding: 5px;
+		/* padding: 5px; */
 		width: 99vw;
 		height: 96vh;
 		background-color: #f5f5f5;

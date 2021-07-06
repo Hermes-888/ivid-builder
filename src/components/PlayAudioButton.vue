@@ -87,7 +87,7 @@
 						if (me.audioPath) {
 							me.audioBtnPlayer.pause();
 							me.playing = false;
-							me.audioBtnPlayer.currentTime = 0;
+							//me.audioBtnPlayer.currentTime = 0;
 						}
 					});
 					// pause if Scene plays another file
@@ -95,7 +95,7 @@
 						if (me.audioPath) {
 							me.audioBtnPlayer.pause();
 							me.playing = false;
-							me.audioBtnPlayer.currentTime = 0;
+							//me.audioBtnPlayer.currentTime = 0;
 						}
 					});
 				}

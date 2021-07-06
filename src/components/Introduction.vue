@@ -1,16 +1,14 @@
 <template>
 	<div class="introduction" ref="introduction">
-		<div class="intro-text"
-			v-bind:style="introductionStyle"
-		>
+		<div class="intro-text">
 			<play-audio-button
 				ref="audioBtn"
-				v-if="introductionAudio"
-				:audioPath="introductionAudio"
+				v-if="introData.audio"
+				:audioPath="introData.audio"
 				:audioVolume="audioVolume"
 				:audioPlaybackRate="audioPlaybackRate"
 			/>
-			<span v-html="introductionText"></span>
+			<span v-html="introData.text"></span>
 		</div>
 		<div class="start-button">
 			<div class="start-image"
@@ -35,26 +33,20 @@
 		},
 
 		/**
-		 * introductionText can contain HTML
-		 * introductionStyle is an object of css properties to change its default style
-		 * if introductionAudio, add an audio element and play the file
+		 * introData.text can contain HTML
+		 * if introData.audio, add an audio button element and allow user to play the file
+		 * if introData.image, add a background image at mounted
 		 */
 		props: {
-			introductionText: {
-				type: String,
-				default: ''
-			},
-			introductionStyle: {
+			introData: {
 				type: Object,
-				default() {}
-			},
-			introductionImage: {
-				type: String,
-				default: ''
-			},
-			introductionAudio: {
-				type: String,
-				default: ''
+				default() {
+					return {
+						text: 'Your course description',
+						audio: '',
+						image: ''
+					}
+				}
 			},
 			audioVolume: {
 				type: Number,
@@ -69,8 +61,8 @@
 		},
 		mounted() {
 			this.$nextTick(function() {
-				if (this.introductionImage) {
-					this.$refs.introduction.style.backgroundImage = "url('" + this.introductionImage + "')";
+				if (this.introData.image) {
+					this.$refs.introduction.style.backgroundImage = "url('" + this.introData.image + "')";
 				}
 			});
 		},
@@ -79,7 +71,7 @@
 			 * Play button has been clicked
 			 */
 			startClicked: function() {
-				if (this.introductionAudio) {
+				if (this.introData.audio) {
 					this.$refs.audioBtn.$emit('pauseAudio');
 				}
 				this.$emit('startClicked');
