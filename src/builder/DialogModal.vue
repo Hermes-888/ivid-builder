@@ -12,7 +12,7 @@
           @click="$emit('closeModal')"
         >X</span>
       </div>
-      <div class="dialog-body" ref="dialogbody">
+      <div class="dialog-body" ref="dialogBody">
         <!-- <span v-text="dialogBodyContent"></span> -->
       </div>
       <!-- <div class="dialog-footer">
@@ -35,6 +35,7 @@
  * construct form from keys? or instance forms for each type of content
  */
 import FormIntroduction from './FormIntroduction.vue';
+import FormScene from './FormScene.vue';
 import Vue from 'vue';
 
 	export default {
@@ -71,7 +72,7 @@ import Vue from 'vue';
     // },
     watch: {
       /**
-       * set dialogBodyContent when allData is ready
+       * set dialogBody content when data is ready
        */
       currentData: {
         immediate: true,
@@ -79,8 +80,8 @@ import Vue from 'vue';
           var comp = this;
           console.log('-- watch Dialog currentData:', this.currentData);
           if (!newstate) { return; }
-          if (newstate.hasOwnProperty('titleText')) {
-            // this.dialogBodyContent = JSON.stringify(this.currentData);
+
+          if (newstate.hasOwnProperty('titleText') && this.$refs.dialogBody) {
             var mcClass = Vue.extend(FormIntroduction);
 						this.mcInstance = new mcClass({
 							propsData: {
@@ -88,16 +89,38 @@ import Vue from 'vue';
 							}
 						});
             this.mcInstance.$mount();
-            this.$refs.dialogbody.appendChild(this.mcInstance.$el);
+
+            this.$refs.dialogBody.innerHTML = '';
+            this.$refs.dialogBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('updateChanges', function(data) {
               console.log('Modal saveChanges:', data);
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
           }
-          if (Array.isArray(newstate)) {
-            this.dialogBodyContent = JSON.stringify(this.currentData);
+
+          if (Array.isArray(newstate) && this.$refs.dialogBody) {
+            // sceneData or cueData
+            // this.$refs.dialogBody.innerHTML = '';
+            // this.$refs.dialogBody.innerText = JSON.stringify(this.currentData);
             // Array of scenes w/cueData
+            var mcClass = Vue.extend(FormScene);
+            // addInstance(mcClass);// ???
+						this.mcInstance = new mcClass({
+							propsData: {
+								formData: this.currentData
+							}
+						});
+            this.mcInstance.$mount();
+
+            this.$refs.dialogBody.innerHTML = '';
+            this.$refs.dialogBody.appendChild(this.mcInstance.$el);
+            this.mcInstance.$on('updateChanges', function(data) {
+              console.log('Modal saveChanges:', data);
+              comp.$emit('closeModal');
+              comp.$emit('saveChanges', data);
+            });
+            // cueData[] - tabs to select which cue?
           }
         }
       },

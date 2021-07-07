@@ -1,5 +1,5 @@
 <template>
-    <div class="form-introduction">
+    <div class="form-body">
         <div class="form-row">
             <div class="empty-button"></div>
             <label for="titleText">Title:</label>
@@ -8,7 +8,6 @@
             >
         </div>
         <div class="form-row">
-            <!-- <div class="empty-button"></div> -->
             <label for="description">Text:</label>
             <textarea id="description"
                 v-model="updatedData.text"
@@ -43,15 +42,6 @@
                 Save Changes <icon-save-file/>
             </button>
         </div>
-        <!-- 
-        <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
-        <label for="jack">Jack</label>
-        <input type="checkbox" id="john" value="John" v-model="checkedNames">
-        <label for="john">John</label>
-        <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
-        <label for="mike">Mike</label>
-        <br>
-        <span>Checked names: {{ checkedNames }}</span> -->
     </div>
 </template>
 
@@ -61,9 +51,9 @@ export default {
      * Nice form styles
      * https://codepen.io/rickyeckhardt/pen/zYGwaKr
      * https://codepen.io/uzcho_/pen/bPZMez
+     * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
      */
     name: "FormIntroduction",
-    // components: {},
     props: {
         formData: {
             type: Object,
@@ -85,13 +75,12 @@ export default {
                 audio: '',
                 image: ''
             },// don't mutate the prop
-            checkedNames: []
         }
     },
     mounted () {
+        // create a deep copy of data to mutate
         this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));// deep
-            //console.log('Form:', this.updatedData);
+            this.updatedData = JSON.parse(JSON.stringify(this.formData));
         });
     },
     methods: {
@@ -99,9 +88,8 @@ export default {
             console.log('get id:', event);
             var id = event.target.id;
             if (!id) {
-                console.log('path:', event.path);
-                //id = event.target.parent.id;
-                // console.log('get id:', event);
+                //console.log('path:', event.path);
+                id = event.path[3].id;
             }
             console.log('upload:', id);
         }
@@ -110,7 +98,7 @@ export default {
 </script>
 
 <style scoped>
-    .form-introduction {
+    .form-body {
         width: 100%;
     }
     .form-row {
@@ -119,7 +107,7 @@ export default {
         clear: both;
     }
     .bordered {
-        border-top: 2px solid #333333;
+        border-top: 2px solid #888888;
         margin-top: 20px;
         padding: 15px 0;
     }
@@ -153,7 +141,7 @@ export default {
         margin-bottom: 8px;
     }
     .empty-button {
-        width: 20px;
+        width: 15px;
         margin: 0 10px;
         padding: 0 5px;
         float: right;

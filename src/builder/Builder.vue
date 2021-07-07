@@ -76,7 +76,7 @@ export default {
     },
     data () {
       return {
-        //tableView: false,// view itemData as Table or Panel
+        // language = data[index]
         repoVisible: false,// toggle RepoPanel
         showModal: false,// toggle
         selectedRowId: 0,// IntroContent or SceneData.cueData
@@ -111,12 +111,9 @@ export default {
         currentData: null
       }
     },
-    mounted () {
-        this.$nextTick(function() {
-            this.actualData = JSON.parse(JSON.stringify(this.allData));// deep
-            //console.log('Form:', this.updatedData);
-        });
-    },
+    // mounted () {
+    //     this.$nextTick(function() {});
+    // },
     watch: {
       /**
        * set currentData to introContent, when allData is ready
@@ -132,6 +129,9 @@ export default {
               console.log('-- watch Builder currentData:', this.currentData);
             }
           }
+          // a mutable copy of allData to update
+          this.actualData = JSON.parse(JSON.stringify(this.allData));
+          //console.log('actualData:', this.actualData);
         }
       },
       /**
@@ -188,19 +188,31 @@ export default {
          * NOTE: table itemData gets changed
          *
          * @param data - Object currentData
-         * @param rowIndex - Int which sceneData[index]
+         * @param cueIndex - Int which sceneData[index]
          */
-        updateItemData: function (data, rowIndex) {
-            console.log('Builder updateItemData:', data, rowIndex);
+        updateItemData: function (data, cueIndex) {
+            console.log('Builder updateItemData:', data, cueIndex);
             // console.log('$refs:', this.$refs);
             // this.showModal = false;
-            if (rowIndex) {
-                // this.itemData[rowIndex] = data;
+            // ToDo: update actualData w/data and send it to App
+            if (this.sceneVisible) {
+              // update sceneLanguage[language].sceneData
+              if (cueIndex) {
+                // update sceneLanguage[language].sceneData[?Define Global?].cueData[cueIndex]
+              }
+            } else {
+              // update introContent[language]
+              this.actualData.introContent[this.language] = data;
+              // send to App to refresh
+              this.$emit('updateData', this.actualData);
+            }
+            if (cueIndex) {
+                // this.itemData[cueIndex] = data;
                 // editPanel.options.propsData.itemData
                 // rawdata
-                console.log('editPanel');//, this.$refs.editPanel.itemData[rowIndex]);
-                // this.$refs.editPanel.itemData[rowIndex] = data;
-                // this.$refs.editPanel.$options.propsData.itemData[rowIndex] = data;
+                console.log('editPanel');//, this.$refs.editPanel.itemData[cueIndex]);
+                // this.$refs.editPanel.itemData[cueIndex] = data;
+                // this.$refs.editPanel.$options.propsData.itemData[cueIndex] = data;
 
                 // for App rawdata
                 this.$emit('updateData', this.actualData);

@@ -167,7 +167,7 @@
 			return {
 				vidPlayer: null,
 				cueTrack: null,
-				showProgressbar: false,
+				showProgressbar: true,
 				progressHolder: null,// add markers to outer progressbar element
 				progress: 0,
 				jumpTo: 0,

@@ -65,16 +65,19 @@
 				showScene: false,
 				showConclusion: false,
 				showWarning: false,
-				timeCounter: null,// for clearInterval
 
-				// timeSpent is sent to LMS to measure how long the viewer viewed this lesson
-				timeSpent: 0, // increments upon starting a scene
-				userScore: 100, // default 100%
-
+				/**
+				 * timeSpent is sent to LMS to measure how long the viewer viewed this lesson
+				 * timeCounter to clearInterval
+				 * userScore defaults to 100%, can be used during scene
+				 */
+				timeSpent: 0,
+				timeCounter: null,
+				userScore: 100,
 				/**
 				 * variables initialized by the LMS
 				 * audioVolume, audioPlaybackRate, updated if changed in media player controls
-				 * ccEnabled to turn on Closed Captions of IntroVideo
+				 * ccEnabled to turn on Closed Captions
 				 * firstName to personalize Introduction or Scene
 				 * languageId sent from LMS default 1=English
 				 */
@@ -82,12 +85,10 @@
 				audioPlaybackRate: 1,
 				ccEnabled: false,
 				firstName: '',
-				languageId: 1,// changes languages, locally or outside of the LMS
+				languageId: 1,// sets language, set manually outside the LMS
 				/**
 				 * Languages: [1 English, 2 Spanish, 7 Mandarin, 8 Korean, 9 Vietnamese, 10 ASL, 12 Tagalog, 13 Serbo-Croatian]
-				 * language = languages.indexOf(languageId) for introContent[index]
-				 * introContent: [] titleText and content for each language of introduction
-				 * Scene data must include the same languages in the same order
+				 * language = languages.indexOf(languageId) the data[index]				
 				 */
 				languages: [1, 2, 7, 8, 9, 10, 12, 13],
 				language: 0,// default to English
@@ -103,16 +104,15 @@
 					'I-on ang mode na full screen',// tg
 					'Uključite način rada preko cijelog zaslona'// sc
 				],
-
 				/**
 				 * App titleText,
 				 * Introduction text, audio and image for this language
-        		 * Scene sceneData[scenes] cueData
-				 * fill at mounted()
+        		 * Scene sceneData[scenes] cueData must include the same languages in the same order
+				 * allData=rawdata for Builder, filled at mounted()
 				 */
 				introContent: {},
 				sceneData: [],
-				allData: {}// rawdata for Builder
+				allData: {}
 			}
 		},
 		mounted() {
@@ -183,10 +183,10 @@
 		},
 		methods: {
 			/**
-			 * set data from external json file or from Builder
+			 * set data from external json file or from Builder (_data)
 			 */
 			updateData: function(_data) {
-				//console.log('rawdata:', rawdata, ' data:', _data);
+				console.log('rawdata:', rawdata, ' data:', _data);
 				if (_data) {
 					this.introContent = _data.introContent[this.language];
 					this.sceneData = _data.sceneLanguage[this.language].sceneData;
@@ -229,7 +229,6 @@
 				 */
 				parent.postMessage({'type':'started', 'version':1}, '*');
 			},
-
 			/**
 			 * When the viewer completes all scenes,
 			 * Scene emits a announceCompleted event and sends a score
@@ -250,11 +249,8 @@
 				parent.postMessage({'type':'completed', 'version':1, 'time':this.timeSpent}, '*');
 				//this.sceneCompleted();// show conclusion
 			},
-
 			/**
-			 * When the viewer completes a reviewed scene,
-			 * Scene emits a sceneCompleted event
-			 * show the Conclusion and allow user to review another scene
+			 * When the viewer completes a scene, show the Conclusion
 			 */
 			sceneCompleted: function() {
 				this.showScene = false;
@@ -278,7 +274,6 @@
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
 		color: #000000;
-		/* padding: 5px; */
 		width: 99vw;
 		height: 96vh;
 		background-color: #f5f5f5;
