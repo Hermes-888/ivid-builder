@@ -57,7 +57,26 @@
                 >
                     {{cue.type}}
                     <br>
-                    {{JSON.stringify(cue)}}
+                    <div class="form-row">
+                        <label for="startat"
+                            title="Time in seconds"
+                        >Start Time:</label>
+                        <input type="text" id="startat" class="short-text-input"
+                            v-model="cue.start"
+                            @change="changeEl(cue.start)"
+                        >
+                    </div>
+                    <!--<br> {{JSON.stringify(cue)}} -->
+                    <form-cue-data
+                        :formData="cue"
+                        @itemChanged="changeEl"
+                    />
+                    <form-message
+                        v-show="cue.type === 'AnimatedMessage'"
+                        :formData="cue"
+                        @itemChanged="changeEl"
+                    />
+                    <!--other cue specific comps-->
                 </div>
             </div>
         </div>
@@ -73,6 +92,9 @@
 </template>
 
 <script>
+import FormCueData from './FormCueData.vue';
+import FormMessage from './FormMessage.vue';
+
 export default {
     /**
      * Nice form styles
@@ -82,7 +104,10 @@ export default {
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
      */
     name: "FormScene",
-    // components: {},
+    components: {
+        FormCueData,
+        FormMessage
+    },
     props: {
         formData: {
             type: Array,
@@ -101,6 +126,8 @@ export default {
                 returnTime: '',
                 cueData: []
             }],// don't mutate the prop
+            cues: [],
+            cueForms: []
             /* 
             "sceneData": [
 				{
@@ -120,6 +147,25 @@ export default {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+
+            // loop through cueData, for key add element
+            var comp = this;
+            this.updatedData[0].cueData.forEach(function(cue, index) {
+                comp.cues.push(cue);
+                for(var key in cue) {
+                    //console.log('-:', key, ':', cue[key]);// key : value
+                    if (key === 'useBlur') {
+                        var el = '<label for="blur_'+index+'">Use Blur</label>'+
+                        '<input type="checkbox" id="blur_'+index+'" value="updatedData[0].cueData['+index+'].useBlur" @click="'+comp.changeEl+'">';
+                        //'<input type="checkbox" id="blur_'+index+'" value="updatedData[0].cueData['+index+'].useBlur" onClick="'+comp.changeEl+'">';//function () { [native code] }
+                        //console.log('-',el);//, eval(el));// error extra ">"
+                        comp.cueForms.push(el);
+                    }
+                }
+            });
+            // for(var key in this.updatedData[0].cueData[0]) {
+            //     console.log('-:', key, this.updatedData[0].cueData[0][key]);
+            // }
         });
     },
     methods: {
@@ -134,6 +180,9 @@ export default {
         },
         addCue: function() {
             console.log('Add new Cue/tab');
+        },
+        changeEl: function(val) {
+            console.log('data:', val)
         }
     }
 }
@@ -186,6 +235,11 @@ export default {
         width: 25%;
         float: unset;
         margin-right: 40px;
+    }
+    .short-text-input {
+        width: 10%;
+        float: unset;
+        margin-right: 20px;
     }
     .empty-button {
         width: 15px;

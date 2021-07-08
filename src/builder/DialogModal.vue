@@ -143,15 +143,16 @@ import Vue from 'vue';
     top: 15vh;
 		left: 25%;
 		width: 50%;
+    padding: 10px;
+		font-size: 18px;
 		color: #000000;
 		text-align: left;
-		padding: 10px;
 		border-radius: 8px;
 		border: 3px solid #333333;
 		background-color: #ffffff;
-		user-select: none;
+		/* user-select: none;
 		-moz-user-select: none;
-		-webkit-user-select: none;
+		-webkit-user-select: none; */
 	}
 	.dialog-header {
 		font-weight: 600;
@@ -163,10 +164,10 @@ import Vue from 'vue';
 	}
 	.close-btn {
     cursor: pointer;
-		width: 20px;
+		width: 18px;
 		float: right;
 		text-align: center;
-		font-size: smaller;
+		font-size: 16px;
 		border-radius: 50%;
 		border: 1px solid #333333;
 	}
