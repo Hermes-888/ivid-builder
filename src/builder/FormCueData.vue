@@ -7,21 +7,37 @@
             >
             <label for="blur" title="Blur the background during interaction">Use Blur</label>
 
-            <input type="checkbox" id="overlay" v-model="updatedData.useOverlay">
+            <span>-OR- </span>
+            <input type="checkbox" id="overlay"
+                v-model="updatedData.useOverlay"
+                @change="$emit('itemChanged', updatedData.useOverlay)"
+            >
             <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
         </div>
         <div class="form-row-half">
-            <input type="checkbox" id="pause" v-model="updatedData.pauseVideo">
+            <input type="checkbox" id="pause"
+                v-model="updatedData.pauseVideo"
+                @change="$emit('itemChanged', updatedData.pauseVideo)"
+            >
             <label for="pause" title="Pause the video during the interaction">Pause Video</label>
 
-            <input type="checkbox" id="resume" v-model="updatedData.resumePlayback">
+            <input type="checkbox" id="resume"
+                v-model="updatedData.resumePlayback"
+                @change="$emit('itemChanged', updatedData.resumePlayback)"
+            >
             <label for="resume" title="Resume playing the video after the interaction">Resume Video</label>
         </div>
         <div class="form-row">
-            <input type="checkbox" id="in" v-model="updatedData.animateIn">
+            <input type="checkbox" id="in"
+                v-model="updatedData.animateIn"
+                @change="$emit('itemChanged', updatedData.animateIn)"
+            >
             <label for="in">Animate In</label>
 
-            <input type="checkbox" id="out" v-model="updatedData.animateOut">
+            <input type="checkbox" id="out"
+                v-model="updatedData.animateOut"
+                @change="$emit('itemChanged', updatedData.animateOut)"
+            >
             <label for="out">Animate out</label>
 
             <label for="to">Animate To:</label>
@@ -30,15 +46,6 @@
                 @change="$emit('itemChanged', updatedData.animateTo)"
             >
         </div>
-        <!-- <div class="form-row-half">
-            <input type="checkbox" id="overlay" v-model="updatedData.animateOut">
-            <label for="overlay">Animate out</label>
-        </div> -->
-        
-        <!-- <div class="form-row-half">
-            <input type="checkbox" id="overlay" v-model="updatedData.resumePlayback">
-            <label for="overlay">Resume Video</label>
-        </div> -->
     </div>
 </template>
 
@@ -113,14 +120,12 @@ export default {
     }
     .short-text-input {
         width: 5%;
-        margin-left: -15px;
     }
     label {
-        margin-right: 20px;
+        margin-right: 10px;
     }
 
-    /* input, textarea {
-        width: 78%;
+    input, textarea {
         font-size: 16px;
         box-sizing: border-box;
         outline: none;
@@ -143,7 +148,7 @@ export default {
         height: 80px;
         resize: none;
         margin-bottom: 8px;
-    } */
+    }
     .bordered {
         border-top: 2px solid #888888;
         margin-top: 20px;

@@ -76,7 +76,7 @@
 							"useBlur": false,
 							"useOverlay": false,
 							"animateIn": true,
-							"animateOut": false,
+							"animateOut": true,
 							"animateTo": "35%",
 							"pauseVideo": false,
 							"resumePlayback": true,

@@ -111,12 +111,13 @@ export default {
         margin-top: 20px;
         padding: 15px 0;
     }
-    label {
+    /* label {
         margin-right: 20px;
-    }
+    } */
     input, textarea {
         width: 80%;
         float: right;
+        font-family: sans-serif;
         font-size: 16px;
         box-sizing: border-box;
         outline: none;

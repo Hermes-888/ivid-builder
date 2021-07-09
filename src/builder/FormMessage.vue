@@ -13,6 +13,11 @@
                 v-model="updatedData.duration"
                 @change="$emit('itemChanged', updatedData.duration)"
             >
+            <input type="checkbox" id="pause"
+                v-model="updatedData.removeMessage"
+                @change="$emit('itemChanged', updatedData.removeMessage)"
+            >
+            <label for="pause" title="False will leave the message on the screen">Remove Message</label>
         </div>
         <div class="form-row">
             <label for="message">Message:</label>
@@ -54,15 +59,6 @@ export default {
     data () {
         return {
             updatedData: [{
-                "start": 0,
-                "type": "AnimatedMessage",
-                "useBlur": false,
-                "useOverlay": false,
-                "animateIn": true,
-                "animateOut": false,
-                "animateTo": "35%",
-                "pauseVideo": false,
-                "resumePlayback": true,
                 "removeMessage": true,
                 "messageText": "",
                 "duration": 1
@@ -72,7 +68,6 @@ export default {
     mounted () {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            //console.log('message:', this.updatedData);
         });
     },
     // methods: {}
@@ -104,8 +99,7 @@ export default {
         margin-right: 5px;
     }
 
-    /* input, textarea {
-        width: 78%;
+    input, textarea {
         font-size: 16px;
         box-sizing: border-box;
         outline: none;
@@ -128,7 +122,7 @@ export default {
         height: 80px;
         resize: none;
         margin-bottom: 8px;
-    } */
+    }
     .bordered {
         border-top: 2px solid #888888;
         margin-top: 20px;

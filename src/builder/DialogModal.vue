@@ -45,10 +45,6 @@ import Vue from 'vue';
 				type: String,
 				default: ''
 			},
-			// dialogBody: {
-			// 	type: String,
-			// 	default: ''
-			// },
 			dialogStyle: {
 				type: Object,
 				default() {
