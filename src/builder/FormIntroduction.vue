@@ -1,14 +1,19 @@
 <template>
     <div class="form-body">
+      <div class="form-container">
         <div class="form-row">
             <div class="empty-button"></div>
             <label for="titleText">Title:</label>
-            <input id="titleText" v-show="updatedData.titleText"
-                v-model="updatedData.titleText" placeholder="edit me"
+            <input id="titleText" class="input-short"
+              v-show="updatedData.titleText"
+              v-model="updatedData.titleText" placeholder="edit me"
             >
         </div>
         <div class="form-row">
-            <label for="description">Text:</label>
+          <span>Text:</span>
+        </div>
+        <div class="form-row">
+            <!-- <label for="description">Text:</label> -->
             <textarea id="description"
                 v-model="updatedData.text"
             >
@@ -22,7 +27,9 @@
                 <icon-upload-cloud title="Upload an audio file."/>
             </button>
             <label for="audio">Audio:</label>
-            <input id="audio" v-model="updatedData.audio" placeholder="optional">
+            <input id="audio" class="input-short"
+              v-model="updatedData.audio" placeholder="optional"
+            >
         </div>
         <div class="form-row">
             <button id="imageUpload" role="button" class="icon-button"
@@ -32,8 +39,11 @@
                 <icon-upload-cloud title="Upload an image. It will also be added to the repository."/>
             </button>
             <label for="image">Image:</label>
-            <input id="image" v-model="updatedData.image" placeholder="optional">
+            <input id="image" class="input-short"
+              v-model="updatedData.image" placeholder="optional"
+            >
         </div>
+      </div>
         <div class="form-row bordered">
             <button role="button" class="icon-button"
                 title="Save changes"
@@ -101,6 +111,11 @@ export default {
     .form-body {
         width: 100%;
     }
+    .form-container {
+      border-radius: 8px;
+      padding: 5px 3px;
+      background-color: #ffffff;
+    }
     .form-row {
         width: 100%;
         margin: 5px 0;
@@ -111,12 +126,11 @@ export default {
         margin-top: 20px;
         padding: 15px 0;
     }
-    /* label {
-        margin-right: 20px;
-    } */
+    .input-short {
+      width: 78%;
+    }
     input, textarea {
-        width: 80%;
-        float: right;
+        /* width: 100%; */
         font-family: sans-serif;
         font-size: 16px;
         box-sizing: border-box;
@@ -136,7 +150,7 @@ export default {
         border-left-width: 0;
     }
     textarea {
-        width: 87%;
+        width: 100%;
         height: 80px;
         resize: none;
         margin-bottom: 8px;
@@ -149,7 +163,7 @@ export default {
         border: 1px solid transparent;
     }
     .icon-button {
-        margin: 0 10px;
+        margin: 0 5px;
         padding: 0 5px;
         cursor: pointer;
         float: right;
