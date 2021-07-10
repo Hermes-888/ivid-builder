@@ -7,7 +7,7 @@
                 @change="$emit('itemChanged', updatedData.start)"
             >
         </div> -->
-        <div class="form-row-half">
+        <div class="form-row">
             <label for="duration">Duration:</label>
             <input type="text" id="duration" class="short-text-input"
                 v-model="updatedData.duration"
@@ -17,14 +17,26 @@
                 v-model="updatedData.removeMessage"
                 @change="$emit('itemChanged', updatedData.removeMessage)"
             >
-            <label for="pause" title="False will leave the message on the screen">Remove Message</label>
+            <label for="pause" 
+              title="False will leave the message on the screen">
+              Remove Message
+            </label>
         </div>
         <div class="form-row">
-            <label for="message">Message:</label>
+            <!-- <label for="message">Message:</label>
             <input type="text" id="message" class="long-text-input"
                 v-model="updatedData.messageText"
                 @change="$emit('itemChanged', updatedData.messageText)"
+            > -->
+        </div>
+        <div class="form-row">
+            <span>Message:</span>
+        </div>
+        <div class="form-row">
+            <textarea id="messageText"
+                v-model="updatedData.messageText"
             >
+            </textarea>
         </div>
     </div>
 </template>
@@ -89,7 +101,7 @@ export default {
         float: left;
     }
     .short-text-input {
-        width: 10%;
+        width: 24px;
         margin-right: 20px;
     }
     .long-text-input {
@@ -100,6 +112,7 @@ export default {
     }
 
     input, textarea {
+        font-family: sans-serif;
         font-size: 16px;
         box-sizing: border-box;
         outline: none;
@@ -118,7 +131,7 @@ export default {
         border-left-width: 0;
     }
     textarea {
-        width: 87%;
+        width: 100%;
         height: 80px;
         resize: none;
         margin-bottom: 8px;

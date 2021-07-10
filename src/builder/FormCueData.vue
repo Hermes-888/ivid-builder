@@ -1,20 +1,21 @@
 <template>
     <div class="form-body">
-        <div class="form-row-half">
+        <div class="form-row">
             <input type="checkbox" id="blur"
                 v-model="updatedData.useBlur"
                 @change="$emit('itemChanged', updatedData.useBlur)"
             >
             <label for="blur" title="Blur the background during interaction">Use Blur</label>
 
-            <span>-OR- </span>
+            <span> -OR- </span>
             <input type="checkbox" id="overlay"
                 v-model="updatedData.useOverlay"
                 @change="$emit('itemChanged', updatedData.useOverlay)"
             >
             <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
+            <span class="small"> (Neither=clear : NOT Both) </span>
         </div>
-        <div class="form-row-half">
+        <div class="form-row">
             <input type="checkbox" id="pause"
                 v-model="updatedData.pauseVideo"
                 @change="$emit('itemChanged', updatedData.pauseVideo)"
@@ -32,13 +33,13 @@
                 v-model="updatedData.animateIn"
                 @change="$emit('itemChanged', updatedData.animateIn)"
             >
-            <label for="in">Animate In</label>
+            <label for="in" class="wide-label">Animate In</label>
 
             <input type="checkbox" id="out"
                 v-model="updatedData.animateOut"
                 @change="$emit('itemChanged', updatedData.animateOut)"
             >
-            <label for="out">Animate out</label>
+            <label for="out" class="wide-label">Animate Out</label>
 
             <label for="to">Animate To:</label>
             <input type="text" id="to" class="short-text-input"
@@ -118,11 +119,14 @@ export default {
         margin: 5px 0;
         float: left;
     }
-    .short-text-input {
-        width: 5%;
+    .small {
+      font-size: 14px;
     }
-    label {
-        margin-right: 10px;
+    .short-text-input {
+        width: 10%;
+    }
+    .wide-label {
+        margin-right: 15px;
     }
 
     input, textarea {

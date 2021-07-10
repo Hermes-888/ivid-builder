@@ -121,7 +121,7 @@ import Vue from 'vue';
         }
       },
     },
-    methods: {}
+    // methods: {}
 	}
 </script>
 
@@ -132,20 +132,20 @@ import Vue from 'vue';
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.4);
   }
 	.dialog-panel {
 		position: absolute;
-    top: 15vh;
-		left: 25%;
-		width: 50%;
-    padding: 10px;
+    top: 5vh;
+		left: 1%;
+		width: 33%;
+    padding: 0;
 		font-size: 18px;
 		color: #000000;
 		text-align: left;
 		border-radius: 8px;
 		border: 3px solid #333333;
-		background-color: #ffffff;
+		background-color: rgba(255, 255, 255, 0.6);
 		/* user-select: none;
 		-moz-user-select: none;
 		-webkit-user-select: none; */

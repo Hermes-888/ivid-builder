@@ -13,13 +13,16 @@
             :value="updatedData.panelBkgColor"
         />
         <div class="form-row">
+          <div class="column-left">
             <label for="panelWidth">Panel width:</label>
             <input type="text" id="panelWidth" class="short-text-input"
                 v-model="updatedData.panelWidth"
                 @change="$emit('itemChanged', updatedData.panelWidth)"
             >
+          </div>
+          <div class="column-right">
             <label for="panelBkgColor" title="Panel background color can have opacity. Click the color swatch to change the color">
-                Panel Background color:
+                Panel Color:
             </label>
             <!-- <input type="color" id="panelBkgColor" class="short-text-input"
                 v-model="updatedData.panelBkgColor"
@@ -35,6 +38,7 @@
             >
                 <icon-palette title="Toggle color picker."/>
             </span> -->
+          </div>
         </div>
         <Sketch class="txt-color-palette"
             v-if="showTxtPalette"
@@ -42,11 +46,14 @@
             :value="updatedData.titleColor"
         />
         <div class="form-row">
+          <div class="column-left col-wide">
             <label for="infoTitle">Title:</label>
             <input type="text" id="infoTitle" class="long-text-input"
                 v-model="updatedData.infoTitle"
                 @change="$emit('itemChanged', updatedData.infoTitle)"
             >
+          </div>
+          <div class="column-right">
             <label for="titleColor" title="Panel background color">Text color:</label>
             <!-- <input type="color" id="titleColor" class="short-text-input"
                 v-model="updatedData.titleColor"
@@ -56,6 +63,7 @@
                 ref="txtcolor" title="Click to open a color picker, click again to close it"
                 @click="showTxtPalette = !showTxtPalette"
             ></div>
+          </div>
         </div>
         <div class="form-row">
             <!-- <label for="infoText">Message:</label> -->
@@ -177,12 +185,23 @@ export default {
         margin: 5px 0;
         float: left;
     }
+    .column-left {
+      width: 66%;
+      display: flex;
+      /* border: 1px solid #333; */
+    }
+    .column-right {
+      width: 33%;
+      display: flex;
+      justify-content: flex-end;
+      /* border: 1px solid rgb(8, 106, 172); */
+    }
     .short-text-input {
-        width: 10%;
+        width: 20%;
         margin-right: 20px;
     }
     .long-text-input {
-        width: 70%;
+        width: 82%;
     }
     label {
         margin-right: 5px;
@@ -242,16 +261,16 @@ export default {
 
     .bkg-color-palette {
         position: absolute;
-        top: 49%;
-        left: 65%;
+        top: 26%;
+        right: 9%;
     }
     .txt-color-palette {
         position: absolute;
-        top: 30%;
-        left: 55%;
+        top: 31%;
+        right: 9%;
     }
     .color-swatch {
-        width: 35px;
+        width: 30px;
         height: 20px;
         cursor: pointer;
         border: 1px solid #333333;

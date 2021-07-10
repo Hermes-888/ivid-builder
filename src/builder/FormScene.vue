@@ -1,5 +1,6 @@
 <template>
     <div class="form-body">
+      <div class="form-container">
         <div class="form-row">
             <button id="videoUpload" role="button" class="icon-button"
                 title="Upload the main video file."
@@ -30,69 +31,71 @@
                 v-model="updatedData[0].returnTime" placeholder="Time in seconds"
             >
         </div>
-        <!-- cueData[] - use tabs to select which cue -->
-        <div id="tabs" class="tabs-container">
-            <span>Interactions:</span>
-            <div class="tabs">
-                <span
-                    v-for="(cue, index) in updatedData[0].cueData"
-                    :key="index"
-                >
-                    <a :class="[ activetab === index ? 'active' : '' ]"
-                        @click="activetab=index"
-                        v-text="(index+1)"
-                    ></a>
-                </span>
+      </div>
+      <!-- cueData[] - use tabs to select which cue -->
+      <div id="tabs" class="tabs-container">
+          <span>Interactions:</span>
+          <div class="tabs">
+              <span
+                  v-for="(cue, index) in updatedData[0].cueData"
+                  :key="index"
+              >
+                  <a :class="[ activetab === index ? 'active' : '' ]"
+                      @click="activetab=index"
+                      v-text="(index+1)"
+                  ></a>
+              </span>
 
-                <a class="add-button" title="Add new cue"
-                    @click="addCue" 
-                >+</a>
-            </div>
-            <div
-                v-for="(cue, index) in updatedData[0].cueData"
-                :key="'panel'+index"
-            >
-                <div  class="tab-content"
-                    v-if="activetab === index"
-                >
-                    {{cue.type}}
-                    <br>
-                    <div class="form-row">
-                        <label for="startat"
-                            title="Time in seconds"
-                        >Start Time:</label>
-                        <input type="text" id="startat" class="short-text-input"
-                            v-model="cue.start"
-                            @change="changeEl(cue.start)"
-                        >
-                    </div>
-                    <!--<br> {{JSON.stringify(cue)}} -->
-                    <form-cue-data
-                        :formData="cue"
-                        @itemChanged="changeEl"
-                    />
-                    <form-message
-                        v-if="cue.type === 'AnimatedMessage'"
-                        :formData="cue"
-                        @itemChanged="changeEl"
-                    />
-                    <form-info-panel
-                        v-if="cue.type === 'InfoPanel'"
-                        :formData="cue"
-                        @itemChanged="changeEl"
-                    />
-                    <!--other cue specific comps-->
-                </div>
-            </div>
-        </div>
-        <div class="form-row bordered">
-            <button role="button" class="icon-button"
-                title="Save changes"
-                @click="$emit('updateChanges', updatedData)"
-            >
-                Save Changes <icon-save-file/>
-            </button>
-        </div>
+              <a class="add-button" title="Add new cue"
+                  @click="addCue" 
+              >+</a>
+          </div>
+          <div
+              v-for="(cue, index) in updatedData[0].cueData"
+              :key="'panel'+index"
+          >
+              <div  class="tab-content"
+                  v-if="activetab === index"
+              >
+                  <span class="">Type: {{cue.type}}</span>
+                  <br>
+                  <div class="form-row">
+                      <label for="startat"
+                          title="Time in seconds"
+                      >Start Time:</label>
+                      <input type="text" id="startat" class="short-text-input"
+                          v-model="cue.start"
+                          @change="changeEl(cue.start)"
+                      >
+                      <!-- <span class="small-text">Seconds</span> -->
+                  </div>
+                  <!--<br> {{JSON.stringify(cue)}} -->
+                  <form-cue-data
+                      :formData="cue"
+                      @itemChanged="changeEl"
+                  />
+                  <form-message
+                      v-if="cue.type === 'AnimatedMessage'"
+                      :formData="cue"
+                      @itemChanged="changeEl"
+                  />
+                  <form-info-panel
+                      v-if="cue.type === 'InfoPanel'"
+                      :formData="cue"
+                      @itemChanged="changeEl"
+                  />
+                  <!--other cue specific comps-->
+              </div>
+          </div>
+      </div>
+      <div class="form-row bordered">
+          <button role="button" class="icon-button"
+              title="Save changes"
+              @click="$emit('updateChanges', updatedData)"
+          >
+              Save Changes <icon-save-file/>
+          </button>
+      </div>
     </div>
 </template>
 
@@ -180,6 +183,11 @@ export default {
     .form-body {
         width: 100%;
     }
+    .form-container {
+      border-radius: 8px;
+      padding: 5px 3px;
+      background-color: #ffffff;
+    }
     .form-row {
         width: 100%;
         margin: 5px 0;
@@ -190,11 +198,8 @@ export default {
         margin-top: 20px;
         padding: 15px 0;
     }
-    label {
-        margin-right: 20px;
-    }
     input, textarea {
-        width: 78%;
+        width: 74%;
         float: right;
         font-size: 16px;
         box-sizing: border-box;
@@ -220,7 +225,7 @@ export default {
         margin-bottom: 8px;
     }
     .short-input {
-        width: 25%;
+        width: 10%;
         float: unset;
         margin-right: 40px;
     }
@@ -237,7 +242,7 @@ export default {
         border: 1px solid transparent;
     }
     .icon-button {
-        margin: 0 10px;
+        margin: 0 5px;
         padding: 0 5px;
         cursor: pointer;
         float: right;
@@ -277,7 +282,7 @@ export default {
     .tabs a{
         float: left;
         cursor: pointer;
-        padding: 5px 20px;
+        padding: 5px 15px;
         transition: background-color 0.2s;
         border: 1px solid #888888;
         border-right: none;
@@ -308,7 +313,7 @@ export default {
         padding: 5px;
         overflow-wrap: anywhere;
         border-top: 1px solid #888888;
-        /* border-radius: 10px;
-        box-shadow: 3px 3px 6px #e1e1e1 */
+        background-color: #ffffff;
+        border-radius: 8px;
     }
 </style>
