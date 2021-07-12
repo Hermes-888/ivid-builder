@@ -2,9 +2,8 @@
     <div class="form-body">
       <div class="form-container">
         <div class="form-row">
-            <div class="empty-button"></div>
             <label for="titleText">Title:</label>
-            <input id="titleText" class="input-short"
+            <input id="titleText"
               v-show="updatedData.titleText"
               v-model="updatedData.titleText" placeholder="edit me"
             >
@@ -13,7 +12,6 @@
           <span>Text:</span>
         </div>
         <div class="form-row">
-            <!-- <label for="description">Text:</label> -->
             <textarea id="description"
                 v-model="updatedData.text"
             >
@@ -49,7 +47,7 @@
                 title="Save changes"
                 @click="$emit('updateChanges', updatedData)"
             >
-                Save Changes <icon-save-file/>
+                Save Intro Changes <icon-save-file/>
             </button>
         </div>
     </div>
@@ -68,12 +66,7 @@ export default {
         formData: {
             type: Object,
             default() {
-                return {
-                    titleText: '',
-                    text: '',
-                    audio: '',
-                    image: ''
-                }
+                return {}
             }
         }
     },
@@ -123,14 +116,14 @@ export default {
     }
     .bordered {
         border-top: 2px solid #888888;
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 15px 0;
     }
     .input-short {
       width: 78%;
     }
     input, textarea {
-        /* width: 100%; */
+        width: 90%;
         font-family: sans-serif;
         font-size: 16px;
         box-sizing: border-box;

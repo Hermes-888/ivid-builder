@@ -1,12 +1,59 @@
 <template>
     <div class="form-body">
-        <!-- <div class="form-row-half">
+        <div class="form-row-half">
             <label for="startat">Start Time:</label>
             <input type="text" id="startat" class="short-text-input"
                 v-model="updatedData.start"
-                @change="$emit('itemChanged', updatedData.start)"
+                @change="$emit('itemChanged', updatedData)"
             >
-        </div> -->
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="blur"
+                v-model="updatedData.useBlur"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="blur" title="Blur the background during interaction">Use Blur</label>
+
+            <span> -OR- </span>
+            <input type="checkbox" id="overlay"
+                v-model="updatedData.useOverlay"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
+            <span class="small-text"> (Neither=clear : NOT Both)</span>
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="pause"
+                v-model="updatedData.pauseVideo"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="pause" title="Pause the video during the interaction">Pause Video</label>
+
+            <input type="checkbox" id="resume"
+                v-model="updatedData.resumePlayback"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="resume" title="Resume playing the video after the interaction">Resume Video</label>
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="in"
+                v-model="updatedData.animateIn"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="in" class="wide-label">Animate In</label>
+
+            <input type="checkbox" id="out"
+                v-model="updatedData.animateOut"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="out" class="wide-label">Animate Out</label>
+
+            <label for="to">Animate To:</label>
+            <input type="text" id="to" class="short-text-input"
+                v-model="updatedData.animateTo"
+                @change="$emit('itemChanged', updatedData)"
+            >
+        </div>
         <Sketch class="bkg-color-palette"
             v-if="showBkgPalette"
             @input="changeBkgColor"
@@ -17,27 +64,17 @@
             <label for="panelWidth">Panel width:</label>
             <input type="text" id="panelWidth" class="short-text-input"
                 v-model="updatedData.panelWidth"
-                @change="$emit('itemChanged', updatedData.panelWidth)"
+                @change="$emit('itemChanged', updatedData)"
             >
           </div>
           <div class="column-right">
             <label for="panelBkgColor" title="Panel background color can have opacity. Click the color swatch to change the color">
                 Panel Color:
             </label>
-            <!-- <input type="color" id="panelBkgColor" class="short-text-input"
-                v-model="updatedData.panelBkgColor"
-                @change="$emit('itemChanged', updatedData.panelBkgColor)"
-            > -->
             <div class="color-swatch" id="panelBkgColor"
                 ref="bkgcolor" title="Click to open a color picker, click again to close it"
                 @click="showBkgPalette = !showBkgPalette"
             ></div>
-            <!-- <span class="palette-icon"
-                title="Toggle color picker."
-                @click="showPalette = !showPalette"
-            >
-                <icon-palette title="Toggle color picker."/>
-            </span> -->
           </div>
         </div>
         <Sketch class="txt-color-palette"
@@ -46,19 +83,15 @@
             :value="updatedData.titleColor"
         />
         <div class="form-row">
-          <div class="column-left col-wide">
+          <div class="column-left">
             <label for="infoTitle">Title:</label>
             <input type="text" id="infoTitle" class="long-text-input"
                 v-model="updatedData.infoTitle"
-                @change="$emit('itemChanged', updatedData.infoTitle)"
+                @change="$emit('itemChanged', updatedData)"
             >
           </div>
           <div class="column-right">
             <label for="titleColor" title="Panel background color">Text color:</label>
-            <!-- <input type="color" id="titleColor" class="short-text-input"
-                v-model="updatedData.titleColor"
-                @change="$emit('itemChanged', updatedData.titleColor)"
-            > -->
             <div class="color-swatch" id="titleColor"
                 ref="txtcolor" title="Click to open a color picker, click again to close it"
                 @click="showTxtPalette = !showTxtPalette"
@@ -66,24 +99,20 @@
           </div>
         </div>
         <div class="form-row">
-            <!-- <label for="infoText">Message:</label> -->
-            <!-- <input type="text" id="infoText" class="long-text-input"
-                v-model="updatedData.infoText"
-                @change="$emit('itemChanged', updatedData.infoText)"
-            > -->
             <span>Information:</span>
         </div>
         <div class="form-row">
             <textarea id="infoText"
                 v-model="updatedData.infoText"
+                @change="$emit('itemChanged', updatedData)"
             >
             </textarea>
         </div>
         <div class="form-row">
-            <label for="infoText">Button text:</label>
-            <input type="text" id="infoText" class="short-text-input"
+            <label for="buttonText">Button text:</label>
+            <input type="text" id="buttonText" class="short-text-input"
                 v-model="updatedData.buttonText"
-                @change="$emit('itemChanged', updatedData.buttonText)"
+                @change="$emit('itemChanged', updatedData)"
             >
         </div>
     </div>
@@ -107,9 +136,9 @@ export default {
         "resumePlayback": true,
         "panelWidth": "40%",
         "panelBkgColor": "rgba(3,117,163, 0.6)",
-        "infoTitle": "This is an info panel Title",
+        "infoTitle": "This is an info panel title",
         "titleColor": "#ffffff",
-        "infoText": "This is the information to display. This is the information to display. This is the information to display.",
+        "infoText": "This is the information to display.",
         "buttonText": "I Agree"
      */
     name: "FormInfoPanel",
@@ -144,6 +173,7 @@ export default {
     mounted () {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+            console.log('InfoPanel:', this.updatedData.type, this.updatedData.index);
             // set color swatchs
             this.$refs.bkgcolor.style.backgroundColor = this.updatedData.panelBkgColor;
             this.$refs.txtcolor.style.backgroundColor = this.updatedData.titleColor;
@@ -155,16 +185,15 @@ export default {
          * https://github.com/xiaokaike/vue-color
          */
         changeBkgColor: function (color) {
-            // this.showPalette = false;// nope, sliders in picker
             //console.log('changeBkgColor:', color);
             this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
-            this.$emit('itemChanged', this.updatedData.panelBkgColor);
             this.$refs.bkgcolor.style.backgroundColor = color.hex8;
+            this.$emit('itemChanged', this.updatedData);
         },
         changeTxtColor: function (color) {
-            this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
-            this.$emit('itemChanged', this.updatedData.textColor);
+            this.updatedData.textColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.txtcolor.style.backgroundColor = color.hex8;
+            this.$emit('itemChanged', this.updatedData);
         }
     }
 }
@@ -195,6 +224,9 @@ export default {
       display: flex;
       justify-content: flex-end;
       /* border: 1px solid rgb(8, 106, 172); */
+    }
+    .small-text {
+      font-size: 14px;
     }
     .short-text-input {
         width: 20%;
@@ -261,13 +293,13 @@ export default {
 
     .bkg-color-palette {
         position: absolute;
-        top: 26%;
-        right: 9%;
+        top: 30%;
+        right: 55px;
     }
     .txt-color-palette {
         position: absolute;
-        top: 31%;
-        right: 9%;
+        top: 34.5%;
+        right: 55px;
     }
     .color-swatch {
         width: 30px;

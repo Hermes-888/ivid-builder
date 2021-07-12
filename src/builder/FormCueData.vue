@@ -13,7 +13,7 @@
                 @change="$emit('itemChanged', updatedData.useOverlay)"
             >
             <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
-            <span class="small"> (Neither=clear : NOT Both) </span>
+            <span class="small-text"> (Neither=clear : NOT Both) </span>
         </div>
         <div class="form-row">
             <input type="checkbox" id="pause"
@@ -98,6 +98,7 @@ export default {
     mounted () {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+            console.log('cueData:', this.updatedData.type, this.updatedData.index);
             //console.log('message:', this.updatedData);
         });
     },
@@ -119,7 +120,7 @@ export default {
         margin: 5px 0;
         float: left;
     }
-    .small {
+    .small-text {
       font-size: 14px;
     }
     .short-text-input {

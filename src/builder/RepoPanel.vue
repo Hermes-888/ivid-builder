@@ -127,7 +127,8 @@ export default {
 .close-button {
   cursor: pointer;
   float: right;
-  padding: 0;
+  font-size: 27px;
+  margin-top: -4px;
 }
 
 .repo-description {
@@ -194,9 +195,5 @@ export default {
 .upload-button:hover {
   border: 3px solid #012b01;
   background-color: #c2f1c2;
-}
-
-.material-design-icon {
-  font-size: 30px;
 }
 </style>

@@ -1,16 +1,24 @@
 <template>
-  <div class="dialog-modal">
-    <div class="dialog-panel"
+  <div class="dialog-modal" id="droptarget">
+    <div class="dialog-panel" ref="dialogPanel"
       v-bind:style="dialogStyle"
     >
-      <div class="dialog-header">
+      <div class="dialog-header" ref="draggable"
+        draggable="true"
+      >
         <span class="dialog-title"
             v-text="dialogHeader"
         ></span>
-        <span class="close-btn"
+        <!-- <span class="close-btn"
           title="Cancel and close modal"
           @click="$emit('closeModal')"
-        >X</span>
+        >X</span> -->
+        <div
+          class="close-button"
+          @click="$emit('closeModal')"
+        >
+          <icon-close/>
+        </div>
       </div>
       <div class="dialog-body" ref="dialogBody">
         <!-- <span v-text="dialogBodyContent"></span> -->
@@ -31,12 +39,16 @@
 
 <script>
 /**
- * dialog header and body can contain HTML
- * construct form from keys? or instance forms for each type of content
+ * dialog header can drag dialog-panel
+ * instance forms for Introduction and Scene data
+ * FormScene adds tabs for each interaction
  */
 import FormIntroduction from './FormIntroduction.vue';
 import FormScene from './FormScene.vue';
 import Vue from 'vue';
+
+// ToDo: use interact to drag dialog-panel
+//import Interact from 
 
 	export default {
 		name: 'DialogModal',
@@ -60,12 +72,56 @@ import Vue from 'vue';
         return {
           dialogBodyContent: 'change me',// construct form
           updatedData: 'new object to return',
-          mcInstance: null
+          mcInstance: null,
+          panel: null,// dialog-panel
+          isDragging: false,
         }
     },
-    // mounted () {
-    //   this.$nextTick(function() {});
-    // },
+    mounted () {
+      this.$nextTick(function() {
+        // dialog header can drag dialog-panel
+        // use Interact instead
+        var comp = this;
+        this.panel = this.$refs.dialogPanel;
+        // console.log('panel:', this.panel.style);
+        // Interact('.dialog-header')
+        //   .draggable({
+        //     // enable inertial throwing
+        //     inertia: true,
+        //     // keep the element within the area of it's parent
+        //     modifiers: [
+        //       interact.modifiers.restrictRect({
+        //         restriction: 'parent',
+        //         //endOnly: true
+        //       })
+        //     ],
+        //     // enable autoScroll
+        //     autoScroll: false,
+
+        //     listeners: {
+        //       // call this function on every dragmove event
+        //       move(event) {
+        //         var target = event.target
+        //         // keep the dragged position in the data-x/data-y attributes
+        //         var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        //         var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        //         // translate the element
+        //         target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+        //         // update the posiion attributes
+        //         target.setAttribute('data-x', x)
+        //         target.setAttribute('data-y', y)
+        //       },
+
+        //       // call this function on every dragend event
+        //       end (event) {
+        //         console.log('drag end');
+        //       }
+        //     }
+        //   });
+      });
+    },
     watch: {
       /**
        * set dialogBody content when data is ready
@@ -89,19 +145,15 @@ import Vue from 'vue';
             this.$refs.dialogBody.innerHTML = '';
             this.$refs.dialogBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('updateChanges', function(data) {
-              console.log('Modal saveChanges:', data);
+              console.log('Modal Intro saveChanges:', data);
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
           }
 
           if (Array.isArray(newstate) && this.$refs.dialogBody) {
-            // sceneData or cueData
-            // this.$refs.dialogBody.innerHTML = '';
-            // this.$refs.dialogBody.innerText = JSON.stringify(this.currentData);
-            // Array of scenes w/cueData
+            // sceneData Array of scenes w/cueData
             var mcClass = Vue.extend(FormScene);
-            // addInstance(mcClass);// ???
 						this.mcInstance = new mcClass({
 							propsData: {
 								formData: this.currentData
@@ -112,16 +164,15 @@ import Vue from 'vue';
             this.$refs.dialogBody.innerHTML = '';
             this.$refs.dialogBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('updateChanges', function(data) {
-              console.log('Modal saveChanges:', data);
+              console.log('Modal Scene saveChanges:', data);
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
-            // cueData[] - tabs to select which cue?
           }
         }
       },
     },
-    // methods: {}
+    // methods: { }
 	}
 </script>
 
@@ -153,19 +204,17 @@ import Vue from 'vue';
 	.dialog-header {
 		font-weight: 600;
 		padding: 5px;
+    cursor: move;
 		border-bottom: 2px solid #888888;
 	}
 	.dialog-title {
 		width: 85%;
 	}
-	.close-btn {
+	.close-button {
     cursor: pointer;
-		width: 18px;
 		float: right;
-		text-align: center;
-		font-size: 16px;
-		border-radius: 50%;
-		border: 1px solid #333333;
+		font-size: 27px;
+    margin-top: -5px;
 	}
 	.dialog-body {
 		padding: 10px;

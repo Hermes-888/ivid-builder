@@ -14,6 +14,14 @@
           @toggleRepo="toggleRepoPanel"
           @editCurrentData="editCurrentData"
           @saveFile="saveFile"
+          @restart="$emit('restart')"
+        />
+        <dialog-modal
+          v-show="showModal"
+          :dialogHeader="currentType"
+          :currentData="currentData"
+          @closeModal="showModal=false"
+          @saveChanges="updateItemData"
         />
         <!-- <edit-panel ref="editPanel"
             :itemHeaders="itemHeaders"
@@ -23,13 +31,6 @@
             @updateItemData="updateItemData"
             @saveFile="saveFile"
         /> -->
-        <dialog-modal
-          v-show="showModal"
-          :dialogHeader="currentType"
-          :currentData="currentData"
-          @closeModal="showModal=false"
-          @saveChanges="updateItemData"
-        />
     </div>
 </template>
 
@@ -38,16 +39,17 @@
  * Main Builder layer holds RepoPanel 
  * 
  * introContent and sceneData get edited here?
- * to refresh ivideo, $emit('updateData', updatedData)
+ * to refresh data, $emit('updateData', updatedData)
  * sceneVisible determines Intro or Scene
  * 
  * allData to select IntroContent or SceneData[num].cueData[]
- * icon is on EditPanel header
+ * 
+ * video player controls: pause, play, restart intro, markers, progressbar
  */
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import DialogModal from "./DialogModal.vue";
-//import EditPanel from "./EditPanel.vue";
+//import EditPanel from "./EditPanel.vue";// DragImagePanel & DragTextPanel
 
 export default {
     name: "Builder",
@@ -197,25 +199,28 @@ export default {
             // ToDo: update actualData w/data and send it to App
             if (this.sceneVisible) {
               // update sceneLanguage[language].sceneData
-              if (cueIndex) {
-                // update sceneLanguage[language].sceneData[?Define Global?].cueData[cueIndex]
-              }
+              this.actualData.sceneLanguage[this.language].sceneData = data;
+              // data is the whole sceneData[]
+              // if (cueIndex) {
+              //   // update sceneLanguage[language].sceneData[?Define Global?].cueData[cueIndex]
+              // }
             } else {
               // update introContent[language]
               this.actualData.introContent[this.language] = data;
-              // send to App to refresh
-              this.$emit('updateData', this.actualData);
             }
+            // send to App to refresh
+            this.$emit('updateData', this.actualData);
+
             if (cueIndex) {
                 // this.itemData[cueIndex] = data;
                 // editPanel.options.propsData.itemData
                 // rawdata
-                console.log('editPanel');//, this.$refs.editPanel.itemData[cueIndex]);
+                console.log('cueIndex=',cueIndex);//, this.$refs.editPanel.itemData[cueIndex]);
                 // this.$refs.editPanel.itemData[cueIndex] = data;
                 // this.$refs.editPanel.$options.propsData.itemData[cueIndex] = data;
 
                 // for App rawdata
-                this.$emit('updateData', this.actualData);
+                // this.$emit('updateData', this.actualData);
                 // this.$forceUpdate();
             }
         },

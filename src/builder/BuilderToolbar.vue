@@ -2,7 +2,7 @@
   <div class="builder-toolbar">
     <div class="editor-header">
         <div class="image-buttons"
-            v-show="headerVisible"
+            v-show="sceneVisible"
         >
             <button role="button" class="icon-button"
                 title="View image layers"
@@ -51,10 +51,51 @@
             </button>
             <button role="button" class="icon-button"
                 title="Edit Data"
-                @click="editCurrentData"
+                @click="$emit('editCurrentData')"
             >
                 <icon-file-edit title="Edit Data"/>
             </button>
+        </div>
+        <div class="player-buttons"
+          v-show="sceneVisible"
+        >
+          <div class="progress-time">Time: {{progress}} </div>
+          <button role="button" class="icon-button"
+            title="Back to Introduction"
+            @click="$emit('restart')"
+          >
+            <icon-step-back title="Back to Introduction"/>
+          </button>
+          <button role="button" class="icon-button"
+            title="Restart video"
+            @click="vidPlayer.currentTime=0;actionLayer.innerHTML=''"
+          >
+              <icon-rewind title="Restart video"/>
+          </button>
+          <button role="button" class="icon-button"
+            title="Play video"
+            @click="$root.$emit('playing', true)"
+          >
+            <icon-play title="Play video"/>
+          </button>
+          <button role="button" class="icon-button"
+            title="Pause video"
+            @click="$root.$emit('playing', false)"
+          >
+            <icon-pause title="Pause video"/>
+          </button>
+          <button role="button" class="icon-button"
+            title="Add new interaction"
+            @click="$emit('toggleRepo')"
+          >
+            <icon-plus title="Add new interaction"/>
+          </button>
+          <button role="button" class="icon-button"
+            title="Hide interactions"
+            @click="actionLayer.innerHTML=''"
+          >
+            <icon-hide-layers title="Hide interactions"/>
+          </button>
         </div>
     </div>
   </div>
@@ -66,8 +107,8 @@ import Vue from 'vue';// for editorNode instance
 
 export default {
   /**
-   * Edit Panel displays icons to edit currently active
-   * Drag and Resize Image, Drag ScreenText
+   * Toolbar displays icons to 
+   * if sceneVisible, show video player controls
    */
   name: "BuilderToolbar",
   // components: {
@@ -81,8 +122,11 @@ export default {
   },
   data() {
     return {
-      headerVisible: true,// toggle editor?
-      contentVisible: false,// drag image and text UNUSED
+      vidPlayer: null,// display video current time
+      progress: 0,
+      actionLayer: null,// interaction elements
+
+      // ToDo: clean this code, alot of unused vars and functions
       selectedSlide: 0,// Faked, type: 'slide'
       // rawData
       rowIndex: 0,// itemData[rowIndex] = IntroContent[lang] or SceneData.cueData[rowIndex]
@@ -122,9 +166,7 @@ export default {
       this.editorNode = new editorInstance({
         // propsData: { value: '<p>nada node</p>'}
       });
-
       this.editorNode.$mount();
-
       // also happens on icon click
       this.editorNode.editor.on('blur', function() {
           console.log('editor blur txt:', comp.textContent, 'key:', comp.cellType);
@@ -151,7 +193,6 @@ export default {
         // key = cellType set at selectCell
         comp.textContent = txt;// update global
       });
-
       // console.log('mounted:', this.editorNode);
     });
   },
@@ -160,32 +201,24 @@ export default {
       immediate: true,
       handler(newstate) {
         if (newstate) {
-          console.log('-- watch editPanel sceneVisible:', newstate);
-          // show image and text panels?
-          // this.contentVisible = newstate;// true
+          // console.log('-- watch editPanel sceneVisible:', newstate);
+          // remove interactions
+          this.actionLayer = document.querySelector('.interaction-overlay');
+
+          let comp = this;// scope for addEventListener
+          if (!this.vidPlayer) {
+            this.vidPlayer = document.querySelector('.video-element');
+            this.vidPlayer.addEventListener('timeupdate', function () {
+              comp.progress = comp.vidPlayer.currentTime.toFixed(3);//Math.round((comp.vidPlayer.currentTime / comp.vidPlayer.duration) * 100);
+            });
+          }
         }
       }
     },
   },
   methods: {
-    toggleEditor: function() {
-        // show/hide editor buttons and content
-        console.log('toggleEditor:', this.sceneVisible);
-        this.headerVisible = !this.headerVisible;
-        if (this.sceneVisible && this.headerVisible) {
-            this.contentVisible = true;
-        } else {
-            this.contentVisible = false;// ternian
-        }
-    },
-    // 
     moreMenuModal: function() {
       console.log('More Menu: open modal here?')
-    },
-    // Edit Data btn opens dialog to edit the currentData
-    editCurrentData: function() {
-      // console.log('editCurrentData:');//, this.itemData);
-      this.$emit('editCurrentData');
     },
     selectCell: function(cell) {
       console.log('selectCell: path', cell.path);
@@ -307,24 +340,6 @@ export default {
       });
     },
     /**
-     * Add a new row to itemData
-     */
-    addPanel: function () {
-      // add a new row to end of slide group
-      if (!this.$root.selectedRowId) {
-        this.$root.selectedRowId = this.rowIndex;// = 2;// Faked
-      }
-      if (this.$root.selectedRowId) {
-        // this.itemData.splice(this.rowIndex + 1, 0, this.blankDataRow);
-        // todo: Fix dataRows: [1,3,2,4] w/ forEach to renumber them
-        // this.itemData[this.selectedSlide].dataRows.splice(this.rowIndex + 1, 0, this.rowIndex + 1);
-        //X this.itemData[this.selectedSlide].dataRows.push(this.itemData[this.selectedSlide].dataRows.length+1);// faked
-        console.log('addPanel:');//, this.itemData[this.selectedSlide].dataRows);
-        // switch to new panel
-        this.rowIndex +=1;
-      } //else {console.log('selectedRowId not set');}
-    },
-    /**
      * Drag Panel has moved or resized
      * @param location is only used for Story Panel Image and ScreenText layout
      * @param type img=imageData or txt=screenText
@@ -376,28 +391,12 @@ export default {
       //this.$emit('updateItemData', this.itemData[this.rowIndex], this.rowIndex, 'panel');
       console.log('Panel: itemData:');//, this.itemData[this.rowIndex]);
     },
-    // Already models the itemData[]
-    updateTextArea: function (evt) {
-      this.$root.selectedRowId = this.rowIndex;
-      // InputEvent.data, evt.target.name
-      console.log('updateTextArea:');//, evt.data, evt.target.name);
-      // console.log('evt.target. ???', document.querySelector(''));
-    },
     /**
      * open file browser and upload to Filepond
      * update imageData.url
      */
     uploadImage: function () {
-      console.log('Upload clicked:');//, this.itemData[this.rowIndex].imageData);
-    },
-    /**
-     * remove from table and update data
-     */
-    removeImage: function () {
-      // if (this.itemData[this.rowIndex].imageData.url) {
-         console.log('Remove image from itemData');
-      //   //this.itemData[this.rowIndex].imageData.url = '';
-      // }
+      console.log('Upload:');//, this.itemData[this.rowIndex].imageData);
     },
     /**
      * download image file
@@ -406,11 +405,17 @@ export default {
       console.log('Download: ');//, this.itemData[this.rowIndex].imageData.url);
     },
     /**
+     * remove from table and update data
+     */
+    removeImage: function () {
+      console.log('Remove image from itemData');
+    },
+    /**
      * Add multiple ScreenText?
      */
-    addScreenText: function () {
-      console.log('Add new ScreenText?');
-    },
+    // addScreenText: function () {
+    //   console.log('Add new ScreenText?');
+    // },
     /**
      * Onion Skin: (All layers?)
      * use image.location to size them. if this is the bottom layer, append ?
@@ -418,7 +423,7 @@ export default {
     toggleLayers: function () {
       // if on then off
       this.layersVisible = !this.layersVisible;
-      console.log('layersVisible:', this.layersVisible);
+      console.log('toggleLayers:', this.layersVisible);
     }
   }
 }
@@ -517,13 +522,22 @@ textarea {
   width: 20%;
 }
 .file-buttons {
-  width: 10%;
+  width: 15%;
   display: flex;
   margin-left: 5%;
 }
+.player-buttons {
+  width: 45%;
+  display: flex;
+  justify-content: flex-end;
+}
+.progress-time {
+  font-size: 22px;
+  margin-right: 20px;
+}
 .icon-button {
-  margin: 0 auto;
-  padding: 0 8px;
+  margin: 0 5px;
+  padding: 0 5px;
   cursor: pointer;
   font-size: 18px;
   color: #333333;

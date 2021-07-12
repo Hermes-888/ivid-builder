@@ -3,32 +3,44 @@
       <div class="form-container">
         <div class="form-row">
             <button id="videoUpload" role="button" class="icon-button"
-                title="Upload the main video file."
-                @click="uploadImage"
+                title="Upload the main video file"
+                @change="changeEl(updatedData[sceneNum])"
+                @click="uploadFile"
             >
-                <icon-upload-cloud title="Upload the main video file."/>
+                <icon-upload-cloud title="Upload the main video file"/>
             </button>
             <label for="video">Video:</label>
-            <input id="video" v-model="updatedData[0].videoBackground" placeholder="required">
+            <input id="video"
+              v-model="updatedData[sceneNum].videoBackground"
+              placeholder="required"
+              @change="changeEl(updatedData[sceneNum])"
+            >
         </div>
         <div class="form-row">
             <button id="captionUpload" role="button" class="icon-button"
                 title="Upload an optional vtt captions file for this video."
-                @click="uploadImage"
+                @change="changeEl(updatedData[sceneNum])"
+                @click="uploadFile"
             >
-                <icon-upload-cloud title="Upload an optional vtt captions file for this video."/>
+                <icon-upload-cloud title="Upload an optional vtt captions file for this video"/>
             </button>
             <label for="captions">Captions:</label>
-            <input id="captions" v-model="updatedData[0].captionsFile" placeholder="optional">
+            <input id="captions"
+              v-model="updatedData[sceneNum].captionsFile"
+              placeholder="optional"
+              @change="changeEl(updatedData[sceneNum])"
+            >
         </div>
         <div class="form-row">
             <label for="branches">Branches:</label>
             <input id="branches" class="short-input" type="number" inputmode="numeric"
-                v-model="updatedData[0].branchCount" placeholder="Number of branches"
+                v-model="updatedData[sceneNum].branchCount" placeholder="Number of branches"
+                @change="changeEl(updatedData[sceneNum])"
             >
             <label for="return">Return Time:</label>
             <input id="return" class="short-input" type="number" inputmode="decimal"
-                v-model="updatedData[0].returnTime" placeholder="Time in seconds"
+                v-model="updatedData[sceneNum].returnTime" placeholder="Time in seconds"
+                @change="changeEl(updatedData[sceneNum])"
             >
         </div>
       </div>
@@ -37,43 +49,36 @@
           <span>Interactions:</span>
           <div class="tabs">
               <span
-                  v-for="(cue, index) in updatedData[0].cueData"
+                  v-for="(cue, index) in updatedData[sceneNum].cueData"
                   :key="index"
               >
-                  <a :class="[ activetab === index ? 'active' : '' ]"
+                  <a :class="[activetab === index ? 'active' : '']"
                       @click="activetab=index"
                       v-text="(index+1)"
                   ></a>
               </span>
 
-              <a class="add-button" title="Add new cue"
-                  @click="addCue" 
-              >+</a>
+              <span>
+                <a class="add-button" title="Add new interaction"
+                    @click="addCue" 
+                >
+                  <icon-plus title="Add new interaction"/>
+                </a>
+              </span>
           </div>
           <div
-              v-for="(cue, index) in updatedData[0].cueData"
+              v-for="(cue, index) in updatedData[sceneNum].cueData"
               :key="'panel'+index"
+              :data-index="index"
           >
-              <div  class="tab-content"
+              <div class="tab-content"
+                  :data-index="index"
                   v-if="activetab === index"
               >
-                  <span class="">Type: {{cue.type}}</span>
-                  <br>
                   <div class="form-row">
-                      <label for="startat"
-                          title="Time in seconds"
-                      >Start Time:</label>
-                      <input type="text" id="startat" class="short-text-input"
-                          v-model="cue.start"
-                          @change="changeEl(cue.start)"
-                      >
-                      <!-- <span class="small-text">Seconds</span> -->
+                    Type: {{cue.type}}
                   </div>
-                  <!--<br> {{JSON.stringify(cue)}} -->
-                  <form-cue-data
-                      :formData="cue"
-                      @itemChanged="changeEl"
-                  />
+                  <!--<div class="form-row"><br> {{JSON.stringify(cue)}} </div>-->
                   <form-message
                       v-if="cue.type === 'AnimatedMessage'"
                       :formData="cue"
@@ -93,16 +98,16 @@
               title="Save changes"
               @click="$emit('updateChanges', updatedData)"
           >
-              Save Changes <icon-save-file/>
+              Save Scene Changes <icon-save-file/>
           </button>
       </div>
     </div>
 </template>
 
 <script>
-import FormCueData from './FormCueData.vue';
 import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
+// ToDo: instance needed components?
 
 export default {
     /**
@@ -125,7 +130,6 @@ export default {
      */
     name: "FormScene",
     components: {
-        FormCueData,
         FormMessage,
         FormInfoPanel,
     },
@@ -155,25 +159,71 @@ export default {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+            this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
+              cue.index = index;// pointer?
+            });
+
+            // listener for video events
+            // toolbar sends play, pause, rewind stepBack to intro
+            var comp = this;
+            // console.log('updatedData:', comp.updatedData);
+            var vid = document.querySelector('.video-element');
+            // console.log(vid.textTracks.length, vid.textTracks);
+            vid.textTracks[0].addEventListener('cuechange', function(e) {
+              if (e.target.activeCues.length > 0) {
+                // console.log('cuechange:', e.target.activeCues[0].id);
+                // set activetab
+                comp.updatedData[comp.sceneNum].cueData.forEach(function(cue, index) {
+                  if (cue.type === e.target.activeCues[0].id) {
+                    comp.activetab = index;
+                  }
+                });
+              }
+            });
         });
     },
     methods: {
-        uploadImage: function(event) {
-            console.log('get id:', event);
+        /**
+         * Determine which upload button Audio or Image file by id
+         * ToDo: needs to upload to public/audio or public/images ???
+         * or full path to file
+         */
+        uploadFile: function(event) {
+            // console.log('get id:', event);
             var id = event.target.id;
             if (!id) {
-                //console.log('path:', event.path);
-                id = event.path[3].id;
+                event.path.forEach(function(el) {
+                  if (el.id && el.id !== 'app') {
+                    id = el.id;
+                  }
+                });
             }
-            console.log('upload:', id);
+            console.log('upload:', id);// which button
         },
+
+        /**
+         * Show dialog modal w/dropdown selector to choose a type
+         * then add selected type to cueData
+         */
         addCue: function() {
-            console.log('Add new Cue/tab');
-            // small dialog modal w/dropdown selector to choose a type
+            console.log('Add new Interaction tab');
+            // show small dialog modal w/dropdown selector to choose a type
             // then add selected type to cueData
         },
+
+        /**
+         * update sceneData or cueData
+         * @param val - Object will contain .index if cueData
+         */
         changeEl: function(val) {
-            console.log('data:', val)
+          if (val.index !== undefined) {
+            //console.log('cueData:', val.index, val);
+            this.updatedData[this.sceneNum].cueData[val.index] = val;
+          } else {
+            //console.log('scene:', val);
+            this.updatedData[this.sceneNum] = val;
+          }
+            
         }
     }
 }
@@ -184,8 +234,9 @@ export default {
         width: 100%;
     }
     .form-container {
-      border-radius: 8px;
       padding: 5px 3px;
+      border-radius: 8px;
+      border: 1px solid #888888;
       background-color: #ffffff;
     }
     .form-row {
@@ -195,7 +246,7 @@ export default {
     }
     .bordered {
         border-top: 2px solid #888888;
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 15px 0;
     }
     input, textarea {
@@ -257,8 +308,7 @@ export default {
     }
 
     .add-button {
-        /* background-color:aqua !important; */
-        font-weight: 600;
+        padding: 4px 15px !important;
     }
 
     /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
@@ -279,7 +329,7 @@ export default {
         margin-left: 20px;
     }
 
-    .tabs a{
+    .tabs a {
         float: left;
         cursor: pointer;
         padding: 5px 15px;
@@ -312,7 +362,7 @@ export default {
     .tab-content {
         padding: 5px;
         overflow-wrap: anywhere;
-        border-top: 1px solid #888888;
+        border: 1px solid #888888;
         background-color: #ffffff;
         border-radius: 8px;
     }

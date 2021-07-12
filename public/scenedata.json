@@ -64,8 +64,8 @@
 				{
 					"_comment": "data for English",
 					"videoBackground": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-					"captionsFile": "",
-					"ccEnabled": false,
+					"captionsFile": "audio/sample.vtt",
+					"ccEnabled": true,
 					"returnTime": 0,
 					"branchCount": 0,
 					"played": false,

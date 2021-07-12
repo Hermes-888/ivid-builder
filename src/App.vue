@@ -37,6 +37,7 @@
 			:sceneVisible="showScene"
 			:language="language"
 			:allData="allData"
+      @restart="showScene=false;showIntroduction=true"
 			@updateData="updateData"
 		/>
 	</div>
@@ -186,7 +187,7 @@
 			 * set data from external json file or from Builder (_data)
 			 */
 			updateData: function(_data) {
-				console.log('rawdata:', rawdata, ' data:', _data);
+				// console.log('rawdata:', rawdata, ' data:', _data);
 				if (_data) {
 					this.introContent = _data.introContent[this.language];
 					this.sceneData = _data.sceneLanguage[this.language].sceneData;
@@ -223,7 +224,7 @@
 			displayScene: function() {
 				this.showIntroduction = false;
 				this.showScene = true;
-				console.log('rawdata:', rawdata);
+				// console.log('rawdata:', rawdata);
 				/**
 				 * send 'started' event to LMS
 				 */

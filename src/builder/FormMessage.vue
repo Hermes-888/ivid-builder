@@ -1,12 +1,60 @@
 <template>
     <div class="form-body">
-        <!-- <div class="form-row-half">
+        <div class="form-row-half">
             <label for="startat">Start Time:</label>
             <input type="text" id="startat" class="short-text-input"
                 v-model="updatedData.start"
-                @change="$emit('itemChanged', updatedData.start)"
+                @change="$emit('itemChanged', updatedData)"
             >
-        </div> -->
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="blur"
+                v-model="updatedData.useBlur"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="blur" title="Blur the background during interaction">Use Blur</label>
+
+            <span> -OR- </span>
+            <input type="checkbox" id="overlay"
+                v-model="updatedData.useOverlay"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
+            <span class="small-text"> (Neither=clear : NOT Both) </span>
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="pause"
+                v-model="updatedData.pauseVideo"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="pause" title="Pause the video during the interaction">Pause Video</label>
+
+            <input type="checkbox" id="resume"
+                v-model="updatedData.resumePlayback"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="resume" title="Resume playing the video after the interaction">Resume Video</label>
+        </div>
+        <div class="form-row">
+            <input type="checkbox" id="in"
+                v-model="updatedData.animateIn"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="in" class="wide-label">Animate In</label>
+
+            <input type="checkbox" id="out"
+                v-model="updatedData.animateOut"
+                @change="$emit('itemChanged', updatedData)"
+            >
+            <label for="out" class="wide-label">Animate Out</label>
+
+            <label for="to">Animate To:</label>
+            <input type="text" id="to" class="short-text-input"
+                v-model="updatedData.animateTo"
+                @change="$emit('itemChanged', updatedData)"
+            >
+        </div>
+        <!--end test-->
         <div class="form-row">
             <label for="duration">Duration:</label>
             <input type="text" id="duration" class="short-text-input"
@@ -15,7 +63,7 @@
             >
             <input type="checkbox" id="pause"
                 v-model="updatedData.removeMessage"
-                @change="$emit('itemChanged', updatedData.removeMessage)"
+                @change="$emit('itemChanged', updatedData)"
             >
             <label for="pause" 
               title="False will leave the message on the screen">
@@ -35,6 +83,7 @@
         <div class="form-row">
             <textarea id="messageText"
                 v-model="updatedData.messageText"
+                @change="$emit('itemChanged', updatedData)"
             >
             </textarea>
         </div>
@@ -71,15 +120,25 @@ export default {
     data () {
         return {
             updatedData: [{
-                "removeMessage": true,
-                "messageText": "",
-                "duration": 1
+              "start": 0,
+              "type": "AnimatedMessage",
+              "useBlur": false,
+              "useOverlay": false,
+              "animateIn": true,
+              "animateOut": true,
+              "animateTo": "35%",
+              "pauseVideo": false,
+              "resumePlayback": true,
+              "removeMessage": true,
+              "messageText": "",
+              "duration": 1
             }],// don't mutate the prop
         }
     },
     mounted () {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+            console.log('Message:', this.updatedData.type, this.updatedData.index);
         });
     },
     // methods: {}
@@ -99,6 +158,9 @@ export default {
         width: 49%;
         margin: 5px 0;
         float: left;
+    }
+    .small-text {
+      font-size: 14px;
     }
     .short-text-input {
         width: 24px;
