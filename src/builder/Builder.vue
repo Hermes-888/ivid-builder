@@ -16,9 +16,8 @@
           @saveFile="saveFile"
           @restart="$emit('restart')"
         />
-        <dialog-modal
+        <editor-modal
           v-show="showModal"
-          :dialogHeader="currentType"
           :currentData="currentData"
           @closeModal="showModal=false"
           @saveChanges="updateItemData"
@@ -48,7 +47,7 @@
  */
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
-import DialogModal from "./DialogModal.vue";
+import EditorModal from "./EditorModal.vue";
 //import EditPanel from "./EditPanel.vue";// DragImagePanel & DragTextPanel
 
 export default {
@@ -56,7 +55,7 @@ export default {
     components: {
         RepoPanel,
         BuilderToolbar,
-        DialogModal,
+        EditorModal,
         //EditPanel
     },
     props: {
@@ -109,7 +108,6 @@ export default {
         ],
         // = allData.introContent[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
-        currentType: 'Dialog Modal Header',
         currentData: null
       }
     },
@@ -127,8 +125,7 @@ export default {
           if (newstate.hasOwnProperty('introContent')) {
             if (!this.sceneVisible) {
               this.currentData = this.allData.introContent[this.language];
-              this.currentType = 'Introduction Data';
-              console.log('-- watch Builder currentData:', this.currentData);
+              // console.log('-- watch Builder currentData:', this.currentData);
             }
           }
           // a mutable copy of allData to update
@@ -148,8 +145,7 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-              this.currentType = 'Scene Data';
-              console.log('sceneVisible currentData:', this.currentData);
+              // console.log('sceneVisible currentData:', this.currentData);
             }
           }
         }

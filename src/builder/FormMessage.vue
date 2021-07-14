@@ -163,8 +163,7 @@ export default {
       font-size: 14px;
     }
     .short-text-input {
-        width: 24px;
-        margin-right: 20px;
+        width: 40px;
     }
     .long-text-input {
         width: 78%;

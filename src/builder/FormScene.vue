@@ -60,7 +60,7 @@
 
               <span>
                 <a class="add-button" title="Add new interaction"
-                    @click="addCue" 
+                    @click="showAddModal=true" 
                 >
                   <icon-plus title="Add new interaction"/>
                 </a>
@@ -101,10 +101,16 @@
               Save Scene Changes <icon-save-file/>
           </button>
       </div>
+      <dialog-modal
+        v-show="showAddModal"
+        @closeModal="showAddModal=!showAddModal"
+        @addNew="addNewCue"
+      />
     </div>
 </template>
 
 <script>
+import DialogModal from './DialogModal.vue';
 import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
 // ToDo: instance needed components?
@@ -130,6 +136,7 @@ export default {
      */
     name: "FormScene",
     components: {
+        DialogModal,
         FormMessage,
         FormInfoPanel,
     },
@@ -144,8 +151,9 @@ export default {
     data () {
         return {
             activetab: 0,// first cueData
-            sceneNum: 0,// main, branches=[1,2,3]
-            types: ['Title Screen', 'Animated Message', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
+            sceneNum: 0,// main, branches are sceneData[1,2,3]
+            showAddModal: false,
+            progress: 0,// video currenttime
             updatedData: [{
                 videoBackground: '',// required
                 captionsFile: '',// optional
@@ -163,22 +171,31 @@ export default {
               cue.index = index;// pointer?
             });
 
-            // listener for video events
+            // interations container. class="interaction-overlay"
+            this.screenEls = document.querySelector('.interaction-overlay');
+
+            // video event listener
             // toolbar sends play, pause, rewind stepBack to intro
             var comp = this;
             // console.log('updatedData:', comp.updatedData);
-            var vid = document.querySelector('.video-element');
+            var vidPlayer = document.querySelector('.video-element');
             // console.log(vid.textTracks.length, vid.textTracks);
-            vid.textTracks[0].addEventListener('cuechange', function(e) {
+            vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
               if (e.target.activeCues.length > 0) {
-                // console.log('cuechange:', e.target.activeCues[0].id);
+                console.log('cuechange:', e.target.activeCues[0].id);
                 // set activetab
-                comp.updatedData[comp.sceneNum].cueData.forEach(function(cue, index) {
+                comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
                   if (cue.type === e.target.activeCues[0].id) {
-                    comp.activetab = index;
+                    comp.activetab = cue.index;
                   }
                 });
+
+                // interactive element is on screen
+                console.log('screenEls[0]:', comp.screenEls.children);
               }
+            });
+            vidPlayer.addEventListener('timeupdate', function () {
+              comp.progress = this.currentTime.toFixed(3);
             });
         });
     },
@@ -203,12 +220,19 @@ export default {
 
         /**
          * Show dialog modal w/dropdown selector to choose a type
-         * then add selected type to cueData
+         * add selected type to cueData[]
+         * @param data Object - selected type
          */
-        addCue: function() {
-            console.log('Add new Interaction tab');
+        addNewCue: function(data) {
+          var len = this.updatedData[this.sceneNum].cueData.length;
+          if (data) {
+            data.start = this.progress;
+            data.index = len;
+          }
+          console.log('Add new Interaction:', data);
+          // this.updatedData[this.sceneNum].cueData.push(data);
             // show small dialog modal w/dropdown selector to choose a type
-            // then add selected type to cueData
+            // add selected type (data) to cueData[]
         },
 
         /**
@@ -308,13 +332,14 @@ export default {
     }
 
     .add-button {
-        padding: 4px 15px !important;
+        padding: 2px 5px !important;
+        margin-top: 4px;
     }
 
     /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
     .tabs-container {  
         width: 100%;
-        margin: 20px auto;
+        margin: 10px auto;
     }
 
     /* Style the tabs */

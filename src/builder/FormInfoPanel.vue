@@ -228,9 +228,11 @@ export default {
     .small-text {
       font-size: 14px;
     }
+    #buttonText {
+      width: 66%;
+    }
     .short-text-input {
-        width: 20%;
-        margin-right: 20px;
+        width: 40px;
     }
     .long-text-input {
         width: 82%;
