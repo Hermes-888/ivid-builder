@@ -86,7 +86,7 @@
           </button>
           <button role="button" class="icon-button"
             title="Add new interaction"
-            @click="$emit('toggleRepo')"
+            @click="showAddModal=true"
           >
             <icon-plus title="Add new interaction"/>
           </button>
@@ -98,12 +98,17 @@
           </button>
         </div>
     </div>
+    <add-new-modal
+      v-show="showAddModal"
+      :dialogStyle="{top: '10vh'}"
+      @closeModal="showAddModal=!showAddModal"
+      @addNew="addNewCue"
+    />
   </div>
 </template>
 
 <script>
-import BubbleEditor from "./BubbleEditor.vue";
-import Vue from 'vue';// for editorNode instance
+import AddNewModal from './AddNewModal.vue';
 
 export default {
   /**
@@ -111,9 +116,9 @@ export default {
    * if sceneVisible, show video player controls
    */
   name: "BuilderToolbar",
-  // components: {
-  //   // BubbleEditor
-  // },
+  components: {
+    AddNewModal
+  },
   props: {
     sceneVisible: {
       type: Boolean,
@@ -125,77 +130,16 @@ export default {
       vidPlayer: null,// display video current time
       progress: 0,
       actionLayer: null,// interaction elements
-
-      // ToDo: clean this code, alot of unused vars and functions
-      selectedSlide: 0,// Faked, type: 'slide'
-      // rawData
-      rowIndex: 0,// itemData[rowIndex] = IntroContent[lang] or SceneData.cueData[rowIndex]
-      layersVisible: false,
-      editorNode: null,// append/remove to selectedCell
-      cellType: null,// set at selectCell(), itemData.<property>
-      textContent: '',// from editor update, updateChangedText(textContent, cellType);
-      lastElement: null,// to remove status
-      // blankCueData: {},
-      blankDataRow: {
-        type: 'data',
-        rowId: 'ID#',
-        fullText: '',
-        screenText: {
-          text: '<p></p>',
-          color: '',
-          location: {top: 0, left: 0}
-        },
-        textPresentation: '',
-        imageDescription: '',
-        imagePresentation: '',
-        imageData: {
-          url: '',// 'images/cookies.png',
-          location: {'top': 0, 'left': 0, 'width': 320, 'height': 180}
-        }
-      },
+      showAddModal: false,// Add New Interaction
+      layersVisible: false,// unused but maybe?
     }
   },
-  mounted() {
-    // ToDo: move editor to DialogModal
-    this.$nextTick(function () {
-      let comp = this;// scope for addEventListener
-
-      // create an editor node to append to selected cell
-      // could be done in the template?
-      let editorInstance = Vue.extend(BubbleEditor);
-      this.editorNode = new editorInstance({
-        // propsData: { value: '<p>nada node</p>'}
-      });
-      this.editorNode.$mount();
-      // also happens on icon click
-      this.editorNode.editor.on('blur', function() {
-          console.log('editor blur txt:', comp.textContent, 'key:', comp.cellType);
-          console.log('editor blur lastElement:', comp.lastElement);
-          // MAY need to update text through here
-          // also happens on icon click, but textContent not set yet
-          // AT selectCell() - comp.updateChangedText(comp.textContent, comp.cellType);
-
-          // clicked in same panel outside of editor
-          // // udate text, show the original and remove the editor
-          if (comp.textContent && comp.cellType) {
-            comp.updateChangedText(comp.textContent, comp.cellType);
-            // console.log('-- blur childNodes:', comp.lastElement.childNodes, comp.lastElement);
-            // comp.lastElement.childNodes[0].style.display = 'block';
-            // comp.lastElement.childNodes[1].remove();
-            // comp.lastElement.setAttribute('data-status', '');
-            comp.removeEditor();
-          }
-      });
-
-      // Fires every keystroke and when menububble icon is clicked
-      this.editorNode.$on('hasUpdates', function(txt, key) {
-        console.log('mounted hasUpdates', txt, key);
-        // key = cellType set at selectCell
-        comp.textContent = txt;// update global
-      });
-      // console.log('mounted:', this.editorNode);
-    });
-  },
+  // mounted() {
+  //   // ToDo: move editor to DialogModal
+  //   this.$nextTick(function () {
+  //     let comp = this;// scope for addEventListener
+  //   });
+  // },
   watch: {
     sceneVisible: {
       immediate: true,
@@ -209,7 +153,8 @@ export default {
           if (!this.vidPlayer) {
             this.vidPlayer = document.querySelector('.video-element');
             this.vidPlayer.addEventListener('timeupdate', function () {
-              comp.progress = comp.vidPlayer.currentTime.toFixed(3);//Math.round((comp.vidPlayer.currentTime / comp.vidPlayer.duration) * 100);
+              comp.progress = comp.vidPlayer.currentTime.toFixed(3);
+              //Math.round((comp.vidPlayer.currentTime / comp.vidPlayer.duration) * 100);
             });
           }
         }
@@ -220,202 +165,32 @@ export default {
     moreMenuModal: function() {
       console.log('More Menu: open modal here?')
     },
-    selectCell: function(cell) {
-      console.log('selectCell: path', cell.path);
-      // StoryPanel rowId and fullText do not use editor Eventually screenText will be
-      // you have to select the text twice
-
-      let key = this.cellType;// null or last cellType for updateChangedText()
-      // click can happen on the text or editor or icon
-      let element = cell.path.find((el) => {
-        return el.classList.contains('inner-text');
-      });
-
-      // this.cellType = element.getAttribute('data-type');
-
-      if (element.getAttribute('data-status') === 'active') {
-        console.log('same cell so return if nodeName:', cell.target.nodeName);
-        if (cell.target.nodeName === 'DIV') {
-          console.log('DIV:', cell.target);
-          // clicked in same panel outside of editor
-          // udate text, show the original and remove the editor
-          if (this.textContent && this.cellType) {
-            this.updateChangedText(this.textContent, this.cellType);
-          }
-          console.log('FIX childNodes:', this.lastElement.childNodes, this.lastElement);
-          this.removeEditor();
-          // this.lastElement.setAttribute('data-status', '');
-          // this.lastElement.childNodes[0].style.display = 'block';
-          // this.lastElement.childNodes[1].remove();
-        }
-        return;
-      }
-
-      if (key && this.textContent) {
-        // remove status from element and show updated text
-        console.log('update lastElement:', key, this.lastElement);
-        this.lastElement.setAttribute('data-status', '');
-        this.lastElement.childNodes[0].style.display = 'block';
-        // save last change before starting a new editor
-        this.updateChangedText(this.textContent, key);
-        this.key = this.cellType = this.textContent = '';// reset?
-      }
-
-      // loop thru possible and remove active status and childNodes[0].style.display none?
-      this.removeEditor();
-      // let group = document.querySelectorAll('.inner-text');
-      // group.forEach(function(el) {
-      //   console.log('group el:', el);
-      //   el.setAttribute('data-status', '');
-      //   el.childNodes[0].style.display = 'block';// un-hide always
-      //   if (el.childNodes.length > 1) {
-      //     el.childNodes[1].remove();
-      //   }
-      // });
-
-      element.setAttribute('data-status', 'active');
-      this.lastElement = element;// to remove status
-      this.cellType = element.getAttribute('data-type');
-
-      console.log('parent:', element.parentElement);
-      console.log('element:', element);
-      console.log('cellType:', this.cellType);
-
-      // element.parentElement.setAttribute('data-status', 'selected');
-      // element.classList.add('cell-selected');
-      this.$root.selectedRowId = this.rowIndex;// StoryBoard.repoImageSelected
-
-      if (element.childNodes) {
-        // hide or remove childNodes
-        if (element.childNodes.length) {
-          console.log('element childNodes:', element.childNodes);
-          // element.childNodes[0].remove();
-          element.childNodes[0].style.display = 'none';
-        }
-
-        // switch on cellType to match data.property
-        switch (this.cellType) {
-          // case 'rowId': break;// plain input
-          // case 'fullText': break;// plain textarea
-          // TODO: EVENTUALLY
-          // case 'screenText':
-          //   this.editorNode.editor.setContent(this.itemData[this.rowIndex].screenText.text, false);
-          //   this.editorNode.value = this.itemData[this.rowIndex].screenText.text;
-          //   break;
-          case 'textPresentation':
-            // this.editorNode.editor.setContent(this.itemData[this.rowIndex].textPresentation, false);
-            // this.editorNode.value = this.itemData[this.rowIndex].textPresentation;
-            break;
-          case 'imageDescription':
-            // this.editorNode.editor.setContent(this.itemData[this.rowIndex].imageDescription, false);
-            // this.editorNode.value = this.itemData[this.rowIndex].imageDescription;
-            break;
-          case 'imagePresentation':
-            // this.editorNode.editor.setContent(this.itemData[this.rowIndex].imagePresentation, false);
-            // this.editorNode.value = this.itemData[this.rowIndex].imagePresentation;
-            break;
-        }
-
-        console.log('attach editorNode:', this.editorNode);
-        // append the editor created at mounted to this cell
-        element.appendChild(this.editorNode.$el);
-        this.editorNode.$el.id = this.cellType;
-        this.editorNode.editor.focus();
-      }
-    },
-    /**
-     * loop thru divs that could have the editor and
-     * remove the active status, display childNodes[0] and
-     * remove the editor
-     */
-    removeEditor: function() {
-      let group = document.querySelectorAll('.inner-text');
-      group.forEach(function(el) {
-        // console.log('group el:', el);
-        el.setAttribute('data-status', '');
-        el.childNodes[0].style.display = 'block';
-        if (el.childNodes.length > 1) {
-          el.childNodes[1].remove();
-        }
-      });
-    },
-    /**
-     * Drag Panel has moved or resized
-     * @param location is only used for Story Panel Image and ScreenText layout
-     * @param type img=imageData or txt=screenText
-     */
-    updateLocationData: function (location, type) {
-      // if (type === 'img') {
-      //   Object.assign(this.itemData[this.rowIndex].imageData.location, location);
-      // }
-      // if (type === 'txt') {
-      //   // screenText.location:{top, left}
-      //   Object.assign(this.itemData[this.rowIndex].screenText.location, location);
-      // }
-      console.log('updateData:', type, 'location:', location.top, location.left, location.width, location.height);
-    },
-    /**
-     * fires on every keystroke
-     * Mark the data as dirty, to indicate the data needs to be saved
-     *
-     * @param txt String updated html
-     * @param key String bubble-editor id
-     */
-    updateChangedText: function (txt, key) {
-      this.$root.selectedRowId = this.rowIndex;
-      console.log('updateChangedText:', txt, key);
-      if (!txt) { console.log('txt is empty'); return; }
-
-      // switch (key) {
-      //   case 'rowId':
-      //     this.itemData[this.rowIndex].rowId = txt;
-      //     break;
-      //   case 'fullText':
-      //     this.itemData[this.rowIndex].fullText = txt;
-      //     break;
-      //   case 'screenText':
-      //     this.itemData[this.rowIndex].screenText.text = txt;
-      //     break;
-      //   case 'textPresentation':
-      //     this.itemData[this.rowIndex].textPresentation = txt;
-      //     break;
-      //   case 'imageDescription':
-      //     this.itemData[this.rowIndex].imageDescription = txt;
-      //     break;
-      //   case 'imagePresentation':
-      //     this.itemData[this.rowIndex].imagePresentation = txt;
-      //     break;
-      // }
-      // reset txt only, cellType may get set immediately
-      this.textContent = '';
-      //this.$emit('updateItemData', this.itemData[this.rowIndex], this.rowIndex, 'panel');
-      console.log('Panel: itemData:');//, this.itemData[this.rowIndex]);
-    },
     /**
      * open file browser and upload to Filepond
      * update imageData.url
      */
     uploadImage: function () {
-      console.log('Upload:');//, this.itemData[this.rowIndex].imageData);
+      console.log('Upload:');
     },
     /**
      * download image file
      */
     downloadImage: function () {
-      console.log('Download: ');//, this.itemData[this.rowIndex].imageData.url);
+      console.log('Download:');
     },
     /**
-     * remove from table and update data
+     * remove image data
      */
     removeImage: function () {
-      console.log('Remove image from itemData');
+      console.log('Delete:');
     },
     /**
-     * Add multiple ScreenText?
+     * pass the new object upward to Builder
      */
-    // addScreenText: function () {
-    //   console.log('Add new ScreenText?');
-    // },
+    addNewCue: function(data) {
+      console.log('toolbar addNew:', data);
+      this.$emit('addNew', data);
+    },
     /**
      * Onion Skin: (All layers?)
      * use image.location to size them. if this is the bottom layer, append ?
@@ -434,88 +209,19 @@ export default {
   font-size: 16px;
   padding: 5px;
 }
-
 .panel-row {
   display: flex;
   width: 100%;
   height: fit-content;
   /* margin-bottom: 5px; */
 }
-
 .editor-header {
   display: flex;
   font-size: 12px;
   font-weight: 600;
   color: #666666;
   padding: 3px;
-  /* background-color: #d3d3d3; */
 }
-
-.id-cell {
-  width: 10%;
-  font-weight: 600;
-  border: 1px solid #000000;
-  background-color: #ffffff;
-}
-.row-id-input {
-  padding: 5px 0 0 5px;
-  border: none;
-  background-color: transparent;
-  font-size: 16px;
-  font-weight: 600;
-}
-.cue-cell {
-  width: 90%;
-  margin-left: 1%;
-  border: 1px solid #000000;
-  background-color: #ffffff;
-}
-
-.pad-left {
-  padding-left: 5px;
-}
-
-textarea {
-  font-family: 'Arimo', Helvetica, Arial, sans-serif; /* Segoe for Spanish? */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
-  margin: 3px;
-  border: none;
-  resize: none;
-  width: 97%;
-  height: 85%;
-}
-
-.editor-content {
-  /* position: relative; */
-  width: 98vw;
-  height: 90vh;
-  overflow: hidden;
-  border: 1px solid #ff0000;
-  /* background-color: #ffffff; */
-}
-
-  .tall-button {
-    line-height: 20px;
-    font-size: 20px;
-    font-weight: 800;
-    cursor: pointer;
-  }
-  .slide-thumb {
-    cursor: pointer;
-    padding: 0 10px;
-    font-weight: 600;
-    text-align: center;
-    line-height: 4vh;
-    user-select: none;
-    border: 1px solid #666666;
-    background-color: #cccccc;
-  }
-  .selected {
-    border-color: #000000;
-    background-color: #ffffff;
-  }
 
 .image-buttons {
   display: flex;

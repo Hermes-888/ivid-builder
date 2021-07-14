@@ -101,7 +101,7 @@
               Save Scene Changes <icon-save-file/>
           </button>
       </div>
-      <dialog-modal
+      <add-new-modal
         v-show="showAddModal"
         @closeModal="showAddModal=!showAddModal"
         @addNew="addNewCue"
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import DialogModal from './DialogModal.vue';
+import AddNewModal from './AddNewModal.vue';
 import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
 // ToDo: instance needed components?
@@ -136,7 +136,7 @@ export default {
      */
     name: "FormScene",
     components: {
-        DialogModal,
+        AddNewModal,
         FormMessage,
         FormInfoPanel,
     },

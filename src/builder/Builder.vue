@@ -15,11 +15,12 @@
           @editCurrentData="editCurrentData"
           @saveFile="saveFile"
           @restart="$emit('restart')"
+          @addNew="addNewCue"
         />
         <editor-modal
-          v-show="showModal"
+          v-show="showEditorModal"
           :currentData="currentData"
-          @closeModal="showModal=false"
+          @closeModal="showEditorModal=false"
           @saveChanges="updateItemData"
         />
         <!-- <edit-panel ref="editPanel"
@@ -79,7 +80,10 @@ export default {
       return {
         // language = data[index]
         repoVisible: false,// toggle RepoPanel
-        showModal: false,// toggle
+        showEditorModal: false,// toggle
+        sceneNum: 0,// main scene
+        vidPlayer: null,
+        progress: 0,// video currenttime
         selectedRowId: 0,// IntroContent or SceneData.cueData
         repoImages: ['images/Caroline_left_pointing.png', 'images/customer_mother_boy.png', 'images/cookies.png', 'images/garlic_sauce.png'],
 
@@ -112,7 +116,13 @@ export default {
       }
     },
     // mounted () {
-    //     this.$nextTick(function() {});
+    //   this.$nextTick(function() {
+    //     var comp = this;
+    //     var vidPlayer = document.querySelector('.video-element');
+    //     vidPlayer.addEventListener('timeupdate', function () {
+    //       comp.progress = this.currentTime.toFixed(3);
+    //     });
+    //   });
     // },
     watch: {
       /**
@@ -147,6 +157,14 @@ export default {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
               // console.log('sceneVisible currentData:', this.currentData);
             }
+            // video player currenttime
+            var comp = this;
+            if (!this.vidPlayer) {
+              this.vidPlayer = document.querySelector('.video-element');
+              this.vidPlayer.addEventListener('timeupdate', function () {
+                comp.progress = this.currentTime.toFixed(3);
+              });
+            }
           }
         }
       },
@@ -176,7 +194,7 @@ export default {
           }
         },
         editCurrentData: function() {
-          this.showModal = true;
+          this.showEditorModal = true;
           // console.log('editCurrentData', this.currentData);
         },
         /**
@@ -191,7 +209,7 @@ export default {
         updateItemData: function (data, cueIndex) {
             console.log('Builder updateItemData:', data, cueIndex);
             // console.log('$refs:', this.$refs);
-            // this.showModal = false;
+            // this.showEditorModal = false;
             // ToDo: update actualData w/data and send it to App
             if (this.sceneVisible) {
               // update sceneLanguage[language].sceneData
@@ -219,6 +237,19 @@ export default {
                 // this.$emit('updateData', this.actualData);
                 // this.$forceUpdate();
             }
+        },
+        addNewCue: function(data) {
+          var len = this.currentData[this.sceneNum].cueData.length;
+          if (data) {
+            data.start = this.progress;
+            data.index = len;
+          }
+          console.log('Builder Add new:', data);
+          // show Editor panel
+          this.showEditorModal = true;
+          // add selected type (data) to cueData[]
+          // this.actualData.sceneLanguage[this.language].sceneData[this.sceneNum].cueData.push(data);
+          // this.currentData[this.sceneNum].cueData.push(data);
         },
         /**
          * download JSON data to save the file

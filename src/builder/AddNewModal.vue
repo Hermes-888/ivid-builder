@@ -1,10 +1,10 @@
 <template>
-  <div class="dialog-modal">
-    <div class="dialog-panel"
+  <div class="addnew-modal">
+    <div class="addnew-panel"
       v-bind:style="dialogStyle"
     >
-      <div class="dialog-header">
-        <span class="dialog-title"
+      <div class="addnew-header">
+        <span class="addnew-title"
             v-text="headerText"
         ></span>
         <span class="close-button"
@@ -13,9 +13,9 @@
           <icon-close/>
         </span>
       </div>
-      <div class="dialog-body" ref="dialogBody">
+      <div class="addnew-body" ref="addnewBody">
         <!-- Add new interaction type, emit obj upward -->
-        <div class="dialog-instructions">
+        <div class="addnew-instructions">
           <div class="row">
             <select v-model="selected"
               @change="typeSelected(selected)"
@@ -38,13 +38,13 @@
           </div>
         </div>
       </div>
-      <div class="dialog-footer">
-        <div class="dialog-footer-buttons">
+      <div class="addnew-footer">
+        <div class="addnew-footer-buttons">
           <button role="button" class="icon-button"
             title="Click to add new element"
             @click="$emit('addNew', selectedObj); $emit('closeModal')"
           >
-            Confirm <icon-plus/>
+            Confirm Selection
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@
 // import Vue from 'vue';
 
 	export default {
-		name: 'DialogModal',
+		name: 'AddNewModal',
 		props: {
 			dialogStyle: {
 				type: Object,
@@ -76,7 +76,7 @@
 		},
     data () {
         return {
-          dialogBodyContent: 'change me',// construct form
+          addnewBodyContent: 'change me',// construct form
           updatedData: 'new object to return',
           mcInstance: null,
           headerText: 'Add New Interaction',
@@ -99,14 +99,14 @@
 </script>
 
 <style scoped>
-  .dialog-modal {
+  .addnew-modal {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
   }
-	.dialog-panel {
+	.addnew-panel {
 		position: absolute;
     top: 3vh;
 		left: 5%;
@@ -119,12 +119,12 @@
 		border: 3px solid #333333;
 		background-color: rgba(255, 255, 255, 1);
 	}
-	.dialog-header {
+	.addnew-header {
 		font-weight: 600;
-		padding: 5px;
+		padding: 8px 5px;
 		border-bottom: 2px solid #888888;
 	}
-	.dialog-title {
+	.addnew-title {
 		width: 85%;
 	}
 	.close-button {
@@ -133,10 +133,10 @@
 		font-size: 27px;
     margin-top: -5px;
 	}
-	.dialog-body {
+	.addnew-body {
 		padding: 10px;
 	}
-  /* .dialog-instructions {
+  /* .addnew-instructions {
     border: 1px solid #333333;
   } */
   .row {
@@ -150,11 +150,11 @@
     padding: 8px;
     border: 1px solid #333333;
   }
-  .dialog-footer {
+  .addnew-footer {
     padding-bottom: 10px;
     /* border-top: 2px solid #888888; */
   }
-  /* .dialog-footer-buttons {
+  /* .addnew-footer-buttons {
     float: right;
   } */
 
