@@ -20,11 +20,17 @@
         <div class="form-row">
             <button id="audioUpload" role="button" class="icon-button"
                 title="Upload an audio file."
-                @click="uploadImage"
+                @click="uploadFile('audio')"
             >
                 <icon-upload-cloud title="Upload an audio file."/>
             </button>
-            <label for="audio">Audio:</label>
+            <button role="button" class="icon-button"
+                title="Search for image"
+                @click="findFile('audio')"
+            >
+                <icon-file-search/>
+            </button>
+            <label for="audio" title="Audio file for introduction text.">Audio:</label>
             <input id="audio" class="input-short"
               v-model="updatedData.audio" placeholder="optional"
             >
@@ -32,28 +38,70 @@
         <div class="form-row">
             <button id="imageUpload" role="button" class="icon-button"
                 title="Upload an image. It will also be added to the repository."
-                @click="uploadImage"
+                @click="uploadFile('image')"
             >
                 <icon-upload-cloud title="Upload an image. It will also be added to the repository."/>
             </button>
-            <label for="image">Image:</label>
+            <!-- <label for="avatar">Image:</label> <icon-file-search>
+            <input type="file" id="avatar" accept=".jpg, .jpeg, .png"> -->
+            <button role="button" class="icon-button"
+                title="Search for image"
+                @click="findFile('image')"
+            >
+                <icon-file-search/>
+            </button>
+            <label for="image" title="Background image for introduction screen.">Image:</label>
             <input id="image" class="input-short"
               v-model="updatedData.image" placeholder="optional"
             >
         </div>
-      </div>
-        <div class="form-row bordered">
-            <button role="button" class="icon-button"
-                title="Save changes"
-                @click="$emit('updateChanges', updatedData)"
+        <div class="form-row">
+          <div class="column-left">
+            <label for="btnColor">Button Color:</label>
+            <div class="color-swatch" id="btnColor"
+                ref="btncolor" title="Click to open a color picker, click again to close it"
+                :style="{'backgroundColor':updatedData.buttonColor}"
+                @click="showTxtPalette = !showTxtPalette"
+            ></div>
+            <input type="text" id="btnHex" class="input-short-short"
+              v-model="updatedData.buttonColor"
             >
-                Save Intro Changes <icon-save-file/>
-            </button>
+          </div>
+          <div class="column-right">
+            <!-- <label for="btnColor" title="Panel background color">Button Color:</label>
+            <div class="color-swatch" id="btnColor"
+                ref="btncolor" title="Click to open a color picker, click again to close it"
+                @click="showTxtPalette = !showTxtPalette"
+            ></div> -->
+          </div>
         </div>
+      </div>
+      <div class="form-row bordered">
+          <!-- <button role="button" class="icon-button"
+              title="Search for images in repository"
+              @click="$emit('toggleRepo')"
+          >
+              <icon-cloud-search title="Search for images in repository"/>
+          </button> -->
+          <button role="button" class="icon-button right"
+              title="Save changes"
+              @click="$emit('updateChanges', updatedData)"
+          >
+              Save Intro Changes <icon-save-file/>
+          </button>
+      </div>
+      <Sketch class="btn-color-palette"
+        v-if="showTxtPalette"
+        @input="changeBtnColor"
+        :value="updatedData.buttonColor ? updatedData.buttonColor : '#ff0000'"
+      />
     </div>
 </template>
 
 <script>
+//
+import {Sketch} from 'vue-color';
+
 export default {
     /**
      * Nice form styles
@@ -62,6 +110,7 @@ export default {
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
      */
     name: "FormIntroduction",
+    components: {Sketch},
     props: {
         formData: {
             type: Object,
@@ -72,11 +121,14 @@ export default {
     },
     data () {
         return {
+            showTxtPalette: false,
+            screenClasses: ['introduction', 'intro-text', 'start-button', 'svg.circle', 'svg.polygon'],
             updatedData: {
                 titleText: '',
                 text: '',
                 audio: '',
-                image: ''
+                image: '',
+                buttonColor: '#333333'// add?
             },// don't mutate the prop
         }
     },
@@ -84,17 +136,34 @@ export default {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
+            this.updatedData.buttonColor = '#333333';// add?
+            // ToDo: get & change screen elements
         });
     },
     methods: {
-        uploadImage: function(event) {
-            console.log('get id:', event);
-            var id = event.target.id;
-            if (!id) {
-                //console.log('path:', event.path);
-                id = event.path[3].id;
+        uploadFile: function(type) {
+            console.log('upload', type);
+        },
+        findFile: function(type) {
+            console.log('find', type);
+            
+            switch(type) {
+              case 'audio':
+                // updatedData.audio
+                break;
+              case 'image':
+                // updatedData.image
+                this.$emit('toggleRepo');// send state?
+                break;
             }
-            console.log('upload:', id);
+        },
+        changeBtnColor: function (color) {
+            this.updatedData.buttonColor = color.hex8;// .rgba is an object, reconstruct as string?
+            this.$refs.btncolor.style.backgroundColor = color.hex8;
+            // this.$emit('itemChanged', this.updatedData);
+            // console.log('svg:', document.querySelectorAll('circle'));
+            document.querySelectorAll('circle')[0].style.stroke = color.hex8;
+            document.querySelectorAll('polygon')[1].style.fill = color.hex8;
         }
     }
 }
@@ -106,21 +175,29 @@ export default {
     }
     .form-container {
       border-radius: 8px;
-      padding: 5px 3px;
+      padding: 5px;
       background-color: #ffffff;
     }
     .form-row {
+        display: flex;
         width: 100%;
         margin: 5px 0;
         clear: both;
     }
+    .right {
+      float: right;
+    }
     .bordered {
+        display: inline-block;
         border-top: 2px solid #888888;
         margin-top: 10px;
-        padding: 15px 0;
+        padding-top: 10px;
     }
     .input-short {
-      width: 78%;
+      width: 70%;
+    }
+    .input-short-short {
+      width: 30%;
     }
     input, textarea {
         width: 90%;
@@ -159,7 +236,6 @@ export default {
         margin: 0 5px;
         padding: 0 5px;
         cursor: pointer;
-        float: right;
         font-size: 16px;
         color: #333333;
         border-radius: 2px;
@@ -168,5 +244,29 @@ export default {
     }
     .icon-button:hover {
         background-color: #ccf1cc;
+    }
+
+    .btn-color-palette {
+        position: absolute;
+        top: 31%;
+        left: 160px;
+    }
+    .color-swatch {
+        width: 30px;
+        height: 20px;
+        margin: 0 5px;
+        cursor: pointer;
+        border: 1px solid #000000;
+    }
+    .column-left {
+      width: 66%;
+      display: flex;
+      /* border: 1px solid #333; */
+    }
+    .column-right {
+      width: 33%;
+      display: flex;
+      justify-content: flex-end;
+      /* border: 1px solid rgb(8, 106, 172); */
     }
 </style>

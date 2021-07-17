@@ -5,7 +5,7 @@
             <button id="videoUpload" role="button" class="icon-button"
                 title="Upload the main video file"
                 @change="changeEl(updatedData[sceneNum])"
-                @click="uploadFile"
+                @click="uploadFile('video')"
             >
                 <icon-upload-cloud title="Upload the main video file"/>
             </button>
@@ -20,7 +20,7 @@
             <button id="captionUpload" role="button" class="icon-button"
                 title="Upload an optional vtt captions file for this video."
                 @change="changeEl(updatedData[sceneNum])"
-                @click="uploadFile"
+                @click="uploadFile('captions')"
             >
                 <icon-upload-cloud title="Upload an optional vtt captions file for this video"/>
             </button>
@@ -95,6 +95,12 @@
       </div>
       <div class="form-row bordered">
           <button role="button" class="icon-button"
+              title="Search for images in repository"
+              @click="$emit('toggleRepo')"
+          >
+              <icon-cloud-search title="Search for images in repository"/>
+          </button>
+          <button role="button" class="icon-button right"
               title="Save changes"
               @click="$emit('updateChanges', updatedData)"
           >
@@ -205,17 +211,9 @@ export default {
          * ToDo: needs to upload to public/audio or public/images ???
          * or full path to file
          */
-        uploadFile: function(event) {
-            // console.log('get id:', event);
-            var id = event.target.id;
-            if (!id) {
-                event.path.forEach(function(el) {
-                  if (el.id && el.id !== 'app') {
-                    id = el.id;
-                  }
-                });
-            }
-            console.log('upload:', id);// which button
+        uploadFile: function(type) {
+            console.log('upload', type);
+            this.$emit('toggleRepo');// send state?
         },
 
         /**
@@ -258,20 +256,25 @@ export default {
         width: 100%;
     }
     .form-container {
-      padding: 5px 3px;
+      padding: 5px;
       border-radius: 8px;
       border: 1px solid #888888;
       background-color: #ffffff;
     }
     .form-row {
+        display: flex;
         width: 100%;
         margin: 5px 0;
         clear: both;
     }
     .bordered {
+        display: inline-block;
         border-top: 2px solid #888888;
         margin-top: 10px;
-        padding: 15px 0;
+        padding-top: 10px;
+    }
+    .right {
+      float: right;
     }
     input, textarea {
         width: 74%;
@@ -320,7 +323,6 @@ export default {
         margin: 0 5px;
         padding: 0 5px;
         cursor: pointer;
-        float: right;
         font-size: 16px;
         color: #333333;
         border-radius: 2px;

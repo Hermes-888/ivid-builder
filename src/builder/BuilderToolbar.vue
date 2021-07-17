@@ -28,12 +28,9 @@
             >
                 <icon-delete title="Remove this image from row."/>
             </button>
-            <button role="button" class="icon-button"
-                    title="Search for images in repository"
-                    @click="$emit('toggleRepo')"
-            >
-                <icon-cloud-search title="Search for images in repository"/>
-            </button>
+            <div class="icon-button" title="unused icons">
+              <icon-palette/>:<icon-collapse/>:<icon-expand/>
+            </div>
         </div>
         <div class="file-buttons">
             <button role="button" class="icon-button"
@@ -48,6 +45,12 @@
                     @click="moreMenuModal"
             >
                 <icon-dots title="Open a panel of tools for: New Column, Audio Files, Learning Extras, ..."/>
+            </button>
+            <button role="button" class="icon-button"
+                    title="Search for images in repository"
+                    @click="$emit('toggleRepo')"
+            >
+                <icon-cloud-search title="Search for images in repository"/>
             </button>
             <button role="button" class="icon-button"
                 title="Edit Data"
@@ -129,7 +132,7 @@ export default {
     return {
       vidPlayer: null,// display video current time
       progress: 0,
-      actionLayer: null,// interaction elements
+      actionLayer: null,// interactive elements
       showAddModal: false,// Add New Interaction
       layersVisible: false,// unused but maybe?
     }
@@ -149,7 +152,7 @@ export default {
           // remove interactions
           this.actionLayer = document.querySelector('.interaction-overlay');
 
-          let comp = this;// scope for addEventListener
+          var comp = this;// scope for addEventListener
           if (!this.vidPlayer) {
             this.vidPlayer = document.querySelector('.video-element');
             this.vidPlayer.addEventListener('timeupdate', function () {

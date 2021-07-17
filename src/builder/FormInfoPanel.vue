@@ -40,7 +40,7 @@
                 v-model="updatedData.animateIn"
                 @change="$emit('itemChanged', updatedData)"
             >
-            <label for="in" class="wide-label">Animate In</label>
+            <label for="in" class="wide-label">Animate In |</label>
 
             <input type="checkbox" id="out"
                 v-model="updatedData.animateOut"
@@ -48,7 +48,7 @@
             >
             <label for="out" class="wide-label">Animate Out</label>
 
-            <label for="to">Animate To:</label>
+            <label for="to">| Animate To:</label>
             <input type="text" id="to" class="short-text-input"
                 v-model="updatedData.animateTo"
                 @change="$emit('itemChanged', updatedData)"

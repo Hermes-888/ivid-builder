@@ -22,6 +22,7 @@
           :currentData="currentData"
           @closeModal="showEditorModal=false"
           @saveChanges="updateItemData"
+          @toggleRepo="toggleRepoPanel"
         />
         <!-- <edit-panel ref="editPanel"
             :itemHeaders="itemHeaders"
@@ -175,7 +176,8 @@ export default {
          * it animates in from left and only covers half the screen
          */
         toggleRepoPanel: function () {
-          this.repoVisible = (!this.repoVisible) ? true : false;
+          // send state?
+          this.repoVisible = !this.repoVisible;
         },
         /**
          * selection from repo to specific row

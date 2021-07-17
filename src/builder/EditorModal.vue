@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-modal" id="droptarget">
+  <div class="editor-modal">
     <div class="editor-panel" ref="editorPanel"
       v-bind:style="editorStyle"
     >
@@ -61,11 +61,17 @@ import Vue from 'vue';
           updatedData: 'new object to return',
           mcInstance: null,
           headerText: 'editor header',
+          panelTop: 0
         }
     },
     mounted () {
       this.$nextTick(function() {
-        // editor-panel is draggable
+        var comp = this;
+        // this.$refs.editorPanel.addEventListener('mousemove', function(e) {
+        //   // console.log('mse:', e.pageY, e.offsetY, e);
+        //   console.log('mseY:',e.pageY, comp.$refs.editorPanel.getBoundingClientRect().y);
+        // }, false);
+        // editor-panel is draggable, only if mouse is over editor-header
         Interact('.editor-panel')
           .draggable({
             // enable inertial throwing
@@ -76,29 +82,33 @@ import Vue from 'vue';
                 restriction: 'parent'
               })
             ],
-            // enable autoScroll
-            // autoScroll: false,
 
             listeners: {
-              // call this function on every dragmove event
-              move(event) {
-                var target = event.target
-                // keep the dragged position in the data-x/data-y attributes
-                var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-                var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
-
-                // translate the element
-                target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-
-                // update the posiion attributes
-                target.setAttribute('data-x', x)
-                target.setAttribute('data-y', y)
+              start(e) {
+                comp.panelTop = comp.$refs.editorPanel.getBoundingClientRect().y;
+                // console.log(e.page.y, comp.panel);
               },
+              // every dragmove event
+              move(event) {
+                if (event.page.y < comp.panelTop+30) {
+                  var target = event.target;
+                  // keep the dragged position in the data-x/data-y attributes
+                  var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                  var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
+                  // translate the element
+                  target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+
+                  // update the posiion attributes
+                  target.setAttribute('data-x', x);
+                  target.setAttribute('data-y', y);
+                  comp.panelTop = comp.$refs.editorPanel.getBoundingClientRect().y;
+                }
+              },
               // call this function on every dragend event
-              end (event) {
-                // console.log('drag end');
-              }
+              // end (event) {
+              //   console.log('drag end');
+              // }
             }
           });
       });
@@ -152,6 +162,13 @@ import Vue from 'vue';
               comp.$emit('saveChanges', data);
             });
           }
+
+          if (this.mcInstance) {
+            // pass Form @click="$emit('toggleRepo')" up to Builder
+            this.mcInstance.$on('toggleRepo', function() {
+              comp.$emit('toggleRepo');// send state: true/false?
+            });
+          }
         }
       },
     }
@@ -161,11 +178,11 @@ import Vue from 'vue';
 <style scoped>
   .editor-modal {
     position: absolute;
-    top: 0;
+    top: 35px;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+    height: 96vh;
+    /* background-color: rgba(0, 0, 0, 0.4); */
   }
 	.editor-panel {
 		position: absolute;
@@ -182,6 +199,7 @@ import Vue from 'vue';
 	}
 	.editor-header {
 		font-weight: 600;
+    margin-left: 10px;
 		padding: 5px;
     cursor: move;
 		border-bottom: 2px solid #888888;

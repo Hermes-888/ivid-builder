@@ -33,6 +33,8 @@ import iconFileEdit from 'vue-material-design-icons/FileDocumentEdit.vue';
 Vue.component('icon-file-edit', iconFileEdit);
 import iconSaveFile from 'vue-material-design-icons/ContentSaveOutline.vue';
 Vue.component('icon-save-file', iconSaveFile);
+import iconFileSearch from 'vue-material-design-icons/FileSearchOutline.vue';
+Vue.component('icon-file-search', iconFileSearch);
 
 // video player controls
 import iconPlay from 'vue-material-design-icons/Play.vue';
