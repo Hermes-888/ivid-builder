@@ -9,7 +9,7 @@
             >
         </div>
         <div class="form-row">
-          <span>Text:</span>
+          <span>Introduction Text:</span>
         </div>
         <div class="form-row">
             <textarea id="description"
@@ -42,8 +42,6 @@
             >
                 <icon-upload-cloud title="Upload an image. It will also be added to the repository."/>
             </button>
-            <!-- <label for="avatar">Image:</label> <icon-file-search>
-            <input type="file" id="avatar" accept=".jpg, .jpeg, .png"> -->
             <button role="button" class="icon-button"
                 title="Search for image"
                 @click="findFile('image')"
@@ -53,6 +51,7 @@
             <label for="image" title="Background image for introduction screen.">Image:</label>
             <input id="image" class="input-short"
               v-model="updatedData.image" placeholder="optional"
+              @change="changeBkgImage"
             >
         </div>
         <div class="form-row">
@@ -61,28 +60,15 @@
             <div class="color-swatch" id="btnColor"
                 ref="btncolor" title="Click to open a color picker, click again to close it"
                 :style="{'backgroundColor':updatedData.buttonColor}"
-                @click="showTxtPalette = !showTxtPalette"
+                @click="showBtnPalette = !showBtnPalette"
             ></div>
             <input type="text" id="btnHex" class="input-short-short"
               v-model="updatedData.buttonColor"
             >
           </div>
-          <div class="column-right">
-            <!-- <label for="btnColor" title="Panel background color">Button Color:</label>
-            <div class="color-swatch" id="btnColor"
-                ref="btncolor" title="Click to open a color picker, click again to close it"
-                @click="showTxtPalette = !showTxtPalette"
-            ></div> -->
-          </div>
         </div>
       </div>
       <div class="form-row bordered">
-          <!-- <button role="button" class="icon-button"
-              title="Search for images in repository"
-              @click="$emit('toggleRepo')"
-          >
-              <icon-cloud-search title="Search for images in repository"/>
-          </button> -->
           <button role="button" class="icon-button right"
               title="Save changes"
               @click="$emit('saveChanges', updatedData)"
@@ -91,7 +77,7 @@
           </button>
       </div>
       <Sketch class="btn-color-palette"
-        v-if="showTxtPalette"
+        v-if="showBtnPalette"
         @input="changeBtnColor"
         :value="updatedData.buttonColor ? updatedData.buttonColor : '#ff0000'"
       />
@@ -121,7 +107,7 @@ export default {
     },
     data () {
         return {
-            showTxtPalette: false,
+            showBtnPalette: false,
             screenClasses: ['introduction', 'intro-text', 'start-button', 'svg.circle', 'svg.polygon'],
             updatedData: {
                 titleText: '',
@@ -137,7 +123,6 @@ export default {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
             this.updatedData.buttonColor = '#333333';// add?
-            // ToDo: get & change screen elements
         });
     },
     methods: {
@@ -160,10 +145,12 @@ export default {
         changeBtnColor: function (color) {
             this.updatedData.buttonColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.btncolor.style.backgroundColor = color.hex8;
-            // this.$emit('itemChanged', this.updatedData);
-            // console.log('svg:', document.querySelectorAll('circle'));
             document.querySelectorAll('circle')[0].style.stroke = color.hex8;
             document.querySelectorAll('polygon')[1].style.fill = color.hex8;
+        },
+        changeBkgImage: function (image) {
+          console.log('changeBkgImage:', this.updatedData.image);
+          document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
         }
     }
 }

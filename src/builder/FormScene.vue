@@ -256,7 +256,6 @@ export default {
           //   }
           // }
           if (val.hasOwnProperty('index')) {
-          // if (val.index !== undefined) {
             // console.log('cueData:', val.index, val);
             this.updatedData[this.sceneNum].cueData[val.index] = val;
           } else {

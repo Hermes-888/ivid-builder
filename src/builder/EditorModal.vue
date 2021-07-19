@@ -145,6 +145,12 @@ import Vue from 'vue';
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
+            this.$root.$on('repoImageSelected', function(filename) {
+              console.log('EditorModal repo listener:', filename);
+              comp.currentData.image = filename;
+              comp.mcInstance.formData = comp.currentData;
+              document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
+            });
           }
 
           if (Array.isArray(newstate) && comp.editorBody) {// && this.$refs.editorBody

@@ -154,6 +154,7 @@ export default {
          */
         repoImageSelected: function (filename) {
           console.log('repoImageSelected', filename);
+          this.$root.$emit('repoImageSelected', filename);
           if (this.$root.selectedRowId) {
             console.log('selectedRowId', this.selectedRowId);
             //this.itemData[this.$root.selectedRowId].imageData.url = filename;
