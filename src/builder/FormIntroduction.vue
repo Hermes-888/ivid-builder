@@ -85,7 +85,7 @@
           </button> -->
           <button role="button" class="icon-button right"
               title="Save changes"
-              @click="$emit('updateChanges', updatedData)"
+              @click="$emit('saveChanges', updatedData)"
           >
               Save Intro Changes <icon-save-file/>
           </button>

@@ -59,7 +59,7 @@
             <label for="duration">Duration:</label>
             <input type="text" id="duration" class="short-text-input"
                 v-model="updatedData.duration"
-                @change="$emit('itemChanged', updatedData.duration)"
+                @change="$emit('itemChanged', updatedData)"
             >
             <input type="checkbox" id="pause"
                 v-model="updatedData.removeMessage"
@@ -132,7 +132,7 @@ export default {
               "removeMessage": true,
               "messageText": "",
               "duration": 1
-            }],// don't mutate the prop
+            }],// .index is added in FormScene
         }
     },
     mounted () {
@@ -163,7 +163,7 @@ export default {
       font-size: 14px;
     }
     .short-text-input {
-        width: 40px;
+        width: 45px;
     }
     .long-text-input {
         width: 78%;

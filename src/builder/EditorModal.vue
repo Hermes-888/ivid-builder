@@ -57,9 +57,9 @@ import Vue from 'vue';
 		},
     data () {
         return {
-          editorBodyContent: 'change me',// construct form
-          updatedData: 'new object to return',
+          editorBody: null,
           mcInstance: null,
+          updatedData: 'new object to return',
           headerText: 'editor header',
           panelTop: 0
         }
@@ -67,10 +67,8 @@ import Vue from 'vue';
     mounted () {
       this.$nextTick(function() {
         var comp = this;
-        // this.$refs.editorPanel.addEventListener('mousemove', function(e) {
-        //   // console.log('mse:', e.pageY, e.offsetY, e);
-        //   console.log('mseY:',e.pageY, comp.$refs.editorPanel.getBoundingClientRect().y);
-        // }, false);
+        // find editorBody
+        this.editorBody = this.$refs.editorBody;
         // editor-panel is draggable, only if mouse is over editor-header
         Interact('.editor-panel')
           .draggable({
@@ -121,45 +119,52 @@ import Vue from 'vue';
         immediate: true,
         handler(newstate, oldstate) {
           var comp = this;
-          console.log('-- watch editor currentData:', this.currentData);
+          console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
+          console.log('mcInstance:', comp.mcInstance, 'editorBody:', comp.editorBody, comp.$refs.editorBody);
           if (!newstate) { return; }
 
-          if (newstate.hasOwnProperty('titleText') && this.$refs.editorBody) {
+          if (!comp.editorBody) {
+            comp.editorBody = document.querySelector('.editor-body');//comp.$refs.editorBody;
+            console.log('FIND editorBody', comp.editorBody);
+          }
+
+          if (newstate.hasOwnProperty('titleText') && comp.editorBody) {
             this.headerText = 'Introduction Data';
             var mcClass = Vue.extend(FormIntroduction);
 						this.mcInstance = new mcClass({
 							propsData: {
-								formData: this.currentData
+								formData: comp.currentData
 							}
 						});
             this.mcInstance.$mount();
 
-            this.$refs.editorBody.innerHTML = '';
-            this.$refs.editorBody.appendChild(this.mcInstance.$el);
-            this.mcInstance.$on('updateChanges', function(data) {
-              console.log('Modal Intro saveChanges:', data);
+            comp.editorBody.innerHTML = '';
+            comp.editorBody.appendChild(this.mcInstance.$el);
+            this.mcInstance.$on('saveChanges', function(data) {
+              console.log('Editor Intro saveChanges:', data);
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
           }
 
-          if (Array.isArray(newstate) && this.$refs.editorBody) {
+          if (Array.isArray(newstate) && comp.editorBody) {// && this.$refs.editorBody
             this.headerText = 'Scene Data';
             // sceneData Array of scenes w/cueData
             var mcClass = Vue.extend(FormScene);
 						this.mcInstance = new mcClass({
 							propsData: {
-								formData: this.currentData
+								formData: comp.currentData
 							}
 						});
+            console.log('Editor instance:', this.mcInstance);
             this.mcInstance.$mount();
 
-            this.$refs.editorBody.innerHTML = '';
-            this.$refs.editorBody.appendChild(this.mcInstance.$el);
-            this.mcInstance.$on('updateChanges', function(data) {
-              console.log('Modal Scene saveChanges:', data);
-              comp.$emit('closeModal');
-              comp.$emit('saveChanges', data);
+            comp.editorBody.innerHTML = '';
+            comp.editorBody.appendChild(this.mcInstance.$el);
+            this.mcInstance.$on('saveChanges', function(data) {
+              console.log('Editor Scene saveChanges:', data);
+              // comp.$emit('closeModal');
+              comp.$emit('saveChanges', data);// inform Builder
             });
           }
 

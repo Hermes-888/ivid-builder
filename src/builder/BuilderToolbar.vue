@@ -87,12 +87,12 @@
           >
             <icon-pause title="Pause video"/>
           </button>
-          <button role="button" class="icon-button"
+          <!-- FIX <button role="button" class="icon-button"
             title="Add new interaction"
             @click="showAddModal=true"
           >
             <icon-plus title="Add new interaction"/>
-          </button>
+          </button> -->
           <button role="button" class="icon-button"
             title="Hide interactions"
             @click="actionLayer.innerHTML=''"
@@ -103,7 +103,7 @@
     </div>
     <add-new-modal
       v-show="showAddModal"
-      :dialogStyle="{top: '10vh'}"
+      :dialogStyle="{top: '14vh', zIndex: 10}"
       @closeModal="showAddModal=!showAddModal"
       @addNew="addNewCue"
     />
@@ -156,7 +156,7 @@ export default {
           if (!this.vidPlayer) {
             this.vidPlayer = document.querySelector('.video-element');
             this.vidPlayer.addEventListener('timeupdate', function () {
-              comp.progress = comp.vidPlayer.currentTime.toFixed(3);
+              comp.progress = parseFloat(comp.vidPlayer.currentTime.toFixed(3));
               //Math.round((comp.vidPlayer.currentTime / comp.vidPlayer.duration) * 100);
             });
           }
@@ -241,7 +241,7 @@ export default {
   justify-content: flex-end;
 }
 .progress-time {
-  font-size: 22px;
+  font-size: 20px;
   margin-right: 20px;
 }
 .icon-button {

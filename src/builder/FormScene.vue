@@ -4,7 +4,7 @@
         <div class="form-row">
             <button id="videoUpload" role="button" class="icon-button"
                 title="Upload the main video file"
-                @change="changeEl(updatedData[sceneNum])"
+                @change="changeFormData(updatedData[sceneNum])"
                 @click="uploadFile('video')"
             >
                 <icon-upload-cloud title="Upload the main video file"/>
@@ -13,13 +13,13 @@
             <input id="video"
               v-model="updatedData[sceneNum].videoBackground"
               placeholder="required"
-              @change="changeEl(updatedData[sceneNum])"
+              @change="changeFormData(updatedData[sceneNum])"
             >
         </div>
         <div class="form-row">
             <button id="captionUpload" role="button" class="icon-button"
                 title="Upload an optional vtt captions file for this video."
-                @change="changeEl(updatedData[sceneNum])"
+                @change="changeFormData(updatedData[sceneNum])"
                 @click="uploadFile('captions')"
             >
                 <icon-upload-cloud title="Upload an optional vtt captions file for this video"/>
@@ -28,19 +28,19 @@
             <input id="captions"
               v-model="updatedData[sceneNum].captionsFile"
               placeholder="optional"
-              @change="changeEl(updatedData[sceneNum])"
+              @change="changeFormData(updatedData[sceneNum])"
             >
         </div>
         <div class="form-row">
             <label for="branches">Branches:</label>
             <input id="branches" class="short-input" type="number" inputmode="numeric"
                 v-model="updatedData[sceneNum].branchCount" placeholder="Number of branches"
-                @change="changeEl(updatedData[sceneNum])"
+                @change="changeFormData(updatedData[sceneNum])"
             >
             <label for="return">Return Time:</label>
             <input id="return" class="short-input" type="number" inputmode="decimal"
                 v-model="updatedData[sceneNum].returnTime" placeholder="Time in seconds"
-                @change="changeEl(updatedData[sceneNum])"
+                @change="changeFormData(updatedData[sceneNum])"
             >
         </div>
       </div>
@@ -82,12 +82,12 @@
                   <form-message
                       v-if="cue.type === 'AnimatedMessage'"
                       :formData="cue"
-                      @itemChanged="changeEl"
+                      @itemChanged="changeFormData"
                   />
                   <form-info-panel
                       v-if="cue.type === 'InfoPanel'"
                       :formData="cue"
-                      @itemChanged="changeEl"
+                      @itemChanged="changeFormData"
                   />
                   <!--other cue specific comps-->
               </div>
@@ -102,7 +102,7 @@
           </button>
           <button role="button" class="icon-button right"
               title="Save changes"
-              @click="$emit('updateChanges', updatedData)"
+              @click="$emit('saveChanges', updatedData)"
           >
               Save Scene Changes <icon-save-file/>
           </button>
@@ -169,13 +169,15 @@ export default {
             }]// don't mutate the prop
         }
     },
+
     mounted () {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
             this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
-              cue.index = index;// pointer?
+              cue.index = index;// inject a pointer to switch tabs on cuechange
             });
+            console.log('FormScene updatedData:', this.updatedData);
 
             // interations container. class="interaction-overlay"
             this.screenEls = document.querySelector('.interaction-overlay');
@@ -183,7 +185,6 @@ export default {
             // video event listener
             // toolbar sends play, pause, rewind stepBack to intro
             var comp = this;
-            // console.log('updatedData:', comp.updatedData);
             var vidPlayer = document.querySelector('.video-element');
             // console.log(vid.textTracks.length, vid.textTracks);
             vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
@@ -201,7 +202,7 @@ export default {
               }
             });
             vidPlayer.addEventListener('timeupdate', function () {
-              comp.progress = this.currentTime.toFixed(3);
+              comp.progress = parseFloat(this.currentTime.toFixed(3));
             });
         });
     },
@@ -226,6 +227,11 @@ export default {
           if (data) {
             data.start = this.progress;
             data.index = len;
+            // add to updatedData and inform EditorModal
+            if (data.type !== 'fakeType') {
+              this.updatedData[this.sceneNum].cueData.push(data);
+              this.$emit('saveChanges', this.updatedData);
+            }
           }
           console.log('Add new Interaction:', data);
           // this.updatedData[this.sceneNum].cueData.push(data);
@@ -234,18 +240,29 @@ export default {
         },
 
         /**
-         * update sceneData or cueData
-         * @param val - Object will contain .index if cueData
+         * update sceneData or cueData from itemChanged
+         * @param val Object - will contain .index if cueData
          */
-        changeEl: function(val) {
-          if (val.index !== undefined) {
-            //console.log('cueData:', val.index, val);
+        changeFormData: function(val) {
+          // console.log('changeFormData:', val);
+          // ToDo: parseFloat each val.property here
+          // for (var item in val) {
+          //   console.log(item, val[item]);
+          //   // var value = val[item];// .includes is not a function
+          //   // if (value.includes('%')) { console.log('---%'); }
+          //   if (parseFloat(val[item])) {
+          //     val[item] = parseFloat(val[item]);
+          //     console.log('--- float:', val[item]);
+          //   }
+          // }
+          if (val.hasOwnProperty('index')) {
+          // if (val.index !== undefined) {
+            // console.log('cueData:', val.index, val);
             this.updatedData[this.sceneNum].cueData[val.index] = val;
           } else {
             //console.log('scene:', val);
             this.updatedData[this.sceneNum] = val;
           }
-            
         }
     }
 }
@@ -303,9 +320,9 @@ export default {
         margin-bottom: 8px;
     }
     .short-input {
-        width: 10%;
+        width: 15%;
         float: unset;
-        margin-right: 40px;
+        margin-right: 30px;
     }
     .short-text-input {
         width: 10%;

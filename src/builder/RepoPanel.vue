@@ -45,12 +45,17 @@ export default {
    */
   name: "RepoPanel",
   components: {},
-  props: {
-    repoImages: {
-      type: Array,
-      default() {
-        return []
-      }
+  // props: {
+  //   repoImages: {
+  //     type: Array,
+  //     default() {
+  //       return []
+  //     }
+  //   }
+  // },
+  data() {
+    return {
+      repoImages: ['images/Caroline_left_pointing.png', 'images/customer_mother_boy.png', 'images/cookies.png', 'images/garlic_sauce.png'],
     }
   },
   mounted() {

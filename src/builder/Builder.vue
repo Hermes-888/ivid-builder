@@ -3,7 +3,6 @@
         <transition name="show">
             <repo-panel name="cloud-repository"
                 v-show="repoVisible"
-                :repo-images="repoImages"
                 @closeRepo="repoVisible = !repoVisible"
                 @imageSelected="repoImageSelected"
             />
@@ -14,24 +13,17 @@
           @toggleRepo="toggleRepoPanel"
           @editCurrentData="editCurrentData"
           @saveFile="saveFile"
-          @restart="$emit('restart')"
+          @restart="$emit('updateData',actualData);$emit('restart');"
           @addNew="addNewCue"
         />
         <editor-modal
           v-show="showEditorModal"
+          :key="currentKey"
           :currentData="currentData"
           @closeModal="showEditorModal=false"
-          @saveChanges="updateItemData"
+          @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
-        <!-- <edit-panel ref="editPanel"
-            :itemHeaders="itemHeaders"
-            :itemData="itemData"
-            :sceneVisible="sceneVisible"
-            @toggleRepo="toggleRepoPanel"
-            @updateItemData="updateItemData"
-            @saveFile="saveFile"
-        /> -->
     </div>
 </template>
 
@@ -39,8 +31,8 @@
 /**
  * Main Builder layer holds RepoPanel 
  * 
- * introContent and sceneData get edited here?
- * to refresh data, $emit('updateData', updatedData)
+ * manage introContent and sceneData
+ * to refresh data, $emit('updateData', actualData)
  * sceneVisible determines Intro or Scene
  * 
  * allData to select IntroContent or SceneData[num].cueData[]
@@ -50,15 +42,13 @@
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import EditorModal from "./EditorModal.vue";
-//import EditPanel from "./EditPanel.vue";// DragImagePanel & DragTextPanel
 
 export default {
     name: "Builder",
     components: {
         RepoPanel,
         BuilderToolbar,
-        EditorModal,
-        //EditPanel
+        EditorModal
     },
     props: {
         sceneVisible: {
@@ -82,38 +72,14 @@ export default {
         // language = data[index]
         repoVisible: false,// toggle RepoPanel
         showEditorModal: false,// toggle
-        sceneNum: 0,// main scene
+        sceneNum: 0,// main scene, branches[1,2,3]
         vidPlayer: null,
         progress: 0,// video currenttime
-        selectedRowId: 0,// IntroContent or SceneData.cueData
-        repoImages: ['images/Caroline_left_pointing.png', 'images/customer_mother_boy.png', 'images/cookies.png', 'images/garlic_sauce.png'],
-
-        itemHeaders: ['ID', 'Cues', 'Screen Text', 'Text Action', 'Image Info', 'Action', 'Image'],
-        // rawdata allData, introContent, sceneLanguage
-        itemData: [
-            {
-                type: 'data',
-                rowId: '01-02',
-                fullText: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                screenText: {
-                    text: '<div><b>Ingredients:</b><ul><li>Garlic</li><li>Olive Oil</li><li>Salt</li></ul></div>',
-                    color: '',
-                    location: {top: 85, left: 400}
-
-                },
-                textPresentation: '<p>Add the list of ingredients over the chalkboard.</p>',
-                imageDescription: '<p>Animate the food sliding in from the <b>right side</b> of the screen.</p>',
-                imagePresentation: '<div>Add Garlic Sauce</div>',
-                imageData: {
-                    url: 'images/garlic_sauce.png',
-                    location: {'top': 300, 'left': 300, 'width': 247, 'height': 156}
-                    // location: {'top': 335, 'left': 474, 'width': 247, 'height': 156}
-                }
-            }
-        ],
+          selectedRowId: 0,// IntroContent or SceneData.cueData
         // = allData.introContent[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
-        currentData: null
+        currentData: null,
+        currentKey: 0// force update in EditorModal
       }
     },
     // mounted () {
@@ -156,14 +122,14 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-              // console.log('sceneVisible currentData:', this.currentData);
+              console.log('sceneVisible currentData:', this.currentData);
             }
             // video player currenttime
             var comp = this;
             if (!this.vidPlayer) {
               this.vidPlayer = document.querySelector('.video-element');
               this.vidPlayer.addEventListener('timeupdate', function () {
-                comp.progress = this.currentTime.toFixed(3);
+                comp.progress = parseFloat(this.currentTime.toFixed(3));
               });
             }
           }
@@ -187,7 +153,7 @@ export default {
          * ToDo: fix selectedRowId = index of introContent or sceneData.cueData
          */
         repoImageSelected: function (filename) {
-          console.log('selectedRowId', this.selectedRowId);
+          console.log('repoImageSelected', filename);
           if (this.$root.selectedRowId) {
             console.log('selectedRowId', this.selectedRowId);
             //this.itemData[this.$root.selectedRowId].imageData.url = filename;
@@ -200,53 +166,51 @@ export default {
           // console.log('editCurrentData', this.currentData);
         },
         /**
-         * called from: Table / Panel, separate instances of itemData
-         * update currentData, allData
-         * text has changed
-         * NOTE: table itemData gets changed
+         * called from: EditorModal
+         * update currentData, allData, actualData.sceneLanguage[this.language].sceneData
          *
          * @param data - Object currentData
-         * @param cueIndex - Int which sceneData[index]
          */
-        updateItemData: function (data, cueIndex) {
-            console.log('Builder updateItemData:', data, cueIndex);
-            // console.log('$refs:', this.$refs);
-            // this.showEditorModal = false;
-            // ToDo: update actualData w/data and send it to App
+        saveChanges: function (data) {
+            console.log('Builder saveChanges:', data);
             if (this.sceneVisible) {
-              // update sceneLanguage[language].sceneData
+              this.currentData[this.sceneNum] = data;
               this.actualData.sceneLanguage[this.language].sceneData = data;
-              // data is the whole sceneData[]
-              // if (cueIndex) {
-              //   // update sceneLanguage[language].sceneData[?Define Global?].cueData[cueIndex]
-              // }
             } else {
               // update introContent[language]
               this.actualData.introContent[this.language] = data;
             }
-            // send to App to refresh
+            // send to App
             this.$emit('updateData', this.actualData);
-
-            if (cueIndex) {
-                // this.itemData[cueIndex] = data;
-                // editPanel.options.propsData.itemData
-                // rawdata
-                console.log('cueIndex=',cueIndex);//, this.$refs.editPanel.itemData[cueIndex]);
-                // this.$refs.editPanel.itemData[cueIndex] = data;
-                // this.$refs.editPanel.$options.propsData.itemData[cueIndex] = data;
-
-                // for App rawdata
-                // this.$emit('updateData', this.actualData);
-                // this.$forceUpdate();
-            }
+            // console.log('saveChanges:', this.actualData);
         },
+        /**
+         * Add a new cue to sceneData.cueData
+         * only when Scene is visible
+         */
         addNewCue: function(data) {
+          console.log('Builder Add new:', data, 'currentData:', this.currentData);
           var len = this.currentData[this.sceneNum].cueData.length;
           if (data) {
             data.start = this.progress;
             data.index = len;
+            if (data.type !== 'fakeType') {
+              this.currentData[this.sceneNum].cueData.push(data);
+              this.actualData.sceneLanguage[this.language].sceneData = this.currentData;
+              // send to App
+              this.$emit('updateData', this.actualData);
+              // ToDo Add new cue from Toolbar is not updating FormScene
+              // this.$forceUpdate();this is NOT firing EditorModal watch currentData
+              // https://michaelnthiessen.com/force-re-render/
+              //this.currentKey += 1;// force update to trigger '-- watch editor currentData
+              // force update works but FormScene is not populated
+            }
           }
-          console.log('Builder Add new:', data);
+          console.log('Builder Add new:', data, 
+                      'currentData:', this.currentData, 
+                      'actualData:', this.actualData
+          );
+
           // show Editor panel
           this.showEditorModal = true;
           // add selected type (data) to cueData[]

@@ -33,13 +33,16 @@
           <div class="row">
             <p>Select an interaction type, it will be added at the current time. {time}</p>
           </div>
-          <div class="row">
-            <span class="smaller">Selected: {{ selected }}</span>
-          </div>
+          
         </div>
       </div>
       <div class="addnew-footer">
-        <div class="addnew-footer-buttons">
+        <div class="addnew-footer-buttons"
+         v-show="selected"
+        >
+          <div class="row">
+            <span>Selected: {{ selected }}</span>
+          </div>
           <button role="button" class="icon-button"
             title="Click to add new element"
             @click="$emit('addNew', selectedObj); $emit('closeModal')"
@@ -81,9 +84,9 @@
           mcInstance: null,
           headerText: 'Add New Interaction',
           selected: '',// type
-          types: ['Title Screen', 'Animated Message', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
-          // object for each type
-          selectedObj: {"type":"fake type"}
+          types: ['Title Screen', 'Animated Message', 'Inforation Panel', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
+          // $emit addNew w/ object for each type
+          selectedObj: {"type":"fakeType"}
         }
     },
     // mounted () {
@@ -92,7 +95,46 @@
     methods: {
       typeSelected: function(type) {
         console.log('typeSelected:', type);
-        // set object data
+        this.selectedObj = {"type":"fake type"};
+        // set selectedObj data
+        switch (type) {
+          case 'Animated Message':
+            this.selectedObj = {
+							"start": 0,
+							"type": "AnimatedMessage",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "35%",
+							"pauseVideo": false,
+							"resumePlayback": true,
+							"removeMessage": true,
+							"messageText": "",
+							"duration": 1.5
+						};
+            break;
+          case 'Inforation Panel':
+            this.selectedObj = {
+							"start": 0,
+							"type": "InfoPanel",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "25%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"panelWidth": "40%",
+							"panelBkgColor": "rgba(3,117,163, 0.6)",
+							"infoTitle": "Title",
+							"titleColor": "#ffffff",
+							"infoText": "information to display.",
+							"buttonText": "Continue"
+						};
+            break;
+            // ToDo: TitleScreen, MultiChoice, MultiAnswer
+        }
       }
     }
 	}
@@ -146,20 +188,13 @@
   .row, select {
     font-size: 16px;
   }
-  .smaller {
-    padding: 8px;
-    border: 1px solid #333333;
-  }
   .addnew-footer {
-    padding-bottom: 10px;
-    /* border-top: 2px solid #888888; */
+    padding: 10px 0;
+    border-top: 2px solid #888888;
   }
-  /* .addnew-footer-buttons {
-    float: right;
-  } */
 
   .icon-button {
-    margin: 0 auto;
+    margin: 5px auto;
     padding: 0 8px;
     cursor: pointer;
     font-size: 18px;

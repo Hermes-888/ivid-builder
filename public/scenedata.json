@@ -71,7 +71,7 @@
 					"played": false,
 					"cueData": [
 						{
-							"start": 3.12,
+							"start": 7.3,
 							"type": "AnimatedMessage",
 							"useBlur": false,
 							"useOverlay": false,
@@ -85,7 +85,7 @@
 							"duration": 4
 						},
 						{
-							"start": 8.8,
+							"start": 12.015,
 							"type": "InfoPanel",
 							"useBlur": true,
 							"useOverlay": false,
