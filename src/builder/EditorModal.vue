@@ -146,10 +146,17 @@ import Vue from 'vue';
               comp.$emit('saveChanges', data);
             });
             this.$root.$on('repoImageSelected', function(filename) {
-              console.log('EditorModal repo listener:', filename);
-              comp.currentData.image = filename;
-              comp.mcInstance.formData = comp.currentData;
-              document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
+              console.log('EditorModal repo:', filename);
+              console.log('instance:', comp.mcInstance.$options.name);
+
+              if (comp.mcInstance.$options.name === 'FormIntroduction') {
+                comp.currentData.image = filename;
+                comp.mcInstance.updatedData.image = filename;
+                document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
+              } else {
+                // FormScene
+              }
+              comp.mcInstance.formData = comp.currentData;// didn't update
             });
           }
 
@@ -168,7 +175,7 @@ import Vue from 'vue';
             comp.editorBody.innerHTML = '';
             comp.editorBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('saveChanges', function(data) {
-              console.log('Editor Scene saveChanges:', data);
+              console.log('Editor Scene saveChanges:', data);//   do both hear this too?
               // comp.$emit('closeModal');
               comp.$emit('saveChanges', data);// inform Builder
             });
@@ -198,7 +205,7 @@ import Vue from 'vue';
 	.editor-panel {
 		position: absolute;
     top: 5vh;
-		left: 1%;
+		left: 33%;
 		width: 33%;
     padding: 0;
 		font-size: 18px;

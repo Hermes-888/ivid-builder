@@ -108,7 +108,7 @@ export default {
     data () {
         return {
             showBtnPalette: false,
-            screenClasses: ['introduction', 'intro-text', 'start-button', 'svg.circle', 'svg.polygon'],
+            // screenClasses: ['introduction', 'intro-text', 'start-button', 'svg.circle', 'svg.polygon'],
             updatedData: {
                 titleText: '',
                 text: '',
@@ -124,6 +124,16 @@ export default {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
             this.updatedData.buttonColor = '#333333';// add?
         });
+    },
+    watch: {
+      formData: {
+        immediate: true,
+        handler(newstate, oldstate) {
+          this.updatedData = JSON.parse(JSON.stringify(this.formData));
+          this.updatedData.buttonColor = '#333333';// add?
+          console.log('FormIntroduction updated:', this.updatedData);
+        }
+      }
     },
     methods: {
         uploadFile: function(type) {

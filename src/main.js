@@ -49,6 +49,8 @@ import iconPlus from 'vue-material-design-icons/Plus.vue';
 Vue.component('icon-plus', iconPlus);
 import iconHideLayers from 'vue-material-design-icons/LayersOff.vue';
 Vue.component('icon-hide-layers', iconHideLayers);
+import iconMarker from 'vue-material-design-icons/MapMarkerOutline.vue';
+Vue.component('icon-marker', iconMarker);
 
 Vue.config.productionTip = false;
 new Vue({

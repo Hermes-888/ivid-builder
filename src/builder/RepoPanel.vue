@@ -55,7 +55,14 @@ export default {
   // },
   data() {
     return {
-      repoImages: ['images/Caroline_left_pointing.png', 'images/customer_mother_boy.png', 'images/cookies.png', 'images/garlic_sauce.png'],
+      // ToDo: read a folder? external data
+      repoImages: [
+        'images/Caroline_left_pointing.png',
+        'images/customer_mother_boy.png', 
+        'images/allergen_platter_lt.png',
+        'images/cookies.png', 
+        'images/garlic_sauce.png'
+      ],
     }
   },
   mounted() {
@@ -73,9 +80,6 @@ export default {
           Object.assign(event.target.style, {
             width: `${event.rect.width}px`
           });
-        },
-        end: function (e) {
-          // console.log(e.type, e.target.style.width);
         }
       }
     });

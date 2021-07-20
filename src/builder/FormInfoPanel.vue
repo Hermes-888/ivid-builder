@@ -2,7 +2,7 @@
     <div class="form-body">
         <div class="form-row-half">
             <label for="startat">Start Time:</label>
-            <input type="text" id="startat" class="short-text-input"
+            <input type="text" id="startat" class="input-med"
                 v-model="updatedData.start"
                 @change="$emit('itemChanged', updatedData)"
             >
@@ -49,7 +49,7 @@
             <label for="out" class="wide-label">Animate Out</label>
 
             <label for="to">| Animate To:</label>
-            <input type="text" id="to" class="short-text-input"
+            <input type="text" id="to" class="input-short"
                 v-model="updatedData.animateTo"
                 @change="$emit('itemChanged', updatedData)"
             >
@@ -62,7 +62,7 @@
         <div class="form-row">
           <div class="column-left">
             <label for="panelWidth">Panel width:</label>
-            <input type="text" id="panelWidth" class="short-text-input"
+            <input type="text" id="panelWidth" class="input-short"
                 v-model="updatedData.panelWidth"
                 @change="$emit('itemChanged', updatedData)"
             >
@@ -110,7 +110,7 @@
         </div>
         <div class="form-row">
             <label for="buttonText">Button text:</label>
-            <input type="text" id="buttonText" class="short-text-input"
+            <input type="text" id="buttonText" class="input-short"
                 v-model="updatedData.buttonText"
                 @change="$emit('itemChanged', updatedData)"
             >
@@ -188,11 +188,14 @@ export default {
             //console.log('changeBkgColor:', color);
             this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.bkgcolor.style.backgroundColor = color.hex8;
+            // hard code?
+            document.querySelector('.panel').style.backgroundColor = color.hex8;
             this.$emit('itemChanged', this.updatedData);
         },
         changeTxtColor: function (color) {
             this.updatedData.textColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.txtcolor.style.backgroundColor = color.hex8;
+            document.querySelector('.info-title').style.color = color.hex8;
             this.$emit('itemChanged', this.updatedData);
         }
     }
@@ -231,8 +234,11 @@ export default {
     #buttonText {
       width: 66%;
     }
-    .short-text-input {
-        width: 40px;
+    .input-med {
+      width: 60px
+    }
+    .input-short {
+        width: 50px;
     }
     .long-text-input {
         width: 82%;
@@ -261,7 +267,7 @@ export default {
         border-left-width: 0;
     }
     textarea {
-        width: 87%;
+        width: 99%;
         height: 80px;
         resize: none;
         margin-bottom: 8px;

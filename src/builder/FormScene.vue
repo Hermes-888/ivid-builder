@@ -65,6 +65,13 @@
                   <icon-plus title="Add new interaction"/>
                 </a>
               </span>
+              <span style="float: right;">
+                <a class="jump-button" title="Jump to selected cue."
+                    @click="changeVideoTime"
+                >
+                  <icon-marker title="Jump to selected cue."/>
+                </a>
+              </span>
           </div>
           <div
               v-for="(cue, index) in updatedData[sceneNum].cueData"
@@ -166,10 +173,22 @@ export default {
                 branchCount: 0,
                 returnTime: 0,
                 cueData: []// array of interaction objects
-            }]// don't mutate the prop
+            }],// don't mutate the prop
+            vidPlayer: null
         }
     },
-
+    watch: {
+      formData: {
+        immediate: true,
+        handler(newstate, oldstate) {
+          this.updatedData = JSON.parse(JSON.stringify(this.formData));
+          this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
+            cue.index = index;// inject a pointer to switch tabs on cuechange
+          });
+          console.log('FormScene updated:', this.updatedData);
+        }
+      }
+    },
     mounted () {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
@@ -185,12 +204,12 @@ export default {
             // video event listener
             // toolbar sends play, pause, rewind stepBack to intro
             var comp = this;
-            var vidPlayer = document.querySelector('.video-element');
-            // console.log(vid.textTracks.length, vid.textTracks);
-            vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
+            this.vidPlayer = document.querySelector('.video-element');
+            // console.log(this.vidPlayer.textTracks.length, this.vidPlayer.textTracks);
+            this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
               if (e.target.activeCues.length > 0) {
                 console.log('cuechange:', e.target.activeCues[0].id);
-                // set activetab
+                // set activetab if cue is active
                 comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
                   if (cue.type === e.target.activeCues[0].id) {
                     comp.activetab = cue.index;
@@ -201,12 +220,17 @@ export default {
                 console.log('screenEls[0]:', comp.screenEls.children);
               }
             });
-            vidPlayer.addEventListener('timeupdate', function () {
+            this.vidPlayer.addEventListener('timeupdate', function () {
               comp.progress = parseFloat(this.currentTime.toFixed(3));
             });
         });
     },
     methods: {
+        changeVideoTime: function() {
+          this.vidPlayer.currentTime = this.updatedData[this.sceneNum].cueData[this.activetab].start;
+          this.screenEls = document.querySelector('.interaction-overlay');
+          // console.log('screen els:', this.screenEls);
+        },
         /**
          * Determine which upload button Audio or Image file by id
          * ToDo: needs to upload to public/audio or public/images ???
@@ -352,6 +376,12 @@ export default {
     .add-button {
         padding: 2px 5px !important;
         margin-top: 4px;
+    }
+    .jump-button {
+      font-size: 24px;
+      padding: 0 5px !important;
+      border: none !important;
+      background-color: transparent !important;
     }
 
     /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
