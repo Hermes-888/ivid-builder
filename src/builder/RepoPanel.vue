@@ -15,54 +15,107 @@
     </div>
 
     <div class="repo-container">
-      <div class="repo-drag-handle"></div>
-      <div class="image-holder"
-        v-for="(img, index) in repoImages"
-        :key="index"
-      >
-        <img class="image-thumbs"
-          :data-index="index"
-          :src="img"
-          :title="extractFilename(img)"
-          @click="imageSelected"
-        />
-        <div class="repo-image-name"
-          v-html="simplifyFilename(img)"
-        ></div>
+      <div id="tabs" class="tabs-container">
+          <div class="tabs">
+              <span
+                  v-for="(tab, index) in repoAssets"
+                  :key="index"
+              >
+                  <a :class="[activetab === index ? 'active' : '']"
+                      @click="activetab=index"
+                      v-text="tab"
+                  ></a>
+              </span>
+          </div>
+          <div class="tab-content"
+              :data-index="0"
+              v-if="activetab === 0"
+          >
+              <div class="image-holder"
+                v-for="(aud, num) in repoSounds"
+                :key="num"
+              >
+                <play-audio-button :audioPath="repoSounds[num]"/>
+                <div class="repo-image-name"
+                  v-html="simplifyFilename(aud)"
+                ></div>
+              </div>
+          </div>
+          <div class="tab-content"
+              :data-index="1"
+              v-if="activetab === 1"
+          >
+            <div class="image-holder"
+                v-for="(vid, num) in repoVideos"
+                :key="num"
+              >
+                <div class="repo-image-name"
+                  v-html="simplifyFilename(vid)"
+                ></div>
+              </div>
+          </div>
+          <div class="tab-content"
+              :data-index="2"
+              v-if="activetab === 2"
+          >
+              <div class="image-holder"
+                v-for="(img, num) in repoImages"
+                :key="num"
+              >
+                <img class="image-thumbs"
+                  :data-index="num"
+                  :src="img"
+                  :title="extractFilename(img)"
+                  @click="imageSelected"
+                />
+                <div class="repo-image-name"
+                  v-html="simplifyFilename(img)"
+                ></div>
+              </div>
+          </div>
       </div>
+      <!-- <div class="repo-drag-handle"></div> -->
     </div>
-    <div class="upload-button">UPLOAD NEW IMAGE or VIDEO</div>
+    <div class="upload-button">
+      <span>UPLOAD NEW </span>
+      <span v-text="repoAssets[activetab]"></span>
+    </div>
   </div>
 </template>
 
 <script>
 import Interact from 'interactjs';
+import PlayAudioButton from '../components/PlayAudioButton.vue';
 
 export default {
   /**
-   * half screen drawer overlay of images to select
-   * triggered by
+   * half screen drawer overlay
+   * Tabs for Audio, Video & Images to select
    */
   name: "RepoPanel",
-  components: {},
-  // props: {
-  //   repoImages: {
-  //     type: Array,
-  //     default() {
-  //       return []
-  //     }
-  //   }
-  // },
+  components: {
+    PlayAudioButton
+  },
   data() {
     return {
       // ToDo: read a folder? external data
+      activetab: 2,
+      repoAssets: ['Sounds','Videos','Images'],
+      repoSounds: [
+        'audio/foundit.mp3', 
+        'audio/hint.mp3', 
+        'audio/nope.mp3', 
+        'audio/what_next.mp3', 
+        'audio/feedback.mp3'
+      ],
+      repoVideos: ['fake/Scene_1.mp4', 'fake/Branch_A.mp4', 'fake/Branch_B.mp4'],
       repoImages: [
         'images/Caroline_left_pointing.png',
         'images/customer_mother_boy.png', 
         'images/allergen_platter_lt.png',
         'images/cookies.png', 
         'images/garlic_sauce.png'
-      ],
+      ]
     }
   },
   mounted() {
@@ -109,7 +162,7 @@ export default {
 .repo-panel {
   position: absolute;
   top: 8px;
-  left: 0; /* transition in StoryBoard animates onto screen */
+  left: 0;
   width: 27vw;
   height: 95vh;
   z-index: 10;
@@ -122,7 +175,7 @@ export default {
   -ms-touch-action: none;
   touch-action: none;
   min-width: 25%;
-  max-width: 65%; /* drag wider handle? Interact resizeable? */
+  max-width: 65%;
 }
 
 .repo-header {
@@ -142,20 +195,17 @@ export default {
 
 .repo-description {
   padding: 0 5%;
-  border-bottom: 1px solid #666666;
 }
 
 .repo-container {
-  /*display: flex;*/
-  /*padding: 2%;*/
-  margin-left: 4%;
+  margin-left: 2%;
 }
 
 .repo-drag-handle {
   position: absolute;
   right: 0;
   width: 15px;
-  height: 80%;
+  height: 70%;
 }
 
 .repo-drag-handle:hover {
@@ -190,6 +240,7 @@ export default {
   left: 12%;
   height: 30px;
   padding: 10px;
+  font-size: 16px;
   color: #024747;
   text-align: center;
   font-weight: 600;
@@ -204,5 +255,63 @@ export default {
 .upload-button:hover {
   border: 3px solid #012b01;
   background-color: #c2f1c2;
+}
+
+/* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
+.tabs-container {  
+    width: 100%;
+    /* margin: 10px auto; */
+}
+
+/* Style the tabs */
+.tabs {
+    overflow: hidden;
+    margin-left: 20px;
+    margin-bottom: -2px;/* hide bottom border */
+}
+
+.tabs ul {
+    list-style-type: none;
+    margin-left: 20px;
+}
+
+.tabs a {
+    float: left;
+    cursor: pointer;
+    padding: 5px 15px;
+    transition: background-color 0.2s;
+    border: 1px solid #888888;
+    border-right: none;
+    background-color: #f1f1f1;
+    border-radius: 6px 6px 0 0;
+    /* font-weight: bold; */
+}
+.tabs a:last-child { 
+    border-right: 1px solid #888888;
+}
+
+/* Change background color of tabs on hover */
+.tabs a:hover {
+    background-color: #aaa;
+    color: #fff;
+}
+
+/* Styling for active tab */
+.tabs a.active {
+    background-color: #fff;
+    color: #333333;
+    border-bottom: 2px solid #fff;
+    cursor: default;
+}
+
+/* Style the tab content */
+.tab-content {
+    width: 95%;
+    contain: layout;
+    padding: 5px;
+    overflow-wrap: anywhere;
+    border: 1px solid #888888;
+    background-color: #ffffff;
+    border-radius: 8px;
 }
 </style>
