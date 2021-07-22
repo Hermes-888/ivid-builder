@@ -195,6 +195,7 @@ export default {
 
 .repo-description {
   padding: 0 5%;
+  font-size: smaller;
 }
 
 .repo-container {
@@ -237,24 +238,24 @@ export default {
 .upload-button {
   position: absolute;
   bottom: 1%;
-  left: 12%;
-  height: 30px;
-  padding: 10px;
+  left: 2%;
+  width: 92%;
+  padding: 5px;
   font-size: 16px;
-  color: #024747;
+  color: #333;
   text-align: center;
   font-weight: 600;
   line-height: 30px;
   white-space: pre-wrap;
   border-radius: 12px;
-  border: 3px solid #008000;
-  background-color: #8fbc8f;
+  border: 3px solid #888888;
+  background-color: #f1f1f1;
   cursor: pointer;
 }
 
 .upload-button:hover {
-  border: 3px solid #012b01;
-  background-color: #c2f1c2;
+  color: #fff;
+  background-color: #aaa;
 }
 
 /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
@@ -284,7 +285,7 @@ export default {
     border-right: none;
     background-color: #f1f1f1;
     border-radius: 6px 6px 0 0;
-    /* font-weight: bold; */
+    font-weight: bold;
 }
 .tabs a:last-child { 
     border-right: 1px solid #888888;
@@ -306,10 +307,9 @@ export default {
 
 /* Style the tab content */
 .tab-content {
-    width: 95%;
-    contain: layout;
-    padding: 5px;
-    overflow-wrap: anywhere;
+    width: 96%;
+    padding: 2px;
+    /* overflow-wrap: anywhere; */
     border: 1px solid #888888;
     background-color: #ffffff;
     border-radius: 8px;
