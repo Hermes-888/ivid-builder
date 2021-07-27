@@ -87,7 +87,7 @@
 				 * use debug to wrap console logs, exit early or other needs
 				 * setting this to false will not do these things
 				 */
-				debug: false,
+				debug: true,
 				/**
 				 * audio element gets set at watch.sceneVisible
 				 * audioVolume could be adjusted by LMS
@@ -162,6 +162,15 @@
 					}
 				}
 			},
+      sceneData: {
+        immediate: true,
+        handler(newdata) {
+          console.log('- watch sceneData changed:', newdata);
+          //this.$nextTick(function () {
+          this.stepNum = 1000;// trigger refreh
+          //});
+        }
+      },
 			stepNum: {
 				immediate: true,
 				handler(num) {
@@ -170,59 +179,60 @@
 						 * set currentStep to the desired sceneData to display
 						 * bind the template elements to currentStep
 						 */
-						this.currentStep = this.sceneData[num];
-						this.currentScene = num;// stepNum
-						if (this.debug) {
-							console.log('--- watch stepNum:', num);
-							console.log('video file:', this.currentStep.videoBackground);
-							// console.log('--- currentScene:', this.currentScene, 'currentStep:', this.currentStep);
-						}
+            if (num > this.sceneData.length) {
+              console.log('-- watch stepNum TRIGGER:', num);
+              this.stepNum = 0;
+            } else {
+              this.currentStep = this.sceneData[num];
+              this.currentScene = num;// stepNum
+              if (this.debug) {
+                console.log('--- watch stepNum:', num);
+                console.log('video file:', this.currentStep.videoBackground);
+                // console.log('--- currentScene:', this.currentScene, 'currentStep:', this.currentStep);
+              }
 
-						// check if branches have all been viewed
-						if (this.stepNum === 0 && this.currentStep.hasOwnProperty('branchCount')) {
-							this.branchCount = this.currentStep.branchCount;
-							if (this.debug) {
-								console.log('has branches:', this.currentStep.branchCount);
-							}
-						}
-						/**
-						 * if cueData, construct a VTTCue and set the cue.id & cue.text
-						 * save cues to currentCues, bound to ActiveVideo VTTCues
-						 * which are added to the video.TextTrack
-						 */
-						var comp = this;// scope
-						if (this.currentStep.hasOwnProperty('cueData')) {
-							comp.currentCues = [];// bound to ActiveVideo.vttCues
-							this.currentStep.cueData.forEach(function(data) {
-								var cue = new VTTCue(data.start,data.start+0.5, '');
-								cue.id = data.type;
-								cue.text = JSON.stringify(data);
-								comp.currentCues.push(cue);// used by ActiveVideo
-								if (comp.debug) {
-									console.log('New Cue:', cue);
-								}
-							});
-						}
+              // check if branches have all been viewed
+              if (this.stepNum === 0 && this.currentStep.hasOwnProperty('branchCount')) {
+                this.branchCount = this.currentStep.branchCount;
+                if (this.debug) {
+                  console.log('has branches:', this.currentStep.branchCount);
+                }
+              }
+              /**
+               * if cueData, construct a VTTCue and set the cue.id & cue.text
+               * save cues to currentCues, bound to ActiveVideo VTTCues
+               * which are added to the video.TextTrack
+               */
+              var comp = this;// scope
+              if (this.currentStep.hasOwnProperty('cueData')) {
+                comp.currentCues = [];// bound to ActiveVideo.vttCues
+                this.currentStep.cueData.forEach(function(data) {
+                  var cue = new VTTCue(data.start,data.start+0.5, '');
+                  cue.id = data.type;
+                  cue.text = JSON.stringify(data);
+                  comp.currentCues.push(cue);// used by ActiveVideo
+                  if (comp.debug) {
+                    console.log('New Cue:', cue);
+                  }
+                });
+              }
 
-						// if played and has returnTime
-						if (this.currentStep.hasOwnProperty('returnTime')) {
-							if (this.currentStep.played) {
-								// tell video layer to jump to returnTime
-								this.$root.$emit('jumpTo', this.currentStep.returnTime);
-								if (this.debug) {
-									console.log('Emit jumpTo:', this.currentStep.returnTime);
-								}
-							}
+              // if played and has returnTime
+              if (this.currentStep.hasOwnProperty('returnTime')) {
+                if (this.currentStep.played) {
+                  // tell video layer to jump to returnTime
+                  this.$root.$emit('jumpTo', this.currentStep.returnTime);
+                  if (this.debug) {
+                    console.log('Emit jumpTo:', this.currentStep.returnTime);
+                  }
+                }
+              }
+              this.currentStep.played = true;
+              this.branches[this.stepNum] = true;
+              if (this.debug && this.branches) {
+                console.log('branch status:', this.branches);// [true, empty, false]
+              }
 						}
-						this.currentStep.played = true;
-						this.branches[this.stepNum] = true;
-						if (this.debug && this.branches) {
-							console.log('branch status:', this.branches);// [true, empty, false]
-						}
-
-						// play the first questionAudio and animate text
-						// this.playAudioFile(this.currentStep.questionAudio);
-						// this.showAnswers = this.showQuestion = true;
 					});
 				}
 			}

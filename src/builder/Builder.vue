@@ -20,7 +20,7 @@
           v-show="showEditorModal"
           :key="currentKey"
           :currentData="currentData"
-          @closeModal="showEditorModal=false"
+          @closeModal="closeEditorModal"
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
@@ -73,7 +73,8 @@ export default {
         repoVisible: false,// toggle RepoPanel
         showEditorModal: false,// toggle
         sceneNum: 0,// main scene, branches[1,2,3]
-        vidPlayer: null,
+        vidPlayer: null,// Player elements
+        interactionLayer: null,
         progress: 0,// video currenttime
           selectedRowId: 0,// IntroContent or SceneData.cueData
         // = allData.introContent[language] || allData.sceneLanguage[language].sceneData
@@ -82,15 +83,6 @@ export default {
         currentKey: 0// force update in EditorModal
       }
     },
-    // mounted () {
-    //   this.$nextTick(function() {
-    //     var comp = this;
-    //     var vidPlayer = document.querySelector('.video-element');
-    //     vidPlayer.addEventListener('timeupdate', function () {
-    //       comp.progress = this.currentTime.toFixed(3);
-    //     });
-    //   });
-    // },
     watch: {
       /**
        * set currentData to introContent, when allData is ready
@@ -132,6 +124,9 @@ export default {
                 comp.progress = parseFloat(this.currentTime.toFixed(3));
               });
             }
+            if (!this.interactionLayer) {
+              this.interactionLayer = document.querySelector('.interaction-overlay');
+            }
           }
         }
       },
@@ -164,7 +159,18 @@ export default {
         },
         editCurrentData: function() {
           this.showEditorModal = true;
+          document.querySelector('.builder-toolbar').style.backgroundColor = '#00000033';
+          if (this.interactionLayer) {
+            this.interactionLayer.style.display = 'none';
+          }
           // console.log('editCurrentData', this.currentData);
+        },
+        closeEditorModal: function() {
+          this.showEditorModal = false;
+          document.querySelector('.builder-toolbar').style.backgroundColor = 'transparent';
+          if (this.interactionLayer) {
+            this.interactionLayer.style.display = 'block';
+          }
         },
         /**
          * called from: EditorModal
@@ -257,7 +263,7 @@ export default {
     .builder {
         position: absolute;
         top: 0;
-        width: 99vw;
+        width: 100vw;
         /* border-bottom: 1px solid red; */
     }
 

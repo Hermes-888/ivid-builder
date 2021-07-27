@@ -3,21 +3,22 @@
         <div class="form-row-half">
             <label for="startat">Start Time:</label>
             <input type="text" id="startat" class="input-med"
-                v-model="updatedData.start"
-                @change="$emit('itemChanged', updatedData)"
+                v-model.number="updatedData.start"
+                @keypress="isNumber($event)"
+                @input="$emit('itemChanged', updatedData)"
             >
         </div>
         <div class="form-row">
             <input type="checkbox" id="blur"
                 v-model="updatedData.useBlur"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="blur" title="Blur the background during interaction">Use Blur</label>
 
             <span> -OR- </span>
             <input type="checkbox" id="overlay"
                 v-model="updatedData.useOverlay"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="overlay" title="Overlay the background to obscure it">Use Overlay</label>
             <span class="small-text"> (Neither=clear : NOT Both)</span>
@@ -25,33 +26,33 @@
         <div class="form-row">
             <input type="checkbox" id="pause"
                 v-model="updatedData.pauseVideo"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="pause" title="Pause the video during the interaction">Pause Video</label>
 
             <input type="checkbox" id="resume"
                 v-model="updatedData.resumePlayback"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="resume" title="Resume playing the video after the interaction">Resume Video</label>
         </div>
         <div class="form-row">
             <input type="checkbox" id="in"
                 v-model="updatedData.animateIn"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="in" class="wide-label">Animate In |</label>
 
             <input type="checkbox" id="out"
                 v-model="updatedData.animateOut"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             <label for="out" class="wide-label">Animate Out</label>
 
             <label for="to">| Animate To:</label>
             <input type="text" id="to" class="input-short"
                 v-model="updatedData.animateTo"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
         </div>
         <Sketch class="bkg-color-palette"
@@ -64,7 +65,7 @@
             <label for="panelWidth">Panel width:</label>
             <input type="text" id="panelWidth" class="input-short"
                 v-model="updatedData.panelWidth"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
           </div>
           <div class="column-right">
@@ -73,7 +74,7 @@
             </label>
             <div class="color-swatch" id="panelBkgColor"
                 ref="bkgcolor" title="Click to open a color picker, click again to close it"
-                @click="showBkgPalette = !showBkgPalette"
+                @click="showPalette"
             ></div>
           </div>
         </div>
@@ -87,14 +88,14 @@
             <label for="infoTitle">Title:</label>
             <input type="text" id="infoTitle" class="long-text-input"
                 v-model="updatedData.infoTitle"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
           </div>
           <div class="column-right">
             <label for="titleColor" title="Panel background color">Text color:</label>
             <div class="color-swatch" id="titleColor"
                 ref="txtcolor" title="Click to open a color picker, click again to close it"
-                @click="showTxtPalette = !showTxtPalette"
+                @click="showPalette"
             ></div>
           </div>
         </div>
@@ -104,7 +105,7 @@
         <div class="form-row">
             <textarea id="infoText"
                 v-model="updatedData.infoText"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
             </textarea>
         </div>
@@ -112,7 +113,7 @@
             <label for="buttonText">Button text:</label>
             <input type="text" id="buttonText" class="input-short"
                 v-model="updatedData.buttonText"
-                @change="$emit('itemChanged', updatedData)"
+                @input="$emit('itemChanged', updatedData)"
             >
         </div>
     </div>
@@ -180,22 +181,48 @@ export default {
         });
     },
     methods: {
+      // @keypress="isNumber($event)"
+      isNumber (evt) {
+          const keysAllowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+          if (!keysAllowed.includes(evt.key)) {
+            evt.preventDefault();
+          }
+        },
         /**
          * Color Picker
          * https://github.com/xiaokaike/vue-color
          */
+        showPalette: function (e) {
+          console.log('showPalette:', e.target.id);
+          if (e.target.id === 'panelBkgColor') {
+            this.showBkgPalette = !this.showBkgPalette;
+            if (this.showBkgPalette) {
+              this.$refs.bkgcolor.classList.add('swatch-glow');
+              // document.querySelector('#panelBkgColor').classList.add('swatch-glow');
+            } else {
+              this.$refs.bkgcolor.classList.remove('swatch-glow');
+              // document.querySelector('#panelBkgColor').classList.remove('swatch-glow');
+            }
+          } else {
+            this.showTxtPalette = !this.showTxtPalette;
+            if (this.showTxtPalette) {
+              this.$refs.txtcolor.classList.add('swatch-glow');
+              // document.querySelector('#titleColor').classList.add('swatch-glow');
+            } else {
+              this.$refs.txtcolor.classList.remove('swatch-glow');
+              // document.querySelector('#titleColor').classList.remove('swatch-glow');
+            }
+          }
+        },
         changeBkgColor: function (color) {
             //console.log('changeBkgColor:', color);
             this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.bkgcolor.style.backgroundColor = color.hex8;
-            // hard code?
-            document.querySelector('.panel').style.backgroundColor = color.hex8;
             this.$emit('itemChanged', this.updatedData);
         },
         changeTxtColor: function (color) {
-            this.updatedData.textColor = color.hex8;// .rgba is an object, reconstruct as string?
+            this.updatedData.titleColor = color.hex8;
             this.$refs.txtcolor.style.backgroundColor = color.hex8;
-            document.querySelector('.info-title').style.color = color.hex8;
             this.$emit('itemChanged', this.updatedData);
         }
     }
@@ -314,6 +341,11 @@ export default {
         height: 20px;
         cursor: pointer;
         border: 1px solid #333333;
+    }
+    .swatch-glow {
+      box-shadow: 0px 0px 20px 5px rgb(78, 236, 210);
+      /* in order: x offset, y offset, blur size, spread size, color */
+      /* blur size and spread size are optional (they default to 0) */
     }
     .palette-icon {
         font-size: 14px;

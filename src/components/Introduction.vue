@@ -44,7 +44,8 @@
 					return {
 						text: 'Your course description',
 						audio: '',
-						image: ''
+						image: '',
+            buttonColor: '#333333'
 					}
 				}
 			},

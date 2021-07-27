@@ -18,7 +18,7 @@
         </div>
         <div class="form-row">
             <button id="captionUpload" role="button" class="icon-button"
-                title="Upload an optional vtt captions file for this video."
+                title="Upload an optional vtt captions file for this video"
                 @change="changeFormData(updatedData[sceneNum])"
                 @click="uploadFile('captions')"
             >
@@ -33,15 +33,27 @@
         </div>
         <div class="form-row">
             <label for="branches">Branches:</label>
-            <input id="branches" class="short-input" type="number" inputmode="numeric"
+            <input id="branches" class="shorter-input" type="number" inputmode="numeric"
                 v-model="updatedData[sceneNum].branchCount" placeholder="Number of branches"
                 @change="changeFormData(updatedData[sceneNum])"
             >
-            <label for="return">Return Time:</label>
-            <input id="return" class="short-input" type="number" inputmode="decimal"
-                v-model="updatedData[sceneNum].returnTime" placeholder="Time in seconds"
-                @change="changeFormData(updatedData[sceneNum])"
+            <button id="captionUpload" role="button" class="icon-button"
+              title="Add new branch"
             >
+                <icon-plus title="Add new branch"/>
+            </button>
+            <!-- v-for sceneData.length (scenes) add buttons to switch sceneNum -->
+        </div>
+        <div class="form-row"
+          v-if="updatedData[sceneNum].branchCount > 0"
+        >
+          <label for="branchNum">Branch:</label>
+          <span id="branchNum" v-text="sceneNum"></span>
+          <label for="return">Return Time:</label>
+          <input id="return" class="short-input" type="number" inputmode="decimal"
+              v-model="updatedData[sceneNum].returnTime" placeholder="Time in seconds"
+              @change="changeFormData(updatedData[sceneNum])"
+          >
         </div>
       </div>
       <!-- cueData[] - use tabs to select which cue -->
@@ -66,10 +78,10 @@
                 </a>
               </span>
               <span style="float: right;">
-                <a class="jump-button" title="Jump to selected cue."
+                <a class="jump-button" title="Jump to selected cue"
                     @click="changeVideoTime"
                 >
-                  <icon-marker title="Jump to selected cue."/>
+                  <icon-marker title="Jump to selected cue"/>
                 </a>
               </span>
           </div>
@@ -95,6 +107,11 @@
                       v-if="cue.type === 'InfoPanel'"
                       :formData="cue"
                       @itemChanged="changeFormData"
+                  />
+                  <form-multi-choice
+                    v-if="cue.type === 'MultipleChoice'"
+                    :formData="cue"
+                    @itemChanged="changeFormData"
                   />
                   <!--other cue specific comps-->
               </div>
@@ -126,7 +143,14 @@
 import AddNewModal from './AddNewModal.vue';
 import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
-// ToDo: instance needed components?
+import FormMultiChoice from './FormMultiChoice.vue';
+
+// modalLayer screenElements
+import AnimatedMessage from '../components/AnimatedMessage.vue';
+import InfoPanel from '../components/InfoPanel.vue';
+import MultiChoice from '../components/MultiChoice.vue';
+
+import Vue from 'vue';
 
 export default {
     /**
@@ -152,6 +176,7 @@ export default {
         AddNewModal,
         FormMessage,
         FormInfoPanel,
+        FormMultiChoice
     },
     props: {
         formData: {
@@ -174,7 +199,12 @@ export default {
                 returnTime: 0,
                 cueData: []// array of interaction objects
             }],// don't mutate the prop
-            vidPlayer: null
+            vidPlayer: null,
+            // interactionLayer: null,// Player
+            modalLayer: null,// elements container
+            screenElements: [],// array of interactive elements
+            element: null,// copy of the interactive element
+            mcInstance: null,// element instance
         }
     },
     watch: {
@@ -186,50 +216,76 @@ export default {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
           console.log('FormScene updated:', this.updatedData);
+          // construct screenElements
+          this.constructElements(this.updatedData[this.sceneNum].cueData);
         }
-      }
+      },
+      activetab: {
+        immediate: true,
+        handler(newstate, oldstate) {
+          // console.log('activetab:', newstate, oldstate);
+          // loop thru screenElements, only show element for activetab
+          var comp = this;
+          this.screenElements.forEach(function(el, index) {
+            el.style.display = 'none';
+            if (index === comp.activetab) {
+              comp.screenElements[index].style.display = 'block';
+              comp.element = comp.screenElements[index];
+            }
+          });
+        }
+      }        
     },
     mounted () {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
-              cue.index = index;// inject a pointer to switch tabs on cuechange
-            });
-            console.log('FormScene updatedData:', this.updatedData);
+          this.updatedData = JSON.parse(JSON.stringify(this.formData));
+          this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
+            cue.index = index;// inject a pointer to switch tabs on cuechange
+          });
+          console.log('FormScene updatedData:', this.updatedData);
 
-            // interations container. class="interaction-overlay"
-            this.screenEls = document.querySelector('.interaction-overlay');
+          // interactions container. class="interaction-overlay"
+          this.modalLayer = document.querySelector('.modal-elements');
+          // this.interactionLayer = document.querySelector('.interaction-overlay');
 
-            // video event listener
-            // toolbar sends play, pause, rewind stepBack to intro
-            var comp = this;
-            this.vidPlayer = document.querySelector('.video-element');
-            // console.log(this.vidPlayer.textTracks.length, this.vidPlayer.textTracks);
-            this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
-              if (e.target.activeCues.length > 0) {
-                console.log('cuechange:', e.target.activeCues[0].id);
-                // set activetab if cue is active
-                comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
-                  if (cue.type === e.target.activeCues[0].id) {
-                    comp.activetab = cue.index;
-                  }
-                });
+          // video event listeners
+          // toolbar sends play, pause, rewind stepBack to intro
+          var comp = this;
+          this.vidPlayer = document.querySelector('.video-element');
 
-                // interactive element is on screen
-                console.log('screenEls[0]:', comp.screenEls.children);
-              }
-            });
-            this.vidPlayer.addEventListener('timeupdate', function () {
-              comp.progress = parseFloat(this.currentTime.toFixed(3));
-            });
+          this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
+            //console.log('cuechange: target', e.target);// cues, activeCues
+            if (e.target.activeCues.length > 0) {
+              console.log('cuechange:', e.target.activeCues[0].id);
+              // set activetab if cue is active
+              comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
+                if (cue.type === e.target.activeCues[0].id) {
+                  comp.activetab = cue.index;
+                }
+              });
+              // interactive element is on screen
+              // console.log('interactionLayer[0]:', comp.interactionLayer.children);
+            }
+          });
+          this.vidPlayer.addEventListener('timeupdate', function () {
+            comp.progress = parseFloat(this.currentTime.toFixed(3));
+          });
+
+          // this.vidPlayer.addEventListener('canplaythrough', function() {
+          //   //find cueTrack
+          //   var track = Array.from(comp.vidPlayer.textTracks).filter(function(track) {
+          //     return track.label === 'cueTrack';
+          //   });
+          //   console.log(track, track[0].cues);// ,comp.vidPlayer.textTracks);
+          // });
         });
     },
     methods: {
         changeVideoTime: function() {
           this.vidPlayer.currentTime = this.updatedData[this.sceneNum].cueData[this.activetab].start;
-          this.screenEls = document.querySelector('.interaction-overlay');
-          // console.log('screen els:', this.screenEls);
+          // this.interactionLayer = document.querySelector('.interaction-overlay');
+          // console.log('screen els:', this.interactionLayer);
         },
         /**
          * Determine which upload button Audio or Image file by id
@@ -237,8 +293,8 @@ export default {
          * or full path to file
          */
         uploadFile: function(type) {
-            console.log('upload', type);
-            this.$emit('toggleRepo');// send state?
+          console.log('upload', type);
+          this.$emit('toggleRepo');// send state?
         },
 
         /**
@@ -255,6 +311,7 @@ export default {
             if (data.type !== 'fakeType') {
               this.updatedData[this.sceneNum].cueData.push(data);
               this.$emit('saveChanges', this.updatedData);
+              this.constructElements([data], false);// construct array of one, don't clearAll
             }
           }
           console.log('Add new Interaction:', data);
@@ -280,12 +337,82 @@ export default {
           //   }
           // }
           if (val.hasOwnProperty('index')) {
-            // console.log('cueData:', val.index, val);
+            //console.log('cueData:', val.index, val.type, val);
             this.updatedData[this.sceneNum].cueData[val.index] = val;
+            if (!this.element) { return; }
+
+            // apply data to current element
+            switch (val.type) {
+              case 'AnimatedMessage':
+                // ToDo: add bkg color & font color, size?
+                this.element.style.top = val.animateTo;
+                this.element.children[0].innerText = val.messageText;
+                break;
+              case 'InfoPanel':
+                this.element.style.top = val.animateTo;
+                this.element.children[0].style.backgroundColor = val.panelBkgColor;
+                this.element.children[0].style.width = val.panelWidth;
+                this.element.querySelector('.info-title').style.color = val.titleColor;
+                this.element.querySelector('.info-title').children[0].innerHTML = val.infoTitle;
+                this.element.querySelector('.info-text').innerHTML = val.infoText;
+                this.element.querySelector('.info-button').children[0].innerText = val.buttonText;
+                break;
+              case 'MultipleChoice':
+                console.log('changeForm switch:', val.type, val);
+                // this.element
+                break;
+            }
           } else {
             //console.log('scene:', val);
             this.updatedData[this.sceneNum] = val;
           }
+        },
+        constructElements: function(cues, clearAll=true) {
+          // get all cues and instance each element to edit
+          // console.log('construct:',cues);
+          this.modalLayer = document.querySelector('.modal-elements');
+          if (clearAll) {
+            this.screenElements = [];// reset
+            this.modalLayer.innerHTML = '';
+          }
+          
+          var comp = this;
+          // var cues = this.updatedData[this.sceneNum].cueData;
+          cues.forEach(function(cue) {
+            var mcClass = null;
+
+            switch (cue.type) {
+              case 'AnimatedMessage':
+                mcClass = Vue.extend(AnimatedMessage);
+                // ToDo: add width, bkg color, font color, font-size?
+                break;
+              case 'InfoPanel':
+                mcClass = Vue.extend(InfoPanel);
+                break;
+              case 'MultipleChoice':
+                mcClass = Vue.extend(MultiChoice);
+                break;
+            }
+
+            if (mcClass) {
+              var mcInstance = new mcClass({
+                propsData: {
+                  mcData: cue
+                }
+              });
+              mcInstance.$mount();
+              // add element to an array to hide/show when activetab changes
+              // show instanced elements when editing else show screen elements
+              mcInstance.$el.style.top = cue.animateTo;
+              mcInstance.$el.style.display = (cue.index === 0 || !clearAll) ? 'block' : 'none';
+              mcInstance.$el.setAttribute('data-index', cue.index);
+              mcInstance.$el.setAttribute('data-type', cue.type);
+              comp.screenElements.push(mcInstance.$el);
+              comp.modalLayer.appendChild(mcInstance.$el);
+              // mcInstance.$on('saveChanges', function(data) {});
+            }
+          });
+          console.log('screenElements:', this.screenElements);
         }
     }
 }
@@ -343,13 +470,14 @@ export default {
         margin-bottom: 8px;
     }
     .short-input {
-        width: 15%;
+        width: 70px;
         float: unset;
-        margin-right: 30px;
     }
-    .short-text-input {
-        width: 10%;
+    .shorter-input {
+        width: 40px;
         float: unset;
+    }
+    #branchNum {
         margin-right: 20px;
     }
     .empty-button {

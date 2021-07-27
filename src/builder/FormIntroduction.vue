@@ -6,6 +6,7 @@
             <input id="titleText"
               v-show="updatedData.titleText"
               v-model="updatedData.titleText" placeholder="edit me"
+              @input="changeScreen"
             >
         </div>
         <div class="form-row">
@@ -14,6 +15,7 @@
         <div class="form-row">
             <textarea id="description"
                 v-model="updatedData.text"
+                @input="changeScreen"
             >
             </textarea>
         </div>
@@ -59,11 +61,11 @@
             <label for="btnColor">Button Color:</label>
             <div class="color-swatch" id="btnColor"
                 ref="btncolor" title="Click to open a color picker, click again to close it"
-                :style="{'backgroundColor':updatedData.buttonColor}"
-                @click="showBtnPalette = !showBtnPalette"
+                @click="showPalette"
             ></div>
             <input type="text" id="btnHex" class="input-short-short"
               v-model="updatedData.buttonColor"
+              @input="changeScreen"
             >
           </div>
         </div>
@@ -114,15 +116,16 @@ export default {
                 text: '',
                 audio: '',
                 image: '',
-                buttonColor: '#333333'// add?
+                buttonColor: ''
             },// don't mutate the prop
+            element: null// introduction screen element
         }
     },
     mounted () {
         // create a deep copy of data to mutate
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            this.updatedData.buttonColor = '#333333';// add?
+            this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
         });
     },
     watch: {
@@ -130,7 +133,6 @@ export default {
         immediate: true,
         handler(newstate, oldstate) {
           this.updatedData = JSON.parse(JSON.stringify(this.formData));
-          this.updatedData.buttonColor = '#333333';// add?
           console.log('FormIntroduction updated:', this.updatedData);
         }
       }
@@ -152,6 +154,16 @@ export default {
                 break;
             }
         },
+        showPalette: function () {
+          this.showBtnPalette = !this.showBtnPalette;
+          if (this.showBtnPalette) {
+            this.$refs.btncolor.classList.add('swatch-glow');
+            // document.querySelector('#btnColor').classList.add('swatch-glow');
+          } else {
+            this.$refs.btncolor.classList.remove('swatch-glow');
+            // document.querySelector('#btnColor').classList.remove('swatch-glow');
+          }
+        },
         changeBtnColor: function (color) {
             this.updatedData.buttonColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.btncolor.style.backgroundColor = color.hex8;
@@ -161,6 +173,26 @@ export default {
         changeBkgImage: function (image) {
           console.log('changeBkgImage:', this.updatedData.image);
           document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
+        },
+        // id: titleText, description
+        changeScreen: function(e) {
+          // console.log('input e:', e);
+          // console.log('id:', e.target.id);
+          switch (e.target.id) {
+            case 'titleText':
+              document.querySelector('.titlebar').innerHTML = e.target.value;
+              break;
+            case 'description':
+              document.querySelector('.intro-text').childNodes[1].innerHTML = e.target.value;
+              break;
+            case 'btnHex':
+              var color = e.target.value;
+              //https://www.npmjs.com/package/validate-color
+              console.log('color:', color);
+              // document.querySelectorAll('circle')[0].style.stroke = color;
+              // document.querySelectorAll('polygon')[1].style.fill = color;
+              break;
+          }
         }
     }
 }
@@ -254,6 +286,11 @@ export default {
         margin: 0 5px;
         cursor: pointer;
         border: 1px solid #000000;
+    }
+    .swatch-glow {
+      box-shadow: 0px 0px 20px 5px rgb(78, 236, 210);
+      /* in order: x offset, y offset, blur size, spread size, color */
+      /* blur size and spread size are optional (they default to 0) */
     }
     .column-left {
       width: 66%;

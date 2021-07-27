@@ -56,7 +56,7 @@
             >
         </div>
         <!-- element specific -->
-        <div class="form-row">
+        <!-- <div class="form-row">
             <label for="duration">Duration:</label>
             <input type="text" id="duration" class="short-text-input"
                 v-model="updatedData.duration"
@@ -80,14 +80,14 @@
                 @input="$emit('itemChanged', updatedData)"
             >
             </textarea>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
 export default {
     /**
-     * Animated Message
+     * MultiChoice
         "start": 3.12,
         "type": "AnimatedMessage",
         "useBlur": false,
@@ -97,11 +97,8 @@ export default {
         "animateTo": "35%",
         "pauseVideo": false,
         "resumePlayback": true,
-        "removeMessage": true,
-        "messageText": "This is a message from",
-        "duration": 4
      */
-    name: "FormMessage",
+    name: "FormMultiChoice",
     // components: {},
     props: {
         formData: {
@@ -115,7 +112,7 @@ export default {
         return {
             updatedData: [{
               "start": 0,
-              "type": "AnimatedMessage",
+              "type": "MultiChoice",
               "useBlur": false,
               "useOverlay": false,
               "animateIn": true,
@@ -123,9 +120,6 @@ export default {
               "animateTo": "35%",
               "pauseVideo": false,
               "resumePlayback": true,
-              "removeMessage": true,
-              "messageText": "",
-              "duration": 1
             }],// .index is added in FormScene
         }
     },

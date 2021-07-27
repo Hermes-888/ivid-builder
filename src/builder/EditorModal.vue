@@ -1,5 +1,6 @@
 <template>
   <div class="editor-modal">
+    <div class="modal-elements" v-show="modalElements"></div>
     <div class="editor-panel" ref="editorPanel"
       v-bind:style="editorStyle"
     >
@@ -59,6 +60,7 @@ import Vue from 'vue';
         return {
           editorBody: null,
           mcInstance: null,
+          modalElements: false,
           updatedData: 'new object to return',
           headerText: 'editor header',
           panelTop: 0
@@ -69,6 +71,20 @@ import Vue from 'vue';
         var comp = this;
         // find editorBody
         this.editorBody = this.$refs.editorBody;
+
+        this.$root.$on('repoImageSelected', function(filename) {
+          console.log('instance:', comp.mcInstance.$options.name, 'EditorModal repo:', filename);
+
+          if (comp.mcInstance.$options.name === 'FormIntroduction') {
+            comp.currentData.image = filename;
+            comp.mcInstance.updatedData.image = filename;
+            document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
+          }
+          if (comp.mcInstance.$options.name === 'FormScene') {
+            console.log('repoImageSelected Scene:', filename);
+          }
+        });
+
         // editor-panel is draggable, only if mouse is over editor-header
         Interact('.editor-panel')
           .draggable({
@@ -138,29 +154,18 @@ import Vue from 'vue';
 						});
             this.mcInstance.$mount();
 
-            comp.editorBody.innerHTML = '';
-            comp.editorBody.appendChild(this.mcInstance.$el);
+            this.modalElements = false;
+            this.editorBody.innerHTML = '';
+            this.editorBody.appendChild(this.mcInstance.$el);
+
             this.mcInstance.$on('saveChanges', function(data) {
               console.log('Editor Intro saveChanges:', data);
               comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
-            this.$root.$on('repoImageSelected', function(filename) {
-              console.log('EditorModal repo:', filename);
-              console.log('instance:', comp.mcInstance.$options.name);
-
-              if (comp.mcInstance.$options.name === 'FormIntroduction') {
-                comp.currentData.image = filename;
-                comp.mcInstance.updatedData.image = filename;
-                document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
-              } else {
-                // FormScene
-              }
-              comp.mcInstance.formData = comp.currentData;// didn't update
-            });
           }
 
-          if (Array.isArray(newstate) && comp.editorBody) {// && this.$refs.editorBody
+          if (Array.isArray(newstate) && comp.editorBody) {
             this.headerText = 'Scene Data';
             // sceneData Array of scenes w/cueData
             var mcClass = Vue.extend(FormScene);
@@ -172,16 +177,21 @@ import Vue from 'vue';
             console.log('Editor instance:', this.mcInstance);
             this.mcInstance.$mount();
 
-            comp.editorBody.innerHTML = '';
-            comp.editorBody.appendChild(this.mcInstance.$el);
+            this.modalElements = true;
+            this.editorBody.innerHTML = '';
+            this.editorBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('saveChanges', function(data) {
               console.log('Editor Scene saveChanges:', data);//   do both hear this too?
-              // comp.$emit('closeModal');
+              comp.$emit('closeModal');
               comp.$emit('saveChanges', data);// inform Builder
             });
           }
 
           if (this.mcInstance) {
+            this.mcInstance.formData = this.currentData;// didn't update
+            // if (this.mcInstance.name === 'FormIntroduction') {
+            //   document.querySelector('.modal-elements').style.display = 'none';
+            // }
             // pass Form @click="$emit('toggleRepo')" up to Builder
             this.mcInstance.$on('toggleRepo', function() {
               comp.$emit('toggleRepo');// send state: true/false?
@@ -204,6 +214,7 @@ import Vue from 'vue';
   }
 	.editor-panel {
 		position: absolute;
+    z-index: 10;
     top: 5vh;
 		left: 33%;
 		width: 33%;

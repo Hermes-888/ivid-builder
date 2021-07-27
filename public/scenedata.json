@@ -5,7 +5,8 @@
 			"titleText": "EN Slide Title",
 			"text": "Introduction for Interactive Video.<br><br>(define what to put here, the viewer may need to click before the video can play.)",
 			"audio": "audio/what_next.mp3",
-			"image": "images/allergen_platter_lt.png"
+			"image": "images/allergen_platter_lt.png",
+      "buttonColor": "#333333"
 		},
 		{
 			"_comment": "data for Spanish",
