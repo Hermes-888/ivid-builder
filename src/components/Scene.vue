@@ -166,9 +166,7 @@
         immediate: true,
         handler(newdata) {
           console.log('- watch sceneData changed:', newdata);
-          //this.$nextTick(function () {
-          this.stepNum = 1000;// trigger refreh
-          //});
+          this.stepNum = 1000;// trigger refresh
         }
       },
 			stepNum: {
@@ -180,7 +178,6 @@
 						 * bind the template elements to currentStep
 						 */
             if (num > this.sceneData.length) {
-              console.log('-- watch stepNum TRIGGER:', num);
               this.stepNum = 0;
             } else {
               this.currentStep = this.sceneData[num];

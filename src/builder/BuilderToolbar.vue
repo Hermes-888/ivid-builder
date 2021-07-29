@@ -28,9 +28,9 @@
             >
                 <icon-delete title="Remove this image from row."/>
             </button>
-            <div class="icon-button" title="unused icons">
+            <!-- <div class="icon-button" title="unused icons">
               <icon-palette/>:<icon-collapse/>:<icon-expand/>
-            </div>
+            </div> -->
         </div>
         <div class="file-buttons">
             <button role="button" class="icon-button"
@@ -87,18 +87,23 @@
           >
             <icon-pause title="Pause video"/>
           </button>
+          <!--DEFINE ACTION <button role="button" class="icon-button"
+            title="Toggle Captions"
+          >
+            <icon-captions title="Toggle Captions"/>
+          </button> -->
           <!-- FIX <button role="button" class="icon-button"
             title="Add new interaction"
             @click="showAddModal=true"
           >
             <icon-plus title="Add new interaction"/>
           </button> -->
-          <button role="button" class="icon-button"
+          <!--DEFINE ACTION <button role="button" class="icon-button"
             title="Hide interactions"
-            @click="actionLayer.innerHTML=''"
+            @click="actionLayer.style.display='none'"
           >
             <icon-hide-layers title="Hide interactions"/>
-          </button>
+          </button> -->
         </div>
     </div>
     <add-new-modal

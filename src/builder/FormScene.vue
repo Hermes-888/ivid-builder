@@ -78,10 +78,10 @@
                 </a>
               </span>
               <span style="float: right;">
-                <a class="jump-button" title="Jump to selected cue"
+                <a class="jump-button" title="Jump to selected cue start time"
                     @click="changeVideoTime"
                 >
-                  <icon-marker title="Jump to selected cue"/>
+                  <icon-marker title="Jump to selected cue start time"/>
                 </a>
               </span>
           </div>
@@ -312,9 +312,10 @@ export default {
               this.updatedData[this.sceneNum].cueData.push(data);
               this.$emit('saveChanges', this.updatedData);
               this.constructElements([data], false);// construct array of one, don't clearAll
+              this.activetab = len;
             }
           }
-          console.log('Add new Interaction:', data);
+          console.log('Add new Interaction:', len, data);
           // this.updatedData[this.sceneNum].cueData.push(data);
             // show small dialog modal w/dropdown selector to choose a type
             // add selected type (data) to cueData[]
@@ -359,7 +360,7 @@ export default {
                 break;
               case 'MultipleChoice':
                 console.log('changeForm switch:', val.type, val);
-                // this.element
+                // ToDo: finish updating this.element
                 break;
             }
           } else {
@@ -510,6 +511,9 @@ export default {
       padding: 0 5px !important;
       border: none !important;
       background-color: transparent !important;
+    }
+    .jump-button:hover {
+      color: #71b371 !important;
     }
 
     /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */

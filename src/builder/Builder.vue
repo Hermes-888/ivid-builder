@@ -187,6 +187,7 @@ export default {
               // update introContent[language]
               this.actualData.introContent[this.language] = data;
             }
+            this.closeEditorModal();
             // send to App
             this.$emit('updateData', this.actualData);
             // console.log('saveChanges:', this.actualData);

@@ -45,6 +45,8 @@ import iconRewind from 'vue-material-design-icons/Rewind.vue';
 Vue.component('icon-rewind', iconRewind);
 import iconStepBack from 'vue-material-design-icons/StepBackward2.vue';
 Vue.component('icon-step-back', iconStepBack);
+import iconCaptions from 'vue-material-design-icons/ClosedCaptionOutline.vue';
+Vue.component('icon-captions', iconCaptions);
 import iconPlus from 'vue-material-design-icons/Plus.vue';
 Vue.component('icon-plus', iconPlus);
 import iconHideLayers from 'vue-material-design-icons/LayersOff.vue';

@@ -64,8 +64,8 @@
 			"sceneData": [
 				{
 					"_comment": "data for English",
-					"videoBackground": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-					"captionsFile": "audio/sample.vtt",
+					"videoBackground": "https://course-assets.statefoodsafety.com/CourseAsset/get?id=60f5b0d6f3a4781f677c7edb",
+					"captionsFile": "",
 					"ccEnabled": true,
 					"returnTime": 0,
 					"branchCount": 0,
@@ -82,7 +82,7 @@
 							"pauseVideo": false,
 							"resumePlayback": true,
 							"removeMessage": true,
-							"messageText": "This is a message from",
+							"messageText": "This is a message.",
 							"duration": 4
 						},
 						{
@@ -103,7 +103,7 @@
 							"buttonText": "I Agree"
 						},
 						{
-							"start": 15.510,
+							"start": 45.510,
 							"type": "MultipleChoice",
 							"useBlur": true,
 							"useOverlay": false,

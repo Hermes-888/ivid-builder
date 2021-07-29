@@ -192,7 +192,6 @@
 					this.introContent = _data.introContent[this.language];
 					this.sceneData = _data.sceneLanguage[this.language].sceneData;
 					this.allData = _data;
-          console.log('App _data:', _data);
 				} else {
 					// console.log('introData:', rawdata.introContent[this.language]);
 					// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData);

@@ -61,7 +61,6 @@ import Vue from 'vue';
           editorBody: null,
           mcInstance: null,
           modalElements: false,
-          updatedData: 'new object to return',
           headerText: 'editor header',
           panelTop: 0
         }
@@ -160,7 +159,7 @@ import Vue from 'vue';
 
             this.mcInstance.$on('saveChanges', function(data) {
               console.log('Editor Intro saveChanges:', data);
-              comp.$emit('closeModal');
+              // comp.$emit('closeModal');
               comp.$emit('saveChanges', data);
             });
           }
@@ -182,7 +181,7 @@ import Vue from 'vue';
             this.editorBody.appendChild(this.mcInstance.$el);
             this.mcInstance.$on('saveChanges', function(data) {
               console.log('Editor Scene saveChanges:', data);//   do both hear this too?
-              comp.$emit('closeModal');
+              // comp.$emit('closeModal');
               comp.$emit('saveChanges', data);// inform Builder
             });
           }

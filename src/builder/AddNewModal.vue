@@ -110,7 +110,7 @@
 							"pauseVideo": false,
 							"resumePlayback": true,
 							"removeMessage": true,
-							"messageText": "",
+							"messageText": "Your Message",
 							"duration": 1.5
 						};
             break;
@@ -129,11 +129,51 @@
 							"panelBkgColor": "rgba(3,117,163, 0.6)",
 							"infoTitle": "Title",
 							"titleColor": "#ffffff",
-							"infoText": "information to display.",
+							"infoText": "Your information to display.",
 							"buttonText": "Continue"
 						};
             break;
-            // ToDo: TitleScreen, MultiChoice, MultiAnswer
+          case 'Multiple Choice Question':
+            this.selectedObj = {
+							"start": 0,
+							"type": "MultipleChoice",
+							"useBlur": true,
+							"useOverlay": false,
+							"animateIn": true,
+							"animateOut": true,
+							"animateTo": "25%",
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"questionText": "Question",
+							"questionAudio": "",
+							"questionInstructions": "Choose an answer.",
+							"hintButtonText": "Hint?",
+							"hintButtonTextColor": "",
+							"hintButtonBackgroundColor": "",
+							"hintText": "Hint text",
+							"hintAudio": "",
+							"randomizeAnswers": true,
+							"answers": [
+								{
+									"id": 0,
+									"correct": true,
+									"answerText": "Correct Anwer",
+									"answerAudio": "",
+									"feedbackText": "",
+									"feedbackAudio": ""
+								},
+								{
+									"id": 1,
+									"correct": false,
+									"answerText": "Wrong Answer",
+									"answerAudio": "",
+									"feedbackText": "",
+									"feedbackAudio": ""
+								}
+							]
+						}
+            break;
+            // ToDo: TitleScreen, MultiAnswer
         }
       }
     }

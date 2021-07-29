@@ -1,8 +1,8 @@
 <template>
     <div class="form-body">
-        <div class="form-row-half">
+        <div class="form-row">
             <label for="startat">Start Time:</label>
-            <input type="text" id="startat" class="short-text-input"
+            <input type="text" id="startat" class="input-med"
                 v-model="updatedData.start"
                 @keypress="isNumber($event)"
                 @input="$emit('itemChanged', updatedData)"
@@ -50,7 +50,7 @@
             <label for="out" class="wide-label">Animate Out</label>
 
             <label for="to">| Animate To:</label>
-            <input type="text" id="to" class="short-text-input"
+            <input type="text" id="to" class="input-short"
                 v-model="updatedData.animateTo"
                 @input="$emit('itemChanged', updatedData)"
             >
@@ -58,7 +58,7 @@
         <!-- element specific -->
         <div class="form-row">
             <label for="duration">Duration:</label>
-            <input type="text" id="duration" class="short-text-input"
+            <input type="text" id="duration" class="input-short"
                 v-model="updatedData.duration"
                 @input="$emit('itemChanged', updatedData)"
             >
@@ -164,8 +164,11 @@ export default {
     .small-text {
       font-size: 14px;
     }
-    .short-text-input {
+    .input-short {
         width: 45px;
+    }
+    .input-med {
+        width: 60px;
     }
     .long-text-input {
         width: 78%;
