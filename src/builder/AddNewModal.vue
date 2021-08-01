@@ -14,7 +14,6 @@
         </span>
       </div>
       <div class="addnew-body" ref="addnewBody">
-        <!-- Add new interaction type, emit obj upward -->
         <div class="addnew-instructions">
           <div class="row">
             <select v-model="selected"
@@ -30,22 +29,25 @@
               </option>
             </select>
           </div>
-          <div class="row">
-            <p>Select an interaction type, it will be added at the current time. {time}</p>
+          <div class="row"
+            v-show="!selected"
+          >
+            <p>Select an interaction type, it will be added at the current time.</p>
           </div>
           
         </div>
       </div>
       <div class="addnew-footer">
         <div class="addnew-footer-buttons"
-         v-show="selected"
+          v-show="selected"
         >
           <div class="row">
-            <span>Selected: {{ selected }}</span>
+            <span>Selected: </span>
+            <span v-text="selected"></span>
           </div>
           <button role="button" class="icon-button"
             title="Click to add new element"
-            @click="$emit('addNew', selectedObj); $emit('closeModal')"
+            @click="$emit('addNew',selectedObj); $emit('closeModal'); selected='';"
           >
             Confirm Selection
           </button>
@@ -72,26 +74,17 @@
 				default() {
           return {}
         }
-			},
-      // currentData: {
-      //   type: [Object, Array]
-      // }
+			}
 		},
     data () {
         return {
-          addnewBodyContent: 'change me',// construct form
-          updatedData: 'new object to return',
-          mcInstance: null,
           headerText: 'Add New Interaction',
           selected: '',// type
-          types: ['Title Screen', 'Animated Message', 'Inforation Panel', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
+          types: ['Title Screen', 'Animated Message', 'Information Panel', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
           // $emit addNew w/ object for each type
           selectedObj: {"type":"fakeType"}
         }
     },
-    // mounted () {
-    //   this.$nextTick(function() {});
-    // },
     methods: {
       typeSelected: function(type) {
         console.log('typeSelected:', type);
@@ -114,7 +107,7 @@
 							"duration": 1.5
 						};
             break;
-          case 'Inforation Panel':
+          case 'Information Panel':
             this.selectedObj = {
 							"start": 0,
 							"type": "InfoPanel",

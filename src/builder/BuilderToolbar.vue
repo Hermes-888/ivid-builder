@@ -62,7 +62,20 @@
         <div class="player-buttons"
           v-show="sceneVisible"
         >
-          <div class="progress-time">Time: {{progress}} </div>
+          <div class="toolbar-column">
+            <div class="progress-time">
+              Time: <span v-text="progress"></span>
+            </div>
+            <div>
+              <input class="time-slider"
+                type="range" step="0.001"
+                min="0" 
+                :max="duration"
+                :value="progress"
+                @input="updateVidtime"
+              >
+            </div>
+          </div>
           <button role="button" class="icon-button"
             title="Back to Introduction"
             @click="$emit('restart')"
@@ -75,40 +88,47 @@
           >
               <icon-rewind title="Restart video"/>
           </button>
+          <div class="toolbar-column">
+            <button role="button" class="icon-button"
+              v-show="vidPlayer && vidPlayer.paused"
+              title="Play video"
+              @click="$root.$emit('playing', true)"
+            >
+              <icon-play title="Play video"/>
+            </button>
+            <button role="button" class="icon-button"
+              v-show="vidPlayer && !vidPlayer.paused"
+              title="Pause video"
+              @click="$root.$emit('playing', false)"
+            >
+              <icon-pause title="Pause video"/>
+            </button>
+          </div>
+          <!--DEFINE ACTION 
           <button role="button" class="icon-button"
-            title="Play video"
-            @click="$root.$emit('playing', true)"
-          >
-            <icon-play title="Play video"/>
-          </button>
-          <button role="button" class="icon-button"
-            title="Pause video"
-            @click="$root.$emit('playing', false)"
-          >
-            <icon-pause title="Pause video"/>
-          </button>
-          <!--DEFINE ACTION <button role="button" class="icon-button"
             title="Toggle Captions"
           >
             <icon-captions title="Toggle Captions"/>
           </button> -->
-          <!-- FIX <button role="button" class="icon-button"
+          <!-- FIX  -->
+          <button role="button" class="icon-button"
             title="Add new interaction"
             @click="showAddModal=true"
           >
             <icon-plus title="Add new interaction"/>
-          </button> -->
-          <!--DEFINE ACTION <button role="button" class="icon-button"
+          </button>
+          <!--DEFINE ACTION? @click="actionLayer.style.display='none'" -->
+          <button role="button" class="icon-button"
             title="Hide interactions"
-            @click="actionLayer.style.display='none'"
+            @click="$emit('refreshCues')"
           >
             <icon-hide-layers title="Hide interactions"/>
-          </button> -->
+          </button>
         </div>
     </div>
     <add-new-modal
       v-show="showAddModal"
-      :dialogStyle="{top: '14vh', zIndex: 10}"
+      :dialogStyle="{top:'10vh', left:'unset', right:'15%', zIndex:11}"
       @closeModal="showAddModal=!showAddModal"
       @addNew="addNewCue"
     />
@@ -137,6 +157,7 @@ export default {
     return {
       vidPlayer: null,// display video current time
       progress: 0,
+      duration: 0,
       actionLayer: null,// interactive elements
       showAddModal: false,// Add New Interaction
       layersVisible: false,// unused but maybe?
@@ -162,6 +183,7 @@ export default {
             this.vidPlayer = document.querySelector('.video-element');
             this.vidPlayer.addEventListener('timeupdate', function () {
               comp.progress = parseFloat(comp.vidPlayer.currentTime.toFixed(3));
+              comp.duration = parseFloat(comp.vidPlayer.duration.toFixed(3));
               //Math.round((comp.vidPlayer.currentTime / comp.vidPlayer.duration) * 100);
             });
           }
@@ -170,6 +192,12 @@ export default {
     },
   },
   methods: {
+    updateVidtime: function(e) {
+      if (e.target.value !== this.progress) {
+        this.vidPlayer.currentTime = e.target.value;
+        // console.log('updateVidtime:', e.target.value, this.progress, this.duration);
+      }
+    },
     moreMenuModal: function() {
       console.log('More Menu: open modal here?')
     },
@@ -245,9 +273,18 @@ export default {
   display: flex;
   justify-content: flex-end;
 }
+
+.toolbar-column {
+  flex-direction: column;
+}
 .progress-time {
-  font-size: 20px;
-  margin-right: 20px;
+  width:180px;
+  font-size: 17px;
+  margin-bottom: -10px;
+}
+.time-slider {
+  width:180px;
+  height: 1px;
 }
 .icon-button {
   margin: 0 5px;

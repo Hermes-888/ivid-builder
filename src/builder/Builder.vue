@@ -15,6 +15,7 @@
           @saveFile="saveFile"
           @restart="$emit('updateData',actualData);$emit('restart');"
           @addNew="addNewCue"
+          @refreshCues="refreshCues"
         />
         <editor-modal
           v-show="showEditorModal"
@@ -76,8 +77,7 @@ export default {
         vidPlayer: null,// Player elements
         interactionLayer: null,
         progress: 0,// video currenttime
-          selectedRowId: 0,// IntroContent or SceneData.cueData
-        // = allData.introContent[language] || allData.sceneLanguage[language].sceneData
+        //actualData = allData.introContent[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
         currentData: null,
         currentKey: 0// force update in EditorModal
@@ -142,20 +142,11 @@ export default {
         },
         /**
          * selection from repo to specific row
-         * this.$root.selectedRowId = the row[index]
          * @param filename String image url
-         * 
-         * ToDo: fix selectedRowId = index of introContent or sceneData.cueData
          */
         repoImageSelected: function (filename) {
           console.log('repoImageSelected', filename);
           this.$root.$emit('repoImageSelected', filename);
-          if (this.$root.selectedRowId) {
-            console.log('selectedRowId', this.selectedRowId);
-            //this.itemData[this.$root.selectedRowId].imageData.url = filename;
-          } else {
-            //this.itemData[0].imageData.url = filename;
-          }
         },
         editCurrentData: function() {
           this.showEditorModal = true;
@@ -197,33 +188,37 @@ export default {
          * only when Scene is visible
          */
         addNewCue: function(data) {
-          console.log('Builder Add new:', data, 'currentData:', this.currentData);
+          console.log('Builder Add new:', data, 'currentData:', this.currentData[this.sceneNum]);
           var len = this.currentData[this.sceneNum].cueData.length;
           if (data) {
             data.start = this.progress;
             data.index = len;
             if (data.type !== 'fakeType') {
               this.currentData[this.sceneNum].cueData.push(data);
+              // sort cueData or call FormScene addNewCue(data)?
+              this.currentData[this.sceneNum].cueData.sort(function (a, b) {
+                return a.start - b.start;
+              });
+              this.currentData[this.sceneNum].cueData.forEach(function(cue, index) {
+                cue.index = index;// reset pointer to switch tabs on cuechange
+              });
               this.actualData.sceneLanguage[this.language].sceneData = this.currentData;
               // send to App
               this.$emit('updateData', this.actualData);
-              // ToDo Add new cue from Toolbar is not updating FormScene
-              // this.$forceUpdate();this is NOT firing EditorModal watch currentData
               // https://michaelnthiessen.com/force-re-render/
-              //this.currentKey += 1;// force update to trigger '-- watch editor currentData
-              // force update works but FormScene is not populated
+              this.currentKey += 1;// force update to trigger '-- watch editor currentData
+              console.log('Builder Add new:', data, 
+                          'currentData:', this.currentData, 
+                          'actualData:', this.actualData
+              );
             }
           }
-          console.log('Builder Add new:', data, 
-                      'currentData:', this.currentData, 
-                      'actualData:', this.actualData
-          );
-
           // show Editor panel
           this.showEditorModal = true;
-          // add selected type (data) to cueData[]
-          // this.actualData.sceneLanguage[this.language].sceneData[this.sceneNum].cueData.push(data);
-          // this.currentData[this.sceneNum].cueData.push(data);
+        },
+        refreshCues: function() {
+          // send signal to EditorModal to reconstruct modal-elements
+          this.currentKey += 1;// trigger refresh?
         },
         /**
          * download JSON data to save the file

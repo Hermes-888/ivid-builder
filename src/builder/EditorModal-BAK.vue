@@ -1,10 +1,6 @@
 <template>
   <div class="editor-modal">
-    <div class="modal-elements"
-      ref="modalElements"
-      v-show="sceneVisible"
-    >
-    </div>
+    <div class="modal-elements" v-show="modalElements"></div>
     <div class="editor-panel" ref="editorPanel"
       v-bind:style="editorStyle"
     >
@@ -18,21 +14,8 @@
           <icon-close/>
         </span>
       </div>
-      <div class="editor-body">
-        <form-introduction
-          v-if="!sceneVisible && currentData"
-          :formData="currentData"
-          :key="currentKey"
-          @saveChanges="saveChanges"
-          @toggleRepo="$emit('toggleRepo')"
-        />
-        <form-scene
-          v-if="sceneVisible && currentData"
-          :formData="currentData"
-          :key="currentKey"
-          @saveChanges="saveChanges"
-          @toggleRepo="$emit('toggleRepo')"
-        />
+      <div class="editor-body" ref="editorBody">
+        <!-- Dynamic Content @watch currentData -->
       </div>
       <!-- <div class="editor-footer">
         <div class="editor-footer-buttons">
@@ -58,14 +41,10 @@ import FormIntroduction from './FormIntroduction.vue';
 import FormScene from './FormScene.vue';
 
 import Interact from 'interactjs';
-// import Vue from 'vue';
+import Vue from 'vue';
 
 	export default {
 		name: 'EditorModal',
-    components: {
-      FormIntroduction,
-      FormScene
-    },
 		props: {
 			editorStyle: {
 				type: Object,
@@ -79,9 +58,9 @@ import Interact from 'interactjs';
 		},
     data () {
         return {
-          // modalElements: false,// Scene has modal elements
-          currentKey: 0,// update data
-          sceneVisible: false,// toggle Intro or Scene
+          editorBody: null,
+          mcInstance: null,
+          modalElements: false,
           headerText: 'editor header',
           panelTop: 0
         }
@@ -89,15 +68,19 @@ import Interact from 'interactjs';
     mounted () {
       this.$nextTick(function() {
         var comp = this;
+        // find editorBody
+        this.editorBody = this.$refs.editorBody;
 
         this.$root.$on('repoImageSelected', function(filename) {
-          if (comp.sceneVisible) {
-            console.log('repoImageSelected Scene:', filename);
-          } else {
-            console.log('repoImageSelected Intro:', filename);
+          console.log('instance:', comp.mcInstance.$options.name, 'EditorModal repo:', filename);
+
+          if (comp.mcInstance.$options.name === 'FormIntroduction') {
             comp.currentData.image = filename;
+            comp.mcInstance.updatedData.image = filename;
             document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
-            comp.currentKey += 1;// rerender children w/new data
+          }
+          if (comp.mcInstance.$options.name === 'FormScene') {
+            console.log('repoImageSelected Scene:', filename);
           }
         });
 
@@ -145,27 +128,76 @@ import Interact from 'interactjs';
     },
     watch: {
       /**
-       * When data changes,
-       * set modal headerText
-       * sceneVisible switchs between FormScene & FormIntroduction
+       * set editorBody content when data is received
        */
       currentData: {
         immediate: true,
         handler(newstate, oldstate) {
+          var comp = this;
           console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
+          console.log('mcInstance:', comp.mcInstance, 'editorBody:', comp.editorBody, comp.$refs.editorBody);
           if (!newstate) { return; }
 
-          this.sceneVisible = Array.isArray(newstate);
-          this.headerText = this.sceneVisible ? 'Edit Scene Data' : 'Edit Introduction Data';
+          if (!comp.editorBody) {
+            comp.editorBody = document.querySelector('.editor-body');//comp.$refs.editorBody;
+            console.log('FIND editorBody', comp.editorBody);
+          }
+
+          if (newstate.hasOwnProperty('titleText') && comp.editorBody) {
+            this.headerText = 'Introduction Data';
+            var mcClass = Vue.extend(FormIntroduction);
+						this.mcInstance = new mcClass({
+							propsData: {
+								formData: comp.currentData
+							}
+						});
+            this.mcInstance.$mount();
+
+            this.modalElements = false;
+            // this.editorBody.innerHTML = '';
+            this.editorBody.appendChild(this.mcInstance.$el);
+
+            this.mcInstance.$on('saveChanges', function(data) {
+              console.log('Editor Intro saveChanges:', data);
+              // comp.$emit('closeModal');
+              comp.$emit('saveChanges', data);
+            });
+          }
+
+          if (Array.isArray(newstate) && comp.editorBody) {
+            this.headerText = 'Scene Data';
+            // sceneData Array of scenes w/cueData
+            var mcClass = Vue.extend(FormScene);
+						this.mcInstance = new mcClass({
+							propsData: {
+								formData: comp.currentData
+							}
+						});
+            console.log('Editor instance:', this.mcInstance);
+            this.mcInstance.$mount();
+
+            this.modalElements = true;
+            // this.editorBody.innerHTML = '';
+            this.editorBody.appendChild(this.mcInstance.$el);
+            this.mcInstance.$on('saveChanges', function(data) {
+              console.log('Editor Scene saveChanges:', data);//   do both hear this too?
+              // comp.$emit('closeModal');
+              comp.$emit('saveChanges', data);// inform Builder
+            });
+          }
+
+          if (this.mcInstance) {
+            this.mcInstance.formData = this.currentData;// didn't update
+            // if (this.mcInstance.name === 'FormIntroduction') {
+            //   document.querySelector('.modal-elements').style.display = 'none';
+            // }
+            // pass Form @click="$emit('toggleRepo')" up to Builder
+            this.mcInstance.$on('toggleRepo', function() {
+              comp.$emit('toggleRepo');// send state: true/false?
+            });
+          }
         }
       },
-    },
-    methods: {
-      saveChanges: function(data) {
-        console.log('saveChanges:', data);
-        // this.$emit('closeModal');
-        this.$emit('saveChanges', data);
-      }
     }
 	}
 </script>

@@ -205,19 +205,20 @@ export default {
             screenElements: [],// array of interactive elements
             element: null,// copy of the interactive element
             mcInstance: null,// element instance
+            instances: []// test Are they being removed?
         }
     },
     watch: {
       formData: {
-        immediate: true,
+        immediate: false,// important
         handler(newstate, oldstate) {
           this.updatedData = JSON.parse(JSON.stringify(this.formData));
           this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
-          console.log('FormScene updated:', this.updatedData);
+          console.log('--- watch FormScene updatedData:', this.updatedData);
           // construct screenElements
-          this.constructElements(this.updatedData[this.sceneNum].cueData);
+          this.constructElements(this.updatedData[this.sceneNum].cueData, true);
         }
       },
       activetab: {
@@ -243,11 +244,14 @@ export default {
           this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
-          console.log('FormScene updatedData:', this.updatedData);
+          console.log('FormScene mounted updatedData:', this.updatedData);
+          // watch immediate: false
+          this.constructElements(this.updatedData[this.sceneNum].cueData, true);
 
           // interactions container. class="interaction-overlay"
-          this.modalLayer = document.querySelector('.modal-elements');
+          // this.modalLayer = document.querySelector('.modal-elements');
           // this.interactionLayer = document.querySelector('.interaction-overlay');
+          // console.log('screen els:', this.interactionLayer);
 
           // video event listeners
           // toolbar sends play, pause, rewind stepBack to intro
@@ -284,8 +288,6 @@ export default {
     methods: {
         changeVideoTime: function() {
           this.vidPlayer.currentTime = this.updatedData[this.sceneNum].cueData[this.activetab].start;
-          // this.interactionLayer = document.querySelector('.interaction-overlay');
-          // console.log('screen els:', this.interactionLayer);
         },
         /**
          * Determine which upload button Audio or Image file by id
@@ -300,9 +302,10 @@ export default {
         /**
          * Show dialog modal w/dropdown selector to choose a type
          * add selected type to cueData[]
-         * @param data Object - selected type
+         * @param data Object - selected cue type
          */
         addNewCue: function(data) {
+          var comp = this;
           var len = this.updatedData[this.sceneNum].cueData.length;
           if (data) {
             data.start = this.progress;
@@ -310,15 +313,23 @@ export default {
             // add to updatedData and inform EditorModal
             if (data.type !== 'fakeType') {
               this.updatedData[this.sceneNum].cueData.push(data);
+              // sort data by start time and reset cue.index
+              this.updatedData[this.sceneNum].cueData.sort(function (a, b) {
+                return a.start - b.start;
+              });
+              this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
+                if (cue.index === len) {
+                  comp.activetab = index;
+                }
+                cue.index = index;// reset pointer to switch tabs on cuechange
+              });
               this.$emit('saveChanges', this.updatedData);
-              this.constructElements([data], false);// construct array of one, don't clearAll
-              this.activetab = len;
+              // rebuild to sort screenElements
+              this.constructElements(this.updatedData[this.sceneNum].cueData);
+              //this.constructElements([data], false);// construct array of one, don't clearAll
             }
           }
           console.log('Add new Interaction:', len, data);
-          // this.updatedData[this.sceneNum].cueData.push(data);
-            // show small dialog modal w/dropdown selector to choose a type
-            // add selected type (data) to cueData[]
         },
 
         /**
@@ -369,15 +380,18 @@ export default {
           }
         },
         constructElements: function(cues, clearAll=true) {
-          // get all cues and instance each element to edit
-          // console.log('construct:',cues);
-          this.modalLayer = document.querySelector('.modal-elements');
+          // instance each element to edit
+          this.modalLayer = document.querySelector('.modal-elements');// ref=modalElements
+          // console.log('construct:', this.modalLayer, clearAll, cues);
+          
           if (clearAll) {
             this.screenElements = [];// reset
+            this.instances = [];
             this.modalLayer.innerHTML = '';
           }
           
           var comp = this;
+          var count = 0;// test
           // var cues = this.updatedData[this.sceneNum].cueData;
           cues.forEach(function(cue) {
             var mcClass = null;
@@ -408,12 +422,14 @@ export default {
               mcInstance.$el.style.display = (cue.index === 0 || !clearAll) ? 'block' : 'none';
               mcInstance.$el.setAttribute('data-index', cue.index);
               mcInstance.$el.setAttribute('data-type', cue.type);
-              comp.screenElements.push(mcInstance.$el);
+              // comp.screenElements.push(mcInstance.$el);
               comp.modalLayer.appendChild(mcInstance.$el);
-              // mcInstance.$on('saveChanges', function(data) {});
+              comp.screenElements.push(comp.modalLayer.children[count]);
+              comp.instances.push(mcInstance);// save the instance
+              count ++;
             }
           });
-          console.log('screenElements:', this.screenElements);
+          // console.log('editor-modal:', document.querySelector('.editor-modal'));
         }
     }
 }
