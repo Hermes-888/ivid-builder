@@ -8,7 +8,9 @@ import 'vue-material-design-icons/styles.css';
 import iconPalette from 'vue-material-design-icons/Palette.vue';
 Vue.component('icon-palette', iconPalette);
 import iconSave from 'vue-material-design-icons/ContentSaveOutline.vue';
-Vue.component('icon-save', iconSave);// Not used yet
+Vue.component('icon-save', iconSave);
+import iconOpen from 'vue-material-design-icons/FolderOpenOutline.vue';
+Vue.component('icon-open', iconOpen);
 import iconEye from 'vue-material-design-icons/EyeOutline.vue';
 Vue.component('icon-eye', iconEye);
 import iconCloudSearch from 'vue-material-design-icons/CloudSearchOutline.vue';

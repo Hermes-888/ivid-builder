@@ -17,9 +17,6 @@
 		<Introduction
 			v-if="showIntroduction"
 			:introData="introContent"
-			:introductionText="introContent.text"
-			:introductionAudio="introContent.audio"
-			:introductionImage="introContent.image"
 			:audioVolume="audioVolume"
 			:audioPlaybackRate="audioPlaybackRate"
 			@startClicked="displayScene"

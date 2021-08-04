@@ -4,9 +4,10 @@
       Image Repository
       <div
         class="close-button"
+        title="Close repository"
         @click="$emit('closeRepo')"
       >
-        <icon-close/>
+        <icon-close title="Close repository"/>
       </div>
     </div>
     <div class="repo-description">
@@ -77,6 +78,11 @@
       <!-- <div class="repo-drag-handle"></div> -->
     </div>
     <div class="upload-button">
+      <button role="button" class="icon-button"
+          title="Open a file on this device"
+      >
+          <icon-open title="Open a file on this device"/>
+      </button>
       <span>UPLOAD NEW </span>
       <span v-text="repoAssets[activetab]"></span>
     </div>
@@ -110,11 +116,12 @@ export default {
       ],
       repoVideos: ['fake/Scene_1.mp4', 'fake/Branch_A.mp4', 'fake/Branch_B.mp4'],
       repoImages: [
-        'images/Caroline_left_pointing.png',
-        'images/customer_mother_boy.png', 
         'images/allergen_platter_lt.png',
-        'images/cookies.png', 
-        'images/garlic_sauce.png'
+        'images/bakery_background.jpg',
+        'images/garlic_sauce.png',
+        'images/Caroline_left_pointing.png',
+        'images/customer_mother_boy.png',
+        'images/cookies.png'
       ]
     }
   },
@@ -214,8 +221,7 @@ export default {
 }
 
 .image-holder {
-  float: left;
-  width: 90px;
+  width: 100px;
   height: fit-content;
   margin: 1%;
   padding: 3px;
@@ -252,10 +258,24 @@ export default {
   background-color: #f1f1f1;
   cursor: pointer;
 }
-
 .upload-button:hover {
   color: #fff;
   background-color: #aaa;
+}
+
+.icon-button {
+  float: left;
+  margin: 0 5px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 22px;
+  color: #333333;
+  border-radius: 6px;
+  border: 1px solid  #000000;
+  background-color: #efefef;
+}
+.icon-button:hover {
+  background-color: #ccf1cc;
 }
 
 /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
@@ -307,9 +327,12 @@ export default {
 
 /* Style the tab content */
 .tab-content {
+    display: flex;
+    flex-wrap: wrap;
     width: 96%;
+    max-height: 500px;
+    overflow-y: auto;
     padding: 2px;
-    /* overflow-wrap: anywhere; */
     border: 1px solid #888888;
     background-color: #ffffff;
     border-radius: 8px;

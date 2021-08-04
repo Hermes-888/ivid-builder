@@ -63,9 +63,6 @@
  * emit selectedObj upward, then add start:currenttime, index
  */
 
-// import Interact from 'interactjs';
-// import Vue from 'vue';
-
 	export default {
 		name: 'AddNewModal',
 		props: {

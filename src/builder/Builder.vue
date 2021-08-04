@@ -149,8 +149,12 @@ export default {
           this.$root.$emit('repoImageSelected', filename);
         },
         editCurrentData: function() {
-          this.showEditorModal = true;
-          document.querySelector('.builder-toolbar').style.backgroundColor = '#00000033';
+          this.showEditorModal = !this.showEditorModal;
+          if (this.showEditorModal) {
+            document.querySelector('.builder-toolbar').style.backgroundColor = '#00000033';
+          } else {
+            document.querySelector('.builder-toolbar').style.backgroundColor = 'transparent';
+          }
           if (this.interactionLayer) {
             this.interactionLayer.style.display = 'none';
           }
