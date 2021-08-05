@@ -111,7 +111,7 @@
           <div class="message-header" @click="toggleAnswers">
             Answers: 
             <input type="checkbox" id="randomizeAnswers"
-              style="margin-left: 20px;"
+              style="margin-left: 15px;"
               v-model="updatedData.randomizeAnswers"
               @input="$emit('itemChanged', updatedData)"
             >
@@ -406,17 +406,16 @@ export default {
     }
 /* https://scotch.io/courses/getting-started-with-vuejs/vue-events-building-an-accordion */
     .message {
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
+      margin: 0 auto;
     }
     .message-header {
       cursor: pointer;
     }
     .message-body   {
-      padding: 0;
+      padding: 0 5px;
       max-height: 17em;
-      overflow-y: auto;
+      overflow: hidden auto;
       transition: 0.3s ease all;
     }
     .is-closed .message-body {
@@ -426,7 +425,7 @@ export default {
       background-color: rgba(150, 150, 150, 0.5);
     } */
     .message-content {
-      padding: 5px 0;
+      padding: 0px 5px;
       margin-bottom: 5px;
       border: 1px solid #333333;
     }

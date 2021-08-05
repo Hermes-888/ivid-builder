@@ -6,6 +6,8 @@
     >
     </div>
     <div class="editor-panel" ref="editorPanel"
+      style="transform: translate(870px, 140px);"
+      data-x="870" data-y="140"
       v-bind:style="editorStyle"
     >
       <div class="editor-header">
@@ -83,7 +85,8 @@ import Interact from 'interactjs';
           currentKey: 0,// update data
           sceneVisible: false,// toggle Intro or Scene
           headerText: 'editor header',
-          panelTop: 0
+          panelTop: 0,
+          canDrag: false
         }
     },
     mounted () {
@@ -116,11 +119,12 @@ import Interact from 'interactjs';
             listeners: {
               start(e) {
                 comp.panelTop = comp.$refs.editorPanel.getBoundingClientRect().y;
-                // console.log(e.page.y, comp.panel);
+                // interact('#specificElement').draggable(false);
+                comp.canDrag = (e.page.y < comp.panelTop+35) ? true : false;
               },
               // every dragmove event
               move(event) {
-                if (event.page.y < comp.panelTop+30) {
+                if (comp.canDrag) {
                   var target = event.target;
                   // keep the dragged position in the data-x/data-y attributes
                   var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
@@ -139,6 +143,19 @@ import Interact from 'interactjs';
               // end (event) {
               //   console.log('drag end');
               // }
+            }
+          })
+          .resizable({
+            edges: {top: false, left: true, bottom: false, right: true},
+            listeners: {
+              move(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                Object.assign(event.target.style, {
+                  width: `${event.rect.width}px`
+                });
+              }
             }
           });
       });
@@ -182,9 +199,10 @@ import Interact from 'interactjs';
 	.editor-panel {
 		position: absolute;
     z-index: 10;
-    top: 5vh;
-		left: 33%;
-		width: 33%;
+    top: 0;
+		left: 0;
+		min-width: 32%;
+    max-width: 50%;
     padding: 0;
 		font-size: 18px;
 		color: #000000;

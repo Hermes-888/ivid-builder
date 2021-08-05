@@ -581,7 +581,7 @@ export default {
 
     /* Style the tab content */
     .tab-content {
-        padding: 5px;
+        padding: 2px 8px;
         overflow-wrap: anywhere;
         border: 1px solid #888888;
         background-color: #ffffff;

@@ -162,7 +162,7 @@ export default {
         float: left;
     }
     .small-text {
-      font-size: 14px;
+      font-size: 12px;
     }
     .input-short {
         width: 45px;
