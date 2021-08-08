@@ -57,52 +57,75 @@
         </div>
         <!-- element specific -->
         <div class="form-row">
-            <label for="duration">Duration:</label>
-            <input type="text" id="duration" class="input-short"
-                v-model="updatedData.duration"
-                @input="$emit('itemChanged', updatedData)"
-            >
-            <input type="checkbox" id="pause"
-                v-model="updatedData.removeMessage"
-                @input="$emit('itemChanged', updatedData)"
-            >
-            <label for="pause" 
-              title="False will leave the message on the screen">
-              Remove Message
-            </label>
+          <label for="duration"
+            title="Second displayed on screen">
+            Duration:
+          </label>
+          <input type="text" id="duration" class="input-short"
+            v-model="updatedData.duration"
+            @input="$emit('itemChanged', updatedData)"
+          >
+          <input type="checkbox" id="remove"
+            v-model="updatedData.removeMessage"
+            @input="$emit('itemChanged', updatedData)"
+          >
+          <label for="remove" 
+            title="False will leave the message on the screen">
+            Remove Message
+          </label>
         </div>
         <div class="form-row">
             <span>Message:</span>
         </div>
         <div class="form-row">
-            <textarea id="messageText"
-                v-model="updatedData.messageText"
-                @input="$emit('itemChanged', updatedData)"
-            >
-            </textarea>
+          <textarea id="messageText"
+            v-model="updatedData.messageText"
+            @input="$emit('itemChanged', updatedData)"
+          >
+          </textarea>
+        </div>
+        <color-picker id="txtClose"
+          v-if="showTxtPalette"
+          :color="updatedData.textColor"
+          @changed="changeTxtColor"
+          @close="showPalette('txtClose')"
+        />
+        <color-picker id="bkgClose"
+          v-if="showBkgPalette"
+          :color="updatedData.bkgColor"
+          @changed="changeBkgColor"
+          @close="showPalette('bkgClose')"
+        />
+        <div class="form-row">
+          <div class="column-half">
+            <label for="txtColor" title="Panel background color">
+              Text Color:
+            </label>
+            <div class="color-swatch" id="txtColor"
+              ref="txtcolor" title="Click to open a color picker, click again to close it"
+              @click="showPalette('txtColor')"
+            ></div>
+          </div>
+          <div class="column-half">
+            <label for="bkgColor"
+              title="Panel background color can have opacity. Click the color swatch to change the color">
+              Background Color:
+            </label>
+            <div class="color-swatch" id="bkgColor"
+              ref="bkgcolor" title="Click to open a color picker, click again to close it"
+              @click="showPalette('bkgColor')"
+            ></div>
+          </div>
         </div>
     </div>
 </template>
 
 <script>
+import ColorPicker from './ColorPicker.vue';
+
 export default {
-    /**
-     * Animated Message
-        "start": 3.12,
-        "type": "AnimatedMessage",
-        "useBlur": false,
-        "useOverlay": false,
-        "animateIn": true,
-        "animateOut": false,
-        "animateTo": "35%",
-        "pauseVideo": false,
-        "resumePlayback": true,
-        "removeMessage": true,
-        "messageText": "This is a message from",
-        "duration": 4
-     */
     name: "FormMessage",
-    // components: {},
+    components: {ColorPicker},
     props: {
         formData: {
             type: Object,
@@ -125,15 +148,25 @@ export default {
               "resumePlayback": true,
               "removeMessage": true,
               "messageText": "",
-              "duration": 1
+              "duration": 1,
+              "bkgColor": "#ffffffCC",
+              "textColor": "#333333"
             }],// .index is added in FormScene
+            showBkgPalette: false,
+            showTxtPalette: false
         }
     },
     mounted () {
-        this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            console.log('Message:', this.updatedData.type, this.updatedData.index);
-        });
+      this.updatedData = JSON.parse(JSON.stringify(this.formData));
+      // add
+      if (!this.updatedData.hasOwnProperty('bkgColor')) {
+        this.updatedData.bkgColor = "rgba(255,255,255, 0.8)";
+        this.updatedData.textColor = "#333333";
+      }
+      // set color swatchs
+      this.$refs.bkgcolor.style.backgroundColor = this.updatedData.bkgColor;
+      this.$refs.txtcolor.style.backgroundColor = this.updatedData.textColor;
+      // console.log('Message:', this.updatedData.type, this.updatedData.index);
     },
     methods: {
       // @keypress="isNumber($event)"
@@ -142,6 +175,39 @@ export default {
         if (!keysAllowed.includes(evt.key)) {
           evt.preventDefault();
         }
+      },
+      /**
+       * Color Picker
+       * https://github.com/xiaokaike/vue-color
+       */
+      showPalette: function (e) {
+        let elem = e.toString().substr(0, 4);
+        if (elem === 'bkgC') {
+          this.showBkgPalette = !this.showBkgPalette;
+          if (this.showBkgPalette) {
+            this.$refs.bkgcolor.classList.add('swatch-glow');
+          } else {
+            this.$refs.bkgcolor.classList.remove('swatch-glow');
+          }
+        }
+        if (elem === 'txtC') {
+          this.showTxtPalette = !this.showTxtPalette;
+          if (this.showTxtPalette) {
+            this.$refs.txtcolor.classList.add('swatch-glow');
+          } else {
+            this.$refs.txtcolor.classList.remove('swatch-glow');
+          }
+        }
+      },
+      changeBkgColor: function (color) {
+        this.updatedData.bkgColor = color.hex8;// .rgba is an object, reconstruct as string?
+        this.$refs.bkgcolor.style.backgroundColor = color.hex8;
+        this.$emit('itemChanged', this.updatedData);
+      },
+      changeTxtColor: function (color) {
+        this.updatedData.textColor = color.hex8;
+        this.$refs.txtcolor.style.backgroundColor = color.hex8;
+        this.$emit('itemChanged', this.updatedData);
       }
     }
 }
@@ -152,14 +218,14 @@ export default {
         width: 100%;
     }
     .form-row {
+        display: flex;
         width: 100%;
         margin: 5px 0;
-        clear: both;
     }
-    .form-row-half {
-        width: 49%;
-        margin: 5px 0;
-        float: left;
+    .column-half {
+      width: 49%;
+      display: flex;
+      justify-content: flex-start;
     }
     .small-text {
       font-size: 12px;
@@ -169,9 +235,6 @@ export default {
     }
     .input-med {
         width: 60px;
-    }
-    .long-text-input {
-        width: 78%;
     }
     label {
         margin-right: 5px;
@@ -207,13 +270,7 @@ export default {
         margin-top: 20px;
         padding: 15px 0;
     }
-    .empty-button {
-        width: 15px;
-        margin: 0 10px;
-        padding: 0 5px;
-        float: right;
-        border: 1px solid transparent;
-    }
+
     .icon-button {
         margin: 0 10px;
         padding: 0 5px;
@@ -227,5 +284,17 @@ export default {
     }
     .icon-button:hover {
         background-color: #ccf1cc;
+    }
+
+    .color-swatch {
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+        border: 1px solid #333333;
+    }
+    .swatch-glow {
+      box-shadow: 0px 0px 20px 5px rgb(2, 64, 32);
+      /* in order: x offset, y offset, blur size, spread size, color */
+      /* blur size and spread size are optional (they default to 0) */
     }
 </style>

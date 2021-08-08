@@ -68,6 +68,15 @@
               @input="changeScreen"
             >
           </div>
+          <div class="column-right">
+            <label for="btnFillColor" title="Fill the play button">
+              Button Fill Color
+            </label>
+            <div class="color-swatch" id="btnFillColor"
+                ref="fillcolor" title="Click to open a color picker, click again to close it"
+                @click="showPalette"
+            ></div>
+          </div>
         </div>
       </div>
       <div class="form-row bordered">
@@ -78,11 +87,26 @@
               Save Intro Changes <icon-save-file/>
           </button>
       </div>
-      <Sketch class="btn-color-palette"
-        v-if="showBtnPalette"
-        @input="changeBtnColor"
-        :value="updatedData.buttonColor ? updatedData.buttonColor : '#ff0000'"
-      />
+      <div class="picker-panel" id="btnClose"
+          v-if="showBtnPalette"
+          @click.self="showPalette"
+      >
+        <icon-close id="btnCloser" @click="showPalette"/>
+        <Sketch class="btn-color-palette"
+          @input="changeBtnColor"
+          :value="updatedData.buttonColor ? updatedData.buttonColor : '#ff0000'"
+        />
+      </div>
+      <div class="picker-panel" id="fillColor"
+          v-if="showFillPalette"
+          @click.self="showPalette"
+        >
+        <icon-close id="fillCloser" @click="showPalette"/>
+        <Sketch class="btn-fill-palette"
+          @input="changeFillColor"
+          :value="updatedData.fillColor ? updatedData.fillColor : '#ffffff00'"
+        />
+      </div>
     </div>
 </template>
 
@@ -110,15 +134,16 @@ export default {
     data () {
         return {
             showBtnPalette: false,
-            // screenClasses: ['introduction', 'intro-text', 'start-button', 'svg.circle', 'svg.polygon'],
+            showFillPalette: false,
             updatedData: {
                 titleText: '',
                 text: '',
                 audio: '',
                 image: '',
-                buttonColor: ''
+                buttonColor: '',
+                fillColor: '#ffffff00'
             },// don't mutate the prop
-            element: null// introduction screen element
+            element: null,// introduction screen element
         }
     },
     mounted () {
@@ -126,6 +151,8 @@ export default {
         this.$nextTick(function() {
             this.updatedData = JSON.parse(JSON.stringify(this.formData));
             this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
+            // add fillColor, transparent = not filled
+            this.updatedData.fillColor = '#ffffff00';
         });
     },
     watch: {
@@ -154,14 +181,27 @@ export default {
                 break;
             }
         },
-        showPalette: function () {
-          this.showBtnPalette = !this.showBtnPalette;
-          if (this.showBtnPalette) {
-            this.$refs.btncolor.classList.add('swatch-glow');
-            // document.querySelector('#btnColor').classList.add('swatch-glow');
+        showPalette: function (e) {
+          let idname = e.target.id.substr(0, 4);
+          if (!idname) {
+            // svg icon
+            idname = e.target.parentNode.parentNode.id.substr(0, 4);
+          }
+          // console.log('showPalette:', e.target.id, idname);
+          if (idname === 'btnC') {
+            this.showBtnPalette = !this.showBtnPalette;
+            if (this.showBtnPalette) {
+              this.$refs.btncolor.classList.add('swatch-glow');
+            } else {
+              this.$refs.btncolor.classList.remove('swatch-glow');
+            }
           } else {
-            this.$refs.btncolor.classList.remove('swatch-glow');
-            // document.querySelector('#btnColor').classList.remove('swatch-glow');
+            this.showFillPalette = !this.showFillPalette;
+            if (this.showFillPalette) {
+              this.$refs.fillcolor.classList.add('swatch-glow');
+            } else {
+              this.$refs.fillcolor.classList.remove('swatch-glow');
+            }
           }
         },
         changeBtnColor: function (color) {
@@ -169,6 +209,11 @@ export default {
             this.$refs.btncolor.style.backgroundColor = color.hex8;
             document.querySelectorAll('circle')[0].style.stroke = color.hex8;
             document.querySelectorAll('polygon')[1].style.fill = color.hex8;
+        },
+        changeFillColor: function (color) {
+            this.updatedData.fillColor = color.hex8;// .rgba is an object, reconstruct as string?
+            this.$refs.fillcolor.style.backgroundColor = color.hex8;
+            document.querySelectorAll('circle')[0].style.fill = color.hex8;
         },
         changeBkgImage: function (image) {
           console.log('changeBkgImage:', this.updatedData.image);
@@ -189,8 +234,6 @@ export default {
               var color = e.target.value;
               //https://www.npmjs.com/package/validate-color
               console.log('color:', color);
-              // document.querySelectorAll('circle')[0].style.stroke = color;
-              // document.querySelectorAll('polygon')[1].style.fill = color;
               break;
           }
         }
@@ -254,6 +297,9 @@ export default {
         resize: none;
         margin-bottom: 8px;
     }
+    input[type="checkbox"] {
+      width: 90px;
+    }
     .empty-button {
         width: 15px;
         margin: 0 10px;
@@ -275,10 +321,31 @@ export default {
         background-color: #ccf1cc;
     }
 
+    .picker-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        background-color: rgba(0,0,0,0.2);
+    }
+    .picker-panel .close-circle-outline-icon {
+        margin: 5px 10px;
+        float: right;
+    }
+    .picker-panel .close-circle-outline-icon .material-design-icon__svg {
+        fill: #ffffff;
+    }
     .btn-color-palette {
         position: absolute;
         top: 31%;
         left: 160px;
+    }
+    .btn-fill-palette {
+        position: absolute;
+        top: 31%;
+        right: 58px;
     }
     .color-swatch {
         width: 30px;
@@ -293,12 +360,13 @@ export default {
       /* blur size and spread size are optional (they default to 0) */
     }
     .column-left {
-      width: 66%;
+      width: 50%;
       display: flex;
+      justify-content: flex-start;
       /* border: 1px solid #333; */
     }
     .column-right {
-      width: 33%;
+      width: 50%;
       display: flex;
       justify-content: flex-end;
       /* border: 1px solid rgb(8, 106, 172); */

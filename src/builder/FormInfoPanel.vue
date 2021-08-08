@@ -55,11 +55,6 @@
                 @input="$emit('itemChanged', updatedData)"
             >
         </div>
-        <Sketch class="bkg-color-palette"
-            v-if="showBkgPalette"
-            @input="changeBkgColor"
-            :value="updatedData.panelBkgColor"
-        />
         <div class="form-row">
           <div class="column-left">
             <label for="panelWidth">Panel width:</label>
@@ -74,15 +69,10 @@
             </label>
             <div class="color-swatch" id="panelBkgColor"
                 ref="bkgcolor" title="Click to open a color picker, click again to close it"
-                @click="showPalette"
+                @click="showPalette('panelColor')"
             ></div>
           </div>
         </div>
-        <Sketch class="txt-color-palette"
-            v-if="showTxtPalette"
-            @input="changeTxtColor"
-            :value="updatedData.titleColor"
-        />
         <div class="form-row">
           <div class="column-left">
             <label for="infoTitle">Title:</label>
@@ -95,7 +85,7 @@
             <label for="titleColor" title="Panel background color">Text color:</label>
             <div class="color-swatch" id="titleColor"
                 ref="txtcolor" title="Click to open a color picker, click again to close it"
-                @click="showPalette"
+                @click="showPalette('titleColor')"
             ></div>
           </div>
         </div>
@@ -116,34 +106,28 @@
                 @input="$emit('itemChanged', updatedData)"
             >
         </div>
+        <color-picker
+          v-if="showBkgPalette"
+          :color="updatedData.panelBkgColor"
+          @changed="changeBkgColor"
+          @close="showPalette('panelClose')"
+        />
+        <color-picker
+          v-if="showTxtPalette"
+          :color="updatedData.titleColor"
+          @changed="changeTxtColor"
+          @close="showPalette('titleClose')"
+        />
     </div>
 </template>
 
 <script>
 // A better color picker w/rgba
-// ToDo: add an overlay when the palette is visible, to click for close?
-import {Sketch} from 'vue-color';
+import ColorPicker from './ColorPicker.vue';
 
 export default {
-    /**
-        "start": 8.8,
-        "type": "InfoPanel",
-        "useBlur": true,
-        "useOverlay": false,
-        "animateIn": true,
-        "animateOut": true,
-        "animateTo": "25%",
-        "pauseVideo": true,
-        "resumePlayback": true,
-        "panelWidth": "40%",
-        "panelBkgColor": "rgba(3,117,163, 0.6)",
-        "infoTitle": "This is an info panel title",
-        "titleColor": "#ffffff",
-        "infoText": "This is the information to display.",
-        "buttonText": "I Agree"
-     */
     name: "FormInfoPanel",
-    components: {Sketch},
+    components: {ColorPicker},
     props: {
         formData: {
             type: Object,
@@ -154,31 +138,33 @@ export default {
     },
     data () {
         return {
-            showBkgPalette: false,
-            showTxtPalette: false,
-            // colors: {
-            //     hex: '#000000',// default
-            //     rgba: {r: 0, g: 0, b: 0, a: 1},
-            //     a: 1// alpha
-            // },
             updatedData: [{
-                "panelWidth": '',
-                "panelBkgColor": '',
-                "infoTitle": '',
-                "titleColor": '',
-                "infoText": '',
-                "buttonText": ''
+              "start": 8.8,
+              "type": "InfoPanel",
+              "useBlur": true,
+              "useOverlay": false,
+              "animateIn": true,
+              "animateOut": true,
+              "animateTo": "",
+              "pauseVideo": true,
+              "resumePlayback": true,
+              "panelWidth": "",
+              "panelBkgColor": "",
+              "infoTitle": "",
+              "titleColor": "",
+              "infoText": "",
+              "buttonText": ""
             }],// don't mutate the prop
+            showBkgPalette: false,
+            showTxtPalette: false
         }
     },
     mounted () {
-        this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            console.log('InfoPanel:', this.updatedData.type, this.updatedData.index);
-            // set color swatchs
-            this.$refs.bkgcolor.style.backgroundColor = this.updatedData.panelBkgColor;
-            this.$refs.txtcolor.style.backgroundColor = this.updatedData.titleColor;
-        });
+      this.updatedData = JSON.parse(JSON.stringify(this.formData));
+      // set color swatchs
+      this.$refs.bkgcolor.style.backgroundColor = this.updatedData.panelBkgColor;
+      this.$refs.txtcolor.style.backgroundColor = this.updatedData.titleColor;
+      // console.log('InfoPanel:', this.updatedData.type, this.updatedData.index);
     },
     methods: {
       // @keypress="isNumber($event)"
@@ -193,29 +179,25 @@ export default {
          * https://github.com/xiaokaike/vue-color
          */
         showPalette: function (e) {
-          console.log('showPalette:', e.target.id);
-          if (e.target.id === 'panelBkgColor') {
+          let elem = e.toString().substr(0, 6);
+          if (elem === 'panelC') {
             this.showBkgPalette = !this.showBkgPalette;
             if (this.showBkgPalette) {
               this.$refs.bkgcolor.classList.add('swatch-glow');
-              // document.querySelector('#panelBkgColor').classList.add('swatch-glow');
             } else {
               this.$refs.bkgcolor.classList.remove('swatch-glow');
-              // document.querySelector('#panelBkgColor').classList.remove('swatch-glow');
             }
-          } else {
+          }
+          if (elem === 'titleC') {
             this.showTxtPalette = !this.showTxtPalette;
             if (this.showTxtPalette) {
               this.$refs.txtcolor.classList.add('swatch-glow');
-              // document.querySelector('#titleColor').classList.add('swatch-glow');
             } else {
               this.$refs.txtcolor.classList.remove('swatch-glow');
-              // document.querySelector('#titleColor').classList.remove('swatch-glow');
             }
           }
         },
         changeBkgColor: function (color) {
-            //console.log('changeBkgColor:', color);
             this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
             this.$refs.bkgcolor.style.backgroundColor = color.hex8;
             this.$emit('itemChanged', this.updatedData);
@@ -237,7 +219,6 @@ export default {
         display: flex;
         width: 100%;
         margin: 5px 0;
-        clear: both;
     }
     .form-row-half {
         width: 49%;
@@ -256,7 +237,7 @@ export default {
       /* border: 1px solid rgb(8, 106, 172); */
     }
     .small-text {
-      font-size: 14px;
+      font-size: 12px;
     }
     #buttonText {
       width: 66%;
@@ -326,16 +307,6 @@ export default {
         background-color: #ccf1cc;
     }
 
-    .bkg-color-palette {
-        position: absolute;
-        top: 30%;
-        right: 55px;
-    }
-    .txt-color-palette {
-        position: absolute;
-        top: 34.5%;
-        right: 55px;
-    }
     .color-swatch {
         width: 30px;
         height: 20px;
@@ -343,7 +314,7 @@ export default {
         border: 1px solid #333333;
     }
     .swatch-glow {
-      box-shadow: 0px 0px 20px 5px rgb(78, 236, 210);
+      box-shadow: 0px 0px 20px 5px rgb(2, 64, 32);
       /* in order: x offset, y offset, blur size, spread size, color */
       /* blur size and spread size are optional (they default to 0) */
     }

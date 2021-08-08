@@ -228,7 +228,7 @@ import Interact from 'interactjs';
     margin-top: -5px;
 	}
 	.editor-body {
-		padding: 10px;
+		padding: 5px;
 	}
   .editor-footer {
     width: 100%;

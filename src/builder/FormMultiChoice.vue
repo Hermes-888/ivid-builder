@@ -67,7 +67,7 @@
         <!-- element specific -->
         <div class="message" :class="questionClasses">
           <div class="message-header" @click="toggleQuestion">
-            Question Text:     
+            Question:
           </div>
           <div class="message-body">
             <div class="message-content">
@@ -91,11 +91,20 @@
                 >
               </div>
             </div>
+            <div class="message-content form-row pad-sm">
+              <label for="bkgColor" title="Panel background color can have opacity. Click the color swatch to change the color">
+                Background color:
+              </label>
+              <div class="color-swatch" id="bkgColor"
+                ref="bkgcolor" title="Click to open a color picker, click again to close it"
+                @click="showPalette('bkgColor')"
+              ></div>
+            </div>
           </div>
         </div>
         <div class="message" :class="instructClasses">
           <div class="message-header" @click="toggleInstruct">
-            Instructions:  
+            Instructions:
           </div>
           <div class="message-body">
             <div class="message-content">
@@ -105,11 +114,50 @@
               >
               </textarea>
             </div>
+            <div class="message-content">
+              <div class="form-row">
+                <label for="hintText" title="Hint text to display">
+                  Hint:
+                </label>
+              </div>
+              <div class="form-row">
+                <textarea id="hintText" class="area-short"
+                  v-model="updatedData.hintText"
+                  @input="$emit('itemChanged', updatedData)"
+                >
+                </textarea>
+              </div>
+              <div class="form-row">
+                <label for="hintButtonText" title="Hint audio file">
+                  Hint Button Text:
+                </label>
+                <input id="hintButtonText" class="input-med-long"
+                  v-model="updatedData.hintButtonText"
+                  @input="$emit('itemChanged', updatedData)"
+                >
+              </div>
+              <div class="form-row">
+                <label for="txtColor" title="Hint button text color">
+                 Hint Text Color:
+                </label>
+                <div class="color-swatch" id="txtColor"
+                  ref="txtcolor" title="Click to open a color picker, click again to close it"
+                  @click="showPalette('txtColor')"
+                ></div>
+                <label for="btnColor" title="Hint button color">
+                  Hint Button Color:
+                </label>
+                <div class="color-swatch" id="btnColor"
+                  ref="btncolor" title="Click to open a color picker, click again to close it"
+                  @click="showPalette('btnColor')"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="message" :class="answerClasses">
           <div class="message-header" @click="toggleAnswers">
-            Answers: 
+            Answers:
             <input type="checkbox" id="randomizeAnswers"
               style="margin-left: 15px;"
               v-model="updatedData.randomizeAnswers"
@@ -189,16 +237,33 @@
             </div>
           </div>
         </div>
+        <color-picker
+          v-if="showBkgPalette"
+          :color="updatedData.backgroundColor"
+          @changed="changeBkgColor"
+          @close="showPalette('bkgClose')"
+        />
+        <color-picker
+          v-if="showTxtPalette"
+          :color="updatedData.hintButtonTextColor"
+          @changed="changeTxtColor"
+          @close="showPalette('txtClose')"
+        />
+        <color-picker
+          v-if="showBtnPalette"
+          :color="updatedData.hintButtonBackgroundColor"
+          @changed="changeBtnColor"
+          @close="showPalette('btnClose')"
+        />
     </div>
 </template>
 
 <script>
+import ColorPicker from './ColorPicker.vue';
+
 export default {
-    /**
-     * MultiChoice
-     */
     name: "FormMultiChoice",
-    // components: {},
+    components: {ColorPicker},
     props: {
         formData: {
             type: Object,
@@ -222,6 +287,7 @@ export default {
               "questionText": "",
               "questionAudio": "",
               "questionInstructions": "",
+              "backgroundColor": "#ffffffB8",
               "hintButtonText": "Need a hint?",
               "hintButtonTextColor": "",
               "hintButtonBackgroundColor": "",
@@ -251,13 +317,21 @@ export default {
             isQuestionOpen: false,// Question
             isInstructOpen: false,// Instructions
             isAnswersOpen: false,// Answers
+            showBkgPalette: false,// color pickers
+            showTxtPalette: false,
+            showBtnPalette: false
         }
     },
     mounted () {
-        // this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            console.log('MultiChoice:', this.updatedData, this.updatedData.type);//, this.updatedData.index);
-        // });
+      this.updatedData = JSON.parse(JSON.stringify(this.formData));
+      if (!this.updatedData.hasOwnProperty('backgroundColor')) {
+        this.updatedData.backgroundColor = "#ffffffB8";// Add
+      }
+      // set color swatchs
+      this.$refs.bkgcolor.style.backgroundColor = this.updatedData.backgroundColor;
+      this.$refs.txtcolor.style.backgroundColor = this.updatedData.hintButtonTextColor;
+      this.$refs.btncolor.style.backgroundColor = this.updatedData.hintButtonBackgroundColor;
+      // console.log('MultiChoice:', this.updatedData.type, this.updatedData.index, this.updatedData);
     },
     computed: {
       propertiesClasses: function() {
@@ -316,6 +390,53 @@ export default {
         this.isPropertiesOpen = false;
         this.isInstructOpen = false;
         this.isQuestionOpen = false;//this.isAnswersOpen ? false : true;
+      },
+      /**
+       * Color Picker
+       * https://github.com/xiaokaike/vue-color
+       */
+      showPalette: function (e) {
+        let elem = e.toString().substr(0, 4);
+        if (elem === 'bkgC') {
+          this.showBkgPalette = !this.showBkgPalette;
+          if (this.showBkgPalette) {
+            this.$refs.bkgcolor.classList.add('swatch-glow');
+          } else {
+            this.$refs.bkgcolor.classList.remove('swatch-glow');
+          }
+        } 
+        if (elem === 'txtC') {
+          this.showTxtPalette = !this.showTxtPalette;
+          if (this.showTxtPalette) {
+            this.$refs.txtcolor.classList.add('swatch-glow');
+          } else {
+            this.$refs.txtcolor.classList.remove('swatch-glow');
+          }
+        }
+        if (elem === 'btnC') {
+          this.showBtnPalette = !this.showBtnPalette;
+          if (this.showBtnPalette) {
+            this.$refs.btncolor.classList.add('swatch-glow');
+          } else {
+            this.$refs.btncolor.classList.remove('swatch-glow');
+          }
+        }
+      },
+      changeBkgColor: function (color) {
+          this.updatedData.backgroundColor = color.hex8;// .rgba is an object, reconstruct as string?
+          this.$refs.bkgcolor.style.backgroundColor = color.hex8;
+          this.$emit('itemChanged', this.updatedData);
+          // reconstruct the element?
+      },
+      changeTxtColor: function (color) {
+          this.updatedData.hintButtonTextColor = color.hex8;
+          this.$refs.txtcolor.style.backgroundColor = color.hex8;
+          this.$emit('itemChanged', this.updatedData);
+      },
+      changeBtnColor: function (color) {
+          this.updatedData.hintButtonBackgroundColor = color.hex8;
+          this.$refs.btncolor.style.backgroundColor = color.hex8;
+          this.$emit('itemChanged', this.updatedData);
       }
     }
 }
@@ -326,23 +447,30 @@ export default {
         width: 100%;
     }
     .form-row {
+        display: flex;
         width: 100%;
         margin: 5px 0;
-        clear: both;
     }
     .form-row-half {
         width: 49%;
         margin: 5px 0;
         float: left;
     }
+    .pad-sm {
+      width: 97.5% !important;
+      padding: 5px !important;
+    }
     .small-text {
-      font-size: 14px;
+      font-size: 12px;
     }
     .input-short {
         width: 45px;
     }
     .input-med {
         width: 60px;
+    }
+    .input-med-long {
+      width: 65%;
     }
     .input-long {
         width: 75%;
@@ -428,5 +556,18 @@ export default {
       padding: 0px 5px;
       margin-bottom: 5px;
       border: 1px solid #333333;
+    }
+
+    .color-swatch {
+        width: 30px;
+        height: 20px;
+        margin-right: 20px;
+        cursor: pointer;
+        border: 1px solid #333333;
+    }
+    .swatch-glow {
+      box-shadow: 0px 0px 20px 5px rgb(2, 64, 32);
+      /* in order: x offset, y offset, blur size, spread size, color */
+      /* blur size and spread size are optional (they default to 0) */
     }
 </style>

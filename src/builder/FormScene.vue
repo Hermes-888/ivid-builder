@@ -349,8 +349,9 @@ export default {
           //   }
           // }
           if (val.hasOwnProperty('index')) {
-            //console.log('cueData:', val.index, val.type, val);
+            //console.log('cueData:', val.index, val.type, val, this.element);
             this.updatedData[this.sceneNum].cueData[val.index] = val;
+            this.element = this.screenElements[this.activetab];
             if (!this.element) { return; }
 
             // apply data to current element
@@ -359,6 +360,8 @@ export default {
                 // ToDo: add bkg color & font color, size?
                 this.element.style.top = val.animateTo;
                 this.element.children[0].innerText = val.messageText;
+                this.element.style.backgroundColor = val.bkgColor;
+                this.element.children[0].style.color = val.textColor;
                 break;
               case 'InfoPanel':
                 this.element.style.top = val.animateTo;
@@ -370,8 +373,24 @@ export default {
                 this.element.querySelector('.info-button').children[0].innerText = val.buttonText;
                 break;
               case 'MultipleChoice':
+                // reconstruct this element? 
+                // this.constructElements([data], false);// construct array of one, don't clearAll
                 console.log('changeForm switch:', val.type, val);
-                // ToDo: finish updating this.element
+                this.element.querySelector('.multi-question').children[0].innerHTML = val.questionText;
+                this.element.querySelector('.multi-instructions').children[0].innerText = val.questionInstructions;
+                this.element.querySelector('.multi-container').style.backgroundColor = val.backgroundColor;
+                // answers: []
+                let comp = this;
+                val.answers.forEach(function(answer, index) {
+                  let el = comp.element.querySelector('.multi-answer-container').children[index];
+                  el.children[0].children[0].innerText = answer.answerText;
+                });
+                // feedback and continue button?
+                // hint
+                this.element.querySelector('.multi-hint-text').children[1].innerText = val.hintText;
+                this.element.querySelector('.multi-hint-button').children[0].innerText = val.hintButtonText;
+                this.element.querySelector('.multi-hint-button').style.color = val.hintButtonTextColor;
+                this.element.querySelector('.multi-hint-button').style.backgroundColor = val.hintButtonBackgroundColor;
                 break;
             }
           } else {
@@ -535,7 +554,7 @@ export default {
     /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
     .tabs-container {  
         width: 100%;
-        margin: 10px auto;
+        margin: 6px 0 0 0;
     }
 
     /* Style the tabs */
