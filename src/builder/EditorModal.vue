@@ -169,11 +169,13 @@ import Interact from 'interactjs';
       currentData: {
         immediate: true,
         handler(newstate, oldstate) {
-          console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
+          // console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
           if (!newstate) { return; }
 
           this.sceneVisible = Array.isArray(newstate);
           this.headerText = this.sceneVisible ? 'Edit Scene Data' : 'Edit Introduction Data';
+          // adjust icons
+          document.querySelector('.toolbar-header').style.justifyContent = this.sceneVisible ? 'space-around' : 'flex-start';
         }
       },
     },

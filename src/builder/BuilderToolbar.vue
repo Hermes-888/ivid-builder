@@ -167,13 +167,11 @@ export default {
       immediate: true,
       handler(newstate) {
         if (newstate) {
-          console.log('-- watch editPanel sceneVisible:', newstate);
+          // console.log('-- watch editPanel sceneVisible:', newstate);
           // progressbar click access
           document.querySelector('.progress-holder').style.zIndex = 12;
           // remove interactions
           this.actionLayer = document.querySelector('.interaction-overlay');
-          // adjust icons
-          document.querySelector('.toolbar-header').style.justifyContent = 'space-around';
 
           var comp = this;// scope for addEventListener
           if (!this.vidPlayer) {
