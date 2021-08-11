@@ -1,6 +1,6 @@
 <template>
   <div class="builder-toolbar">
-    <div class="editor-header">
+    <div class="toolbar-header">
         <div class="image-buttons"
             v-show="sceneVisible"
         >
@@ -84,7 +84,7 @@
           </button>
           <button role="button" class="icon-button"
             title="Restart video"
-            @click="vidPlayer.currentTime=0;actionLayer.innerHTML=''"
+            @click="vidPlayer.currentTime=0;actionLayer.innerHTML='';"
           >
               <icon-rewind title="Restart video"/>
           </button>
@@ -104,13 +104,12 @@
               <icon-pause title="Pause video"/>
             </button>
           </div>
-          <!--DEFINE ACTION 
-          <button role="button" class="icon-button"
+          <!-- <button role="button" class="icon-button"
             title="Toggle Captions"
           >
             <icon-captions title="Toggle Captions"/>
           </button> -->
-          <!-- FIX  -->
+          <!--IF ENABLED? <icon-captions class="icon-captions" title="Toggle Captions"/> -->
           <button role="button" class="icon-button"
             title="Add new interaction"
             @click="showAddModal=true"
@@ -155,28 +154,26 @@ export default {
   },
   data() {
     return {
-      vidPlayer: null,// display video current time
-      progress: 0,
-      duration: 0,
+      vidPlayer: null,// video element
       actionLayer: null,// interactive elements
+      progress: 0,// vidPlayer video currentTime
+      duration: 0,
       showAddModal: false,// Add New Interaction
       layersVisible: false,// unused but maybe?
     }
   },
-  // mounted() {
-  //   // ToDo: move editor to DialogModal
-  //   this.$nextTick(function () {
-  //     let comp = this;// scope for addEventListener
-  //   });
-  // },
   watch: {
     sceneVisible: {
       immediate: true,
       handler(newstate) {
         if (newstate) {
-          // console.log('-- watch editPanel sceneVisible:', newstate);
+          console.log('-- watch editPanel sceneVisible:', newstate);
+          // progressbar click access
+          document.querySelector('.progress-holder').style.zIndex = 12;
           // remove interactions
           this.actionLayer = document.querySelector('.interaction-overlay');
+          // adjust icons
+          document.querySelector('.toolbar-header').style.justifyContent = 'space-around';
 
           var comp = this;// scope for addEventListener
           if (!this.vidPlayer) {
@@ -241,62 +238,59 @@ export default {
 </script>
 
 <style scoped>
-.builder-toolbar {
-  font-size: 16px;
-  padding: 5px;
-}
-.panel-row {
-  display: flex;
-  width: 100%;
-  height: fit-content;
-  /* margin-bottom: 5px; */
-}
-.editor-header {
-  display: flex;
-  font-size: 12px;
-  font-weight: 600;
-  color: #666666;
-  padding: 3px;
-}
+  .builder-toolbar {
+    font-size: 16px;
+    padding: 5px;
+  }
+  .toolbar-header {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666666;
+    padding: 3px;
+  }
 
-.image-buttons {
-  display: flex;
-  width: 20%;
-}
-.file-buttons {
-  width: 15%;
-  display: flex;
-  margin-left: 5%;
-}
-.player-buttons {
-  width: 45%;
-  display: flex;
-  justify-content: flex-end;
-}
+  .image-buttons {
+    display: flex;
+  }
+  .file-buttons {
+    display: flex;
+  }
+  .player-buttons {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.toolbar-column {
-  flex-direction: column;
-}
-.progress-time {
-  width:180px;
-  font-size: 17px;
-  margin-bottom: -10px;
-}
-.time-slider {
-  width:180px;
-  height: 1px;
-}
-.icon-button {
-  margin: 0 5px;
-  padding: 0 5px;
-  cursor: pointer;
-  font-size: 18px;
-  color: #333333;
-  border-radius: 2px;
-  border: 1px solid  #000000;
-  background-color: #efefef;
-}
-.icon-button:hover {
-  background-color: #ccf1cc;
-}
+  .toolbar-column {
+    flex-direction: column;
+  }
+  .progress-time {
+    width: 180px;
+    font-size: 17px;
+    margin-bottom: -9px;
+  }
+  .time-slider {
+    width: 180px;
+    height: 1px;
+  }
+  .icon-captions {
+    margin: 0 5px;
+    font-size: 26px;
+    cursor: pointer;
+  }
+  .icon-button {
+    margin: 0 5px;
+    padding: 0 5px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333333;
+    border-radius: 2px;
+    border: 1px solid  #000000;
+    background-color: #efefef;
+  }
+  .icon-button:hover {
+    background-color: #ccf1cc;
+  }
 </style>
