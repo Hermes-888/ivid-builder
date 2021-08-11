@@ -1,6 +1,14 @@
 <template>
 	<div class="animated-message">
-		<span v-html="mcData.messageText"></span>
+		<div class="message-text"
+			:style="{
+				backgroundColor:mcData.backgroundColor,
+				color:mcData.textColor,
+				width:mcData.panelWidth
+			}"
+		>
+			<span v-html="mcData.messageText"></span>
+		</div>
 	</div>
 </template>
 
@@ -39,8 +47,10 @@ export default {
 <style>
 	.animated-message {
 		position: absolute;
-		margin-left: 33%;
-		margin-right: 33%;
+		width: 100%;
+	}
+	.message-text {
+		margin: 0 auto;
 		width: 33%;
 		padding: 20px;
 		text-align: center;
@@ -48,6 +58,7 @@ export default {
 		border: 2px solid #333333;
 		background-color: rgba(255,255,255, 0.8);
 	}
+
 	@media (max-width: 1024px) {
 		.animated-message {
 			margin-top: -60px;

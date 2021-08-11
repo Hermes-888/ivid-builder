@@ -1,6 +1,6 @@
 <template>
 	<div class="multi-choice">
-		<div class="multi-container">
+		<div class="multi-container" ref="multicontainer">
 			<div class="multi-question">
 				<span v-html="mcData.questionText"></span>
 			</div>
@@ -118,9 +118,11 @@
 			if (this.mcData.randomizeAnswers) {
 				this.answers = this.randomizeAnswers(this.answers);
 			}
-
 			if (this.mcData.questionAudio) {
 				this.$emit('playAudioFile', this.mcData.questionAudio);
+			}
+			if (this.mcData.backgroundColor) {
+				this.$refs.multicontainer.style.backgroundColor = this.mcData.backgroundColor;
 			}
 		},
 		methods: {

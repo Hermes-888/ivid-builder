@@ -359,9 +359,10 @@ export default {
               case 'AnimatedMessage':
                 // ToDo: add bkg color & font color, size?
                 this.element.style.top = val.animateTo;
-                this.element.children[0].innerText = val.messageText;
-                this.element.style.backgroundColor = val.bkgColor;
-                this.element.children[0].style.color = val.textColor;
+                this.element.querySelector('.message-text').style.width = val.panelWidth;
+                this.element.querySelector('.message-text').style.color = val.textColor;
+                this.element.querySelector('.message-text').style.backgroundColor = val.backgroundColor;
+                this.element.querySelector('.message-text').children[0].innerHTML = val.messageText;
                 break;
               case 'InfoPanel':
                 this.element.style.top = val.animateTo;
@@ -375,7 +376,6 @@ export default {
               case 'MultipleChoice':
                 // reconstruct this element? 
                 // this.constructElements([data], false);// construct array of one, don't clearAll
-                console.log('changeForm switch:', val.type, val);
                 this.element.querySelector('.multi-question').children[0].innerHTML = val.questionText;
                 this.element.querySelector('.multi-instructions').children[0].innerText = val.questionInstructions;
                 this.element.querySelector('.multi-container').style.backgroundColor = val.backgroundColor;

@@ -44,7 +44,7 @@
 	import Introduction from "./components/Introduction.vue";
 	import Scene from './components/Scene.vue';
 	import Builder from "./builder/Builder.vue";
-	import rawdata from '../public/scenedata.json';
+	import rawdata from '../public/slidedata.json';
 
 	export default {
 		name: 'app',

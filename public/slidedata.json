@@ -82,11 +82,14 @@
 							"pauseVideo": false,
 							"resumePlayback": true,
 							"removeMessage": true,
+							"backgroundColor": "#ffffffcc",
+							"textColor": "#333333",
+							"panelWidth": "33%",
 							"messageText": "This is a message.",
-							"duration": 4
+							"duration": 3
 						},
 						{
-							"start": 12.015,
+							"start": 14.318,
 							"type": "InfoPanel",
 							"useBlur": true,
 							"useOverlay": false,
@@ -115,6 +118,7 @@
 							"questionText": "So what do you think happened?<br>How did E. coli bacteria get into the cake?",
 							"questionAudio": "",
 							"questionInstructions": "Choose one of the possible solutions to find the true culprit.",
+							"backgroundColor": "rgba(255,255,255,0.8)",
 							"hintButtonText": "Need a hint?",
 							"hintButtonTextColor": "",
 							"hintButtonBackgroundColor": "",

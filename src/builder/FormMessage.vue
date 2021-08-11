@@ -73,6 +73,13 @@
             title="False will leave the message on the screen">
             Remove Message
           </label>
+          <div class="column-left">
+            <label for="panelWidth">| Width:</label>
+            <input type="text" id="panelWidth" class="input-short"
+                v-model="updatedData.panelWidth"
+                @input="$emit('itemChanged', updatedData)"
+            >
+          </div>
         </div>
         <div class="form-row">
             <span>Message:</span>
@@ -92,7 +99,7 @@
         />
         <color-picker id="bkgClose"
           v-if="showBkgPalette"
-          :color="updatedData.bkgColor"
+          :color="updatedData.backgroundColor"
           @changed="changeBkgColor"
           @close="showPalette('bkgClose')"
         />
@@ -149,8 +156,9 @@ export default {
               "removeMessage": true,
               "messageText": "",
               "duration": 1,
-              "bkgColor": "#ffffffCC",
-              "textColor": "#333333"
+              "backgroundColor": "#ffffffCC",
+              "textColor": "#333333",
+              "panelWidth": "33%"
             }],// .index is added in FormScene
             showBkgPalette: false,
             showTxtPalette: false
@@ -158,13 +166,8 @@ export default {
     },
     mounted () {
       this.updatedData = JSON.parse(JSON.stringify(this.formData));
-      // add
-      if (!this.updatedData.hasOwnProperty('bkgColor')) {
-        this.updatedData.bkgColor = "rgba(255,255,255, 0.8)";
-        this.updatedData.textColor = "#333333";
-      }
       // set color swatchs
-      this.$refs.bkgcolor.style.backgroundColor = this.updatedData.bkgColor;
+      this.$refs.bkgcolor.style.backgroundColor = this.updatedData.backgroundColor;
       this.$refs.txtcolor.style.backgroundColor = this.updatedData.textColor;
       // console.log('Message:', this.updatedData.type, this.updatedData.index);
     },
@@ -200,7 +203,7 @@ export default {
         }
       },
       changeBkgColor: function (color) {
-        this.updatedData.bkgColor = color.hex8;// .rgba is an object, reconstruct as string?
+        this.updatedData.backgroundColor = color.hex8;// .rgba is an object, reconstruct as string?
         this.$refs.bkgcolor.style.backgroundColor = color.hex8;
         this.$emit('itemChanged', this.updatedData);
       },

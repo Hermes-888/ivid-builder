@@ -324,9 +324,6 @@ export default {
     },
     mounted () {
       this.updatedData = JSON.parse(JSON.stringify(this.formData));
-      if (!this.updatedData.hasOwnProperty('backgroundColor')) {
-        this.updatedData.backgroundColor = "#ffffffB8";// Add
-      }
       // set color swatchs
       this.$refs.bkgcolor.style.backgroundColor = this.updatedData.backgroundColor;
       this.$refs.txtcolor.style.backgroundColor = this.updatedData.hintButtonTextColor;
