@@ -246,7 +246,7 @@ export default {
       width: 60px
     }
     .input-short {
-        width: 50px;
+        width: 45px;
     }
     .long-text-input {
         width: 82%;

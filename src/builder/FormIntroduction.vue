@@ -63,7 +63,7 @@
                 ref="btncolor" title="Click to open a color picker, click again to close it"
                 @click="showPalette"
             ></div>
-            <input type="text" id="btnHex" class="input-short-short"
+            <input type="text" id="btnHex" class="input-hex-number"
               v-model="updatedData.buttonColor"
               @input="changeScreen"
             >
@@ -268,8 +268,8 @@ export default {
     .input-short {
       width: 70%;
     }
-    .input-short-short {
-      width: 30%;
+    .input-hex-number {
+      width: 100px;
     }
     input, textarea {
         width: 90%;

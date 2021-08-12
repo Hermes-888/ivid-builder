@@ -121,7 +121,7 @@
                 </label>
               </div>
               <div class="form-row">
-                <textarea id="hintText" class="area-short"
+                <textarea id="hintText"
                   v-model="updatedData.hintText"
                   @input="$emit('itemChanged', updatedData)"
                 >
@@ -185,7 +185,7 @@
                   @input="$emit('itemChanged', updatedData)"
                 >
                 <label :for="'correct'+index"
-                  title="Is the correct answer">
+                  title="This is the correct answer">
                   Correct
                 </label>
               </div>
@@ -210,7 +210,7 @@
                   @input="$emit('itemChanged', updatedData)"
                 >
               </div>
-              <div class="form-row">
+              <div class="form-row border-top">
                 <label :for="'feedbackText'+index">Feedback:</label>
               </div>
               <div class="form-row">
@@ -503,10 +503,10 @@ export default {
     .area-short {
       height: 60px;
     }
-    .bordered {
-        border-top: 2px solid #888888;
-        margin-top: 20px;
-        padding: 15px 0;
+    .border-top {
+        border-top: 3px solid #dddddd;
+        margin-top: 7px;
+        padding: 5px 0 0 0;
     }
     .empty-button {
         width: 15px;
