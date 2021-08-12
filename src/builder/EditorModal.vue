@@ -6,8 +6,8 @@
     >
     </div>
     <div class="editor-panel" ref="editorPanel"
-      style="transform: translate(870px, 140px);"
-      data-x="870" data-y="140"
+      style="transform: translate(870px, 150px);"
+      data-x="870" data-y="150"
       v-bind:style="editorStyle"
     >
       <div class="editor-header">
@@ -81,7 +81,6 @@ import Interact from 'interactjs';
 		},
     data () {
         return {
-          // modalElements: false,// Scene has modal elements
           currentKey: 0,// update data
           sceneVisible: false,// toggle Intro or Scene
           headerText: 'editor header',
@@ -93,6 +92,7 @@ import Interact from 'interactjs';
       this.$nextTick(function() {
         var comp = this;
 
+        // ToDo: this still needs work
         this.$root.$on('repoImageSelected', function(filename) {
           if (comp.sceneVisible) {
             console.log('repoImageSelected Scene:', filename);
@@ -105,6 +105,7 @@ import Interact from 'interactjs';
         });
 
         // editor-panel is draggable, only if mouse is over editor-header
+        // https://interactjs.io/
         Interact('.editor-panel')
           .draggable({
             // enable inertial throwing
@@ -145,6 +146,7 @@ import Interact from 'interactjs';
               // }
             }
           })
+          // .styleCursor(false)
           .resizable({
             edges: {top: false, left: true, bottom: false, right: true},
             listeners: {
@@ -203,7 +205,7 @@ import Interact from 'interactjs';
     z-index: 10;
     top: 0;
 		left: 0;
-		min-width: 32%;
+		min-width: 450px;
     max-width: 50%;
     padding: 0;
 		font-size: 18px;

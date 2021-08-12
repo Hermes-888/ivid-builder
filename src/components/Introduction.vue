@@ -42,10 +42,11 @@
 				type: Object,
 				default() {
 					return {
-						text: 'Your course description',
+						text: '',
 						audio: '',
 						image: '',
-            buttonColor: '#333333'
+            buttonColor: '',
+						fillColor: ''
 					}
 				}
 			},
@@ -83,6 +84,9 @@
 
 <style>
 	.introduction {
+		width: 90%;
+		min-height: 90%;
+		margin: 0 auto;
 		background-repeat: no-repeat;
 		background-size: contain;
 		background-position: center;
@@ -103,7 +107,7 @@
 		cursor: pointer;
 	}
 
-	/* iPhone 12 532 x 1,170 px */
+	/* iPhone 12 532 x 1170 px */
 	@media (max-width: 1170px) and (max-height: 532px) {
 		.start-button {
 			margin-top: 2%;

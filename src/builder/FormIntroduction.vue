@@ -61,12 +61,12 @@
             <label for="btnColor">Button Color:</label>
             <div class="color-swatch" id="btnColor"
                 ref="btncolor" title="Click to open a color picker, click again to close it"
-                @click="showPalette"
+                @click="showPalette('btnColor')"
             ></div>
-            <input type="text" id="btnHex" class="input-hex-number"
+            <!-- <input type="text" id="btnHex" class="input-hex-number"
               v-model="updatedData.buttonColor"
               @input="changeScreen"
-            >
+            > -->
           </div>
           <div class="column-right">
             <label for="btnFillColor" title="Fill the play button">
@@ -74,7 +74,7 @@
             </label>
             <div class="color-swatch" id="btnFillColor"
                 ref="fillcolor" title="Click to open a color picker, click again to close it"
-                @click="showPalette"
+                @click="showPalette('fillColor')"
             ></div>
           </div>
         </div>
@@ -87,32 +87,23 @@
               Save Intro Changes <icon-save-file/>
           </button>
       </div>
-      <div class="picker-panel" id="btnClose"
-          v-if="showBtnPalette"
-          @click.self="showPalette"
-      >
-        <icon-close id="btnCloser" @click="showPalette"/>
-        <Sketch class="btn-color-palette"
-          @input="changeBtnColor"
-          :value="updatedData.buttonColor ? updatedData.buttonColor : '#ff0000'"
-        />
-      </div>
-      <div class="picker-panel" id="fillColor"
-          v-if="showFillPalette"
-          @click.self="showPalette"
-        >
-        <icon-close id="fillCloser" @click="showPalette"/>
-        <Sketch class="btn-fill-palette"
-          @input="changeFillColor"
-          :value="updatedData.fillColor ? updatedData.fillColor : '#ffffff00'"
-        />
-      </div>
+      <color-picker id="btnClose"
+        v-if="showBtnPalette"
+        :color="updatedData.buttonColor"
+        @changed="changeBtnColor"
+        @close="showPalette('btnClose')"
+      />
+      <color-picker id="fillClose"
+        v-if="showFillPalette"
+        :color="updatedData.fillColor"
+        @changed="changeFillColor"
+        @close="showPalette('fillClose')"
+      />
     </div>
 </template>
 
 <script>
-//
-import {Sketch} from 'vue-color';
+import ColorPicker from './ColorPicker.vue';
 
 export default {
     /**
@@ -122,7 +113,7 @@ export default {
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
      */
     name: "FormIntroduction",
-    components: {Sketch},
+    components: {ColorPicker},
     props: {
         formData: {
             type: Object,
@@ -141,26 +132,31 @@ export default {
                 audio: '',
                 image: '',
                 buttonColor: '',
-                fillColor: '#ffffff00'
+                fillColor: ''
             },// don't mutate the prop
-            element: null,// introduction screen element
         }
     },
-    mounted () {
-        // create a deep copy of data to mutate
-        this.$nextTick(function() {
-            this.updatedData = JSON.parse(JSON.stringify(this.formData));
-            this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
-            // add fillColor, transparent = not filled
-            this.updatedData.fillColor = '#ffffff00';
-        });
-    },
+    // mounted () {
+    //     create a deep copy of data to mutate
+    //     this.$nextTick(function() {
+    //         this.updatedData = JSON.parse(JSON.stringify(this.formData));
+    //         this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
+    //         this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
+    //         console.log('FormIntroduction mounted updatedData:', this.updatedData);
+    //     });
+    // },
     watch: {
       formData: {
         immediate: true,
         handler(newstate, oldstate) {
-          this.updatedData = JSON.parse(JSON.stringify(this.formData));
-          console.log('FormIntroduction updated:', this.updatedData);
+            // ToDo: selecting a repoImage re-renders this component and overwrites any changes already made
+            // store the changes in localStorage? and re-define them only if they exist in localStorage
+            this.$nextTick(function() {
+                this.updatedData = JSON.parse(JSON.stringify(newstate));
+                this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
+                this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
+                console.log('FormIntroduction updated:', this.updatedData);
+            });
         }
       }
     },
@@ -182,20 +178,16 @@ export default {
             }
         },
         showPalette: function (e) {
-          let idname = e.target.id.substr(0, 4);
-          if (!idname) {
-            // svg icon
-            idname = e.target.parentNode.parentNode.id.substr(0, 4);
-          }
-          // console.log('showPalette:', e.target.id, idname);
-          if (idname === 'btnC') {
+          let elem = e.toString().substr(0, 4);
+          if (elem === 'btnC') {
             this.showBtnPalette = !this.showBtnPalette;
             if (this.showBtnPalette) {
               this.$refs.btncolor.classList.add('swatch-glow');
             } else {
               this.$refs.btncolor.classList.remove('swatch-glow');
             }
-          } else {
+          }
+          if (elem === 'fill') {
             this.showFillPalette = !this.showFillPalette;
             if (this.showFillPalette) {
               this.$refs.fillcolor.classList.add('swatch-glow');
@@ -216,13 +208,10 @@ export default {
             document.querySelectorAll('circle')[0].style.fill = color.hex8;
         },
         changeBkgImage: function (image) {
-          console.log('changeBkgImage:', this.updatedData.image);
           document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
         },
-        // id: titleText, description
         changeScreen: function(e) {
-          // console.log('input e:', e);
-          // console.log('id:', e.target.id);
+          // console.log('id:', e.target.id, 'input e:', e);
           switch (e.target.id) {
             case 'titleText':
               document.querySelector('.titlebar').innerHTML = e.target.value;
@@ -231,9 +220,11 @@ export default {
               document.querySelector('.intro-text').childNodes[1].innerHTML = e.target.value;
               break;
             case 'btnHex':
-              var color = e.target.value;
+              var color = e.target.value;// UNUSED
               //https://www.npmjs.com/package/validate-color
               console.log('color:', color);
+              this.updatedData.buttonColor = color;
+              this.$refs.btncolor.style.backgroundColor = color;
               break;
           }
         }
@@ -328,7 +319,7 @@ export default {
         width: 100%;
         height: 100%;
         cursor: pointer;
-        background-color: rgba(0,0,0,0.2);
+        background-color: rgba(0,0,0, 0.2);
     }
     .picker-panel .close-circle-outline-icon {
         margin: 5px 10px;
@@ -360,13 +351,13 @@ export default {
       /* blur size and spread size are optional (they default to 0) */
     }
     .column-left {
-      width: 50%;
+      width: 60%;
       display: flex;
       justify-content: flex-start;
       /* border: 1px solid #333; */
     }
     .column-right {
-      width: 50%;
+      width: 40%;
       display: flex;
       justify-content: flex-end;
       /* border: 1px solid rgb(8, 106, 172); */

@@ -6,56 +6,71 @@
 			"text": "Introduction for Interactive Video.<br><br>(define what to put here, the viewer may need to click before the video can play.)",
 			"audio": "audio/what_next.mp3",
 			"image": "images/allergen_platter_lt.png",
-      "buttonColor": "#333333"
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Spanish",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Mandarin",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Korean",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Vietnamese",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for ASL",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Tagalog",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		},
 		{
 			"_comment": "data for Serbo-Croatian",
 			"titleText": "",
 			"text": "",
 			"audio": "",
-			"image": ""
+			"image": "",
+			"buttonColor": "#333333",
+			"fillColor": "rgba(255,255,255, 0)"
 		}
 	],
 
@@ -118,7 +133,7 @@
 							"questionText": "So what do you think happened?<br>How did E. coli bacteria get into the cake?",
 							"questionAudio": "",
 							"questionInstructions": "Choose one of the possible solutions to find the true culprit.",
-							"backgroundColor": "rgba(255,255,255,0.8)",
+							"backgroundColor": "rgba(255,255,255, 0.8)",
 							"hintButtonText": "Need a hint?",
 							"hintButtonTextColor": "",
 							"hintButtonBackgroundColor": "",
@@ -157,31 +172,80 @@
 			]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Spanish"
+				"_comment": "data for Spanish",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Mandarin"
+				"_comment": "data for Mandarin",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Korean"
+				"_comment": "data for Korean",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Vietnamese"
+				"_comment": "data for Vietnamese",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for ASL"
+				"_comment": "data for ASL",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Tagalog"
+				"_comment": "data for Tagalog",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}, {
 			"sceneData": [{
-				"_comment": "data for Serbo-Croatian"
+				"_comment": "data for Serbo-Croatian",
+				"videoBackground": "",
+				"captionsFile": "",
+				"ccEnabled": false,
+				"returnTime": 0,
+				"branchCount": 0,
+				"played": false,
+				"cueData": []
 			}]
 		}
 	]
