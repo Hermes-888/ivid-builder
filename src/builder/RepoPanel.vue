@@ -128,7 +128,7 @@ export default {
   mounted() {
     const comp = this;
     this.$root.$on('changeTab', function(tab) {
-      console.log('changeTab:', tab, comp.activetab);
+      // console.log('changeTab:', tab, comp.activetab);
       if (tab !== undefined) {
         comp.activetab = tab;
       }
@@ -178,7 +178,7 @@ export default {
   left: 0;
   width: 27vw;
   height: 95vh;
-  z-index: 10;
+  z-index: 11;
   user-select: none;
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;

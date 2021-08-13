@@ -296,8 +296,17 @@ export default {
          * or full path to file
          */
         uploadFile: function(type) {
-          console.log('upload', type);
-          this.$emit('toggleRepo');// send state?
+          // console.log('upload', type);
+          switch(type) {
+            case 'video':
+              //this.updatedData[this.sceneNum].videoBackground
+              this.$emit('toggleRepo', {tab:1, state:true});
+              break;
+            case 'captions':
+              //this.updatedData[this.sceneNum].captionsFile
+              this.$emit('toggleRepo', {tab:1, state:true});
+              break;
+          }
         },
 
         toggleRepoPanel(tab) {

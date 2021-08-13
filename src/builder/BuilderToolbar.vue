@@ -169,7 +169,7 @@ export default {
         if (newstate) {
           // console.log('-- watch editPanel sceneVisible:', newstate);
           // progressbar click access
-          document.querySelector('.progress-holder').style.zIndex = 12;
+          document.querySelector('.progress-holder').style.zIndex = 10;
           // remove interactions
           this.actionLayer = document.querySelector('.interaction-overlay');
 

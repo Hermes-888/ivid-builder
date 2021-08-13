@@ -141,7 +141,7 @@ export default {
          * @param repoStat Object - {tab:#, state:true = open it}
          */
         toggleRepoPanel: function (repoState) {
-          console.log('B-tab:', repoState);
+          // console.log('B-tab:', repoState);
           if (repoState) {
             this.repoVisible = repoState.state;
             this.$root.$emit('changeTab', repoState.tab);
