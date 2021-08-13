@@ -163,17 +163,27 @@ export default {
     methods: {
         uploadFile: function(type) {
             console.log('upload', type);
-        },
-        findFile: function(type) {
-            console.log('find', type);
-            
             switch(type) {
               case 'audio':
                 // updatedData.audio
                 break;
               case 'image':
                 // updatedData.image
-                this.$emit('toggleRepo');// send state?
+                break;
+            }
+        },
+        findFile: function(type) {
+            console.log('find', type);
+            switch(type) {
+              case 'audio':
+                // updatedData.audio
+                // RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
+                // {tab:#, state:true=open it}
+                this.$emit('toggleRepo', {tab:0, state:true});
+                break;
+              case 'image':
+                // updatedData.image
+                this.$emit('toggleRepo', {tab:2, state:true});
                 break;
             }
         },
@@ -211,7 +221,7 @@ export default {
           document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
         },
         changeScreen: function(e) {
-          // console.log('id:', e.target.id, 'input e:', e);
+          console.log('Intro changeScreen id:', e.target.id, 'input e:', e);
           switch (e.target.id) {
             case 'titleText':
               document.querySelector('.titlebar').innerHTML = e.target.value;

@@ -104,8 +104,8 @@ export default {
   },
   data() {
     return {
-      // ToDo: read a folder? external data
       activetab: 2,
+      // ToDo: read a folder? external data
       repoAssets: ['Sounds','Videos','Images'],
       repoSounds: [
         'audio/foundit.mp3', 
@@ -126,10 +126,16 @@ export default {
     }
   },
   mounted() {
+    const comp = this;
+    this.$root.$on('changeTab', function(tab) {
+      console.log('changeTab:', tab, comp.activetab);
+      if (tab !== undefined) {
+        comp.activetab = tab;
+      }
+    });
     /**
      * Repo Panel can resize the width
      */
-    const comp = this;
     Interact('.repo-panel').resizable({
       edges: {top: false, left: false, bottom: false, right: true},
       listeners: {

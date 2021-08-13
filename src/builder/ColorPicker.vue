@@ -12,6 +12,15 @@
 /**
  * Color Picker
  * https://github.com/xiaokaike/vue-color
+ * 
+ * import ColorPicker from './ColorPicker.vue';
+ * components: {ColorPicker},
+  <color-picker id="txtClose"
+    v-if="showTxtPalette"
+    :color="updatedData.textColor"
+    @changed="changeTxtColor"
+    @close="showPalette('txtClose')"
+  />
  */
 import {Sketch} from 'vue-color';
 

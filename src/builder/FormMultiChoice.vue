@@ -79,6 +79,7 @@
               <div class="form-row">
                 <button id="questionAudioUpload" role="button" class="icon-button"
                   title="Question audio file"
+                  @click="findFile('questionAudio')"
                 >
                   <icon-upload-cloud title="Question audio file"/>
                 </button>
@@ -126,6 +127,21 @@
                   @input="$emit('itemChanged', updatedData)"
                 >
                 </textarea>
+              </div>
+              <div class="form-row">
+                <button id="questionAudioUpload" role="button" class="icon-button"
+                  title="Question audio file"
+                  @click="findFile('hintAudio')"
+                >
+                  <icon-upload-cloud title="Question audio file"/>
+                </button>
+                <label for="hintAudio" title="Hint audio file">
+                  Audio:
+                </label>
+                <input id="hintAudio" class="input-long"
+                  v-model="updatedData.hintAudio"
+                  @input="$emit('itemChanged', updatedData)"
+                >
               </div>
               <div class="form-row">
                 <label for="hintButtonText" title="Hint audio file">
@@ -199,6 +215,7 @@
               <div class="form-row">
                 <button :id="'answerAudioUpload'+index" role="button" class="icon-button"
                   title="Answer audio file"
+                  @click="findFile('answerAudioUpload_'+index)"
                 >
                   <icon-upload-cloud title="Answer audio file"/>
                 </button>
@@ -223,6 +240,7 @@
               <div class="form-row">
                 <button :id="'feedbackAudioUpload'+index" role="button" class="icon-button"
                   title="Feedback audio file"
+                  @click="findFile('feedbackAudioUpload_'+index)"
                 >
                   <icon-upload-cloud title="Feedback audio file"/>
                 </button>
@@ -230,7 +248,7 @@
                   Audio:
                 </label>
                 <input :id="'feedbackAudio'+index" class="input-long"
-                  v-model="updatedData.answers[index].answerAudio"
+                  v-model="updatedData.answers[index].feedbackAudio"
                   @input="$emit('itemChanged', updatedData)"
                 >
               </div>
@@ -434,7 +452,40 @@ export default {
           this.updatedData.hintButtonBackgroundColor = color.hex8;
           this.$refs.btncolor.style.backgroundColor = color.hex8;
           this.$emit('itemChanged', this.updatedData);
-      }
+      },
+      findFile: function(type) {
+        console.log('find', type);
+        let index = 0;
+        let test = type.split('_');
+        // console.log('test:', test.length, test);
+        if (test.length > 1) {
+          type = test[0];
+          index = parseInt(test[1]);
+          // console.log('type:', type, 'index:', index);
+        }
+        switch(type) {
+          case 'questionAudio':
+            // updatedData.questionAudio
+            // RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
+            // {tab:#, state:true=open it}
+            this.$emit('toggleRepo', {tab:0, state:true});
+            break;
+          case 'hintAudio':
+            // updatedData.hintAudio
+            this.$emit('toggleRepo', {tab:0, state:true});
+            break;
+          case 'answerAudioUpload':
+            // updatedData.answers[index].answerAudio
+            console.log('type:', type, 'index:', index);
+            this.$emit('toggleRepo', {tab:0, state:true});
+            break;
+          case 'feedbackAudioUpload':
+            // updatedData.answers[index].feedbackAudio
+            console.log('type:', type, 'index:', index);
+            this.$emit('toggleRepo', {tab:0, state:true});
+            break;
+        }
+      },
     }
 }
 </script>
@@ -497,7 +548,7 @@ export default {
     }
     textarea {
         width: 100%;
-        height: 80px;
+        height: 75px;
         resize: none;
     }
     .area-short {

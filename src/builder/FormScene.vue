@@ -112,6 +112,7 @@
                     v-if="cue.type === 'MultipleChoice'"
                     :formData="cue"
                     @itemChanged="changeFormData"
+                    @toggleRepo="toggleRepoPanel"
                   />
                   <!--other cue specific comps-->
               </div>
@@ -230,7 +231,7 @@ export default {
           this.screenElements.forEach(function(el, index) {
             el.style.display = 'none';
             if (index === comp.activetab) {
-              comp.screenElements[index].style.display = 'block';
+              el.style.display = 'block';
               comp.element = comp.screenElements[index];
             }
           });
@@ -299,6 +300,10 @@ export default {
           this.$emit('toggleRepo');// send state?
         },
 
+        toggleRepoPanel(tab) {
+          // upward to EditorModal
+          this.$emit('toggleRepo', tab);
+        },
         /**
          * Show dialog modal w/dropdown selector to choose a type
          * add selected type to cueData[]

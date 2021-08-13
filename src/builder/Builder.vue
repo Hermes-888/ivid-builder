@@ -1,11 +1,11 @@
 <template>
     <div class="builder">
         <transition name="show">
-            <repo-panel name="cloud-repository"
-                v-show="repoVisible"
-                @closeRepo="repoVisible = !repoVisible"
-                @imageSelected="repoImageSelected"
-            />
+          <repo-panel name="cloud-repository"
+            v-show="repoVisible"
+            @closeRepo="repoVisible = !repoVisible"
+            @imageSelected="repoImageSelected"
+          />
         </transition>
 
         <builder-toolbar
@@ -43,6 +43,7 @@
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import EditorModal from "./EditorModal.vue";
+import FormIntroduction from './FormIntroduction.vue';
 
 export default {
     name: "Builder",
@@ -134,11 +135,19 @@ export default {
     methods: {
         /**
          * RepoPanel is a drawer on the left side to select images from a library
-         * it animates in from left and only covers half the screen
+         * it animates in from left and is resizable
+         * 
+         * RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
+         * @param repoStat Object - {tab:#, state:true = open it}
          */
-        toggleRepoPanel: function () {
-          // send state?
-          this.repoVisible = !this.repoVisible;
+        toggleRepoPanel: function (repoState) {
+          console.log('B-tab:', repoState);
+          if (repoState) {
+            this.repoVisible = repoState.state;
+            this.$root.$emit('changeTab', repoState.tab);
+          } else {
+            this.repoVisible = !this.repoVisible;
+          }
         },
         /**
          * selection from repo to specific row

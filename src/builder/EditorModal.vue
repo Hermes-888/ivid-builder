@@ -26,14 +26,14 @@
           :formData="currentData"
           :key="currentKey"
           @saveChanges="saveChanges"
-          @toggleRepo="$emit('toggleRepo')"
+          @toggleRepo="toggleRepoPanel"
         />
         <form-scene
           v-if="sceneVisible && currentData"
           :formData="currentData"
           :key="currentKey"
           @saveChanges="saveChanges"
-          @toggleRepo="$emit('toggleRepo')"
+          @toggleRepo="toggleRepoPanel"
         />
       </div>
       <!-- <div class="editor-footer">
@@ -182,6 +182,10 @@ import Interact from 'interactjs';
       },
     },
     methods: {
+      toggleRepoPanel(tab) {
+        // upward to Builder
+        this.$emit('toggleRepo', tab);
+      },
       saveChanges: function(data) {
         console.log('saveChanges:', data);
         // this.$emit('closeModal');
