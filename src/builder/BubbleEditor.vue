@@ -1,5 +1,5 @@
 <template>
-  <div class="editor">
+  <div class="bubble-editor-comp">
     <editor-menu-bubble
       :editor="editor"
       :keep-in-bounds="keepInBounds"
@@ -194,21 +194,20 @@ export default {
 
         // Fires on every keystroke
         this.editor.on("update", ({getHTML}) => {
-          let html = getHTML();
+          // let html = getHTML();
           // console.log('BubbleEditor: update:', html, this.$attrs);// OK
           //let stripped = html.replace(/(<([^>]+)>)/gi, "");// all tags
           // let stripped = html.replace(/(<p[^>]+?>|<p>|<\/p>)/img, "");
-          let s = html.replace(/<li><p>/gm, "<li>");  
-              html = s.replace(/<\/p><\/li>/gm,"</li>");
-          // stripped = '<p>' + stripped + '</p>';
-          if (html !== getHTML()) {
-              console.log('stripped:', html);// stripped);
-              // this.editor.setContent(html, false);// nope
-          }
-          
+          // let s = html.replace(/<li><p>/gm, "<li>");  
+          //     html = s.replace(/<\/p><\/li>/gm,"</li>");
+          // // stripped = '<p>' + stripped + '</p>';
+          // if (html !== getHTML()) {
+          //     console.log('stripped:', html);// stripped);
+          //     // this.editor.setContent(html, false);// nope
+          // }
           // console.log('JSON:', this.editor.getJSON());
           // console.log('value:', this.value);
-          this.$emit('hasUpdates', html, this.$el.id);
+          this.$emit('hasUpdates', this.$el.id, getHTML());
         });
       }
     },
@@ -252,15 +251,17 @@ export default {
 
 <style>
   /* cannot be scoped */
-  .ProseMirror-focused:focus {
-    padding: 1px 5px;
+  .editor__content {
+    width: 100%;
+    height: 110px;
+    margin: -20px 0 8px 0;
+    border-bottom: 1px solid #ababab;
+    overflow-y: auto;
+    cursor: auto;
   }
-  /*.ProseMirror-focused:focus {*/
-  /*  outline: none;*/
-  /*}*/
-  /*.editor__content {*/
-  /*  background-color: #ffffff;*/
-  /*}*/
+  .ProseMirror-focused:focus {
+    outline: none;
+  }
 </style>
 <style scoped>
 .menububble {
@@ -272,9 +273,8 @@ export default {
   border-radius: 5px;
   border: 1px solid #000;
   padding: .3rem;
-  margin-bottom: .5rem;
-  -webkit-transform: translate(-35%, -40px);
-  transform: translate(-35%, -40px);
+  -webkit-transform: translate(-35%, -5px);
+  transform: translate(-35%, -5px);
   visibility: hidden;
   opacity: 0;
   -webkit-transition: opacity .2s, visibility .2s;

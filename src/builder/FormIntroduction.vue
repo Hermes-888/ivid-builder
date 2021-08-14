@@ -12,12 +12,18 @@
         <div class="form-row">
           <span>Introduction Text:</span>
         </div>
-        <div class="form-row">
-            <textarea id="description"
+        <div class="form-row"
+          v-if="updatedData.text"
+        >
+          <bubble-editor id="description" class="textarea-editor" 
+            v-model="updatedData.text"
+            @hasUpdates="changeScreen"
+          />
+            <!-- <textarea id="description"
                 v-model="updatedData.text"
                 @input="changeScreen"
             >
-            </textarea>
+            </textarea> -->
         </div>
         <div class="form-row">
             <button id="audioUpload" role="button" class="icon-button"
@@ -104,6 +110,8 @@
 
 <script>
 import ColorPicker from './ColorPicker.vue';
+import BubbleEditor from "./BubbleEditor.vue";
+// import Vue from 'vue';// for editorNode instance
 
 export default {
     /**
@@ -113,7 +121,7 @@ export default {
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
      */
     name: "FormIntroduction",
-    components: {ColorPicker},
+    components: {ColorPicker, BubbleEditor},
     props: {
         formData: {
             type: Object,
@@ -149,43 +157,43 @@ export default {
       formData: {
         immediate: true,
         handler(newstate, oldstate) {
-            // ToDo: selecting a repoImage re-renders this component and overwrites any changes already made
-            // store the changes in localStorage? and re-define them only if they exist in localStorage
-            this.$nextTick(function() {
-                this.updatedData = JSON.parse(JSON.stringify(newstate));
-                this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
-                this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
-                console.log('FormIntroduction updated:', this.updatedData);
-            });
+          // ToDo: selecting a repoImage re-renders this component and overwrites any changes already made
+          // store the changes in localStorage? and re-define them only if they exist in localStorage
+          this.$nextTick(function() {
+              this.updatedData = JSON.parse(JSON.stringify(newstate));
+              this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
+              this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
+              // console.log('FormIntroduction updated:', this.updatedData);
+          });
         }
       }
     },
     methods: {
         uploadFile: function(type) {
-            console.log('upload', type);
-            switch(type) {
-              case 'audio':
-                // updatedData.audio
-                break;
-              case 'image':
-                // updatedData.image
-                break;
-            }
+          console.log('upload', type);
+          switch(type) {
+            case 'audio':
+              // updatedData.audio
+              break;
+            case 'image':
+              // updatedData.image
+              break;
+          }
         },
         findFile: function(type) {
-            console.log('find', type);
-            switch(type) {
-              case 'audio':
-                // updatedData.audio
-                // RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
-                // {tab:#, state:true=open it}
-                this.$emit('toggleRepo', {tab:0, state:true});
-                break;
-              case 'image':
-                // updatedData.image
-                this.$emit('toggleRepo', {tab:2, state:true});
-                break;
-            }
+          console.log('find', type);
+          switch(type) {
+            case 'audio':
+              // updatedData.audio
+              // RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
+              // {tab:#, state:true=open it}
+              this.$emit('toggleRepo', {tab:0, state:true});
+              break;
+            case 'image':
+              // updatedData.image
+              this.$emit('toggleRepo', {tab:2, state:true});
+              break;
+          }
         },
         showPalette: function (e) {
           let elem = e.toString().substr(0, 4);
@@ -220,22 +228,31 @@ export default {
         changeBkgImage: function (image) {
           document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
         },
-        changeScreen: function(e) {
-          console.log('Intro changeScreen id:', e.target.id, 'input e:', e);
-          switch (e.target.id) {
+        changeScreen: function(e, html) {
+          // console.log(e, 'Intro changeScreen id:', e.target.id, 'input e:', e);
+          let el, val;
+          if (e.target) {
+            el = e.target.id;
+            val = e.target.value;
+          } else {
+            el = e;
+            val = html;
+          }
+
+          switch (el) {
             case 'titleText':
-              document.querySelector('.titlebar').innerHTML = e.target.value;
+              document.querySelector('.titlebar').innerHTML = val;
               break;
             case 'description':
-              document.querySelector('.intro-text').childNodes[1].innerHTML = e.target.value;
+              document.querySelector('.intro-text').childNodes[1].innerHTML = val;
               break;
-            case 'btnHex':
-              var color = e.target.value;// UNUSED
-              //https://www.npmjs.com/package/validate-color
-              console.log('color:', color);
-              this.updatedData.buttonColor = color;
-              this.$refs.btncolor.style.backgroundColor = color;
-              break;
+            // case 'btnHex':
+            //   var color = val;// UNUSED
+            //   //https://www.npmjs.com/package/validate-color
+            //   console.log('color:', color);
+            //   this.updatedData.buttonColor = color;
+            //   this.$refs.btncolor.style.backgroundColor = color;
+            //   break;
           }
         }
     }
@@ -297,6 +314,14 @@ export default {
         height: 80px;
         resize: none;
         margin-bottom: 8px;
+    }
+    .textarea-editor {
+      width: 100%;
+      max-width: 500px;
+      /* height: 80px; */
+      resize: none;
+      /* contain: content; */
+      /* overflow-y: scroll; */
     }
     input[type="checkbox"] {
       width: 90px;
