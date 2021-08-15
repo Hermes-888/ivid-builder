@@ -20,6 +20,7 @@
         <editor-modal
           v-show="showEditorModal"
           :key="currentKey"
+          :editorStyle="editorStyle"
           :currentData="currentData"
           @closeModal="closeEditorModal"
           @saveChanges="saveChanges"
@@ -77,7 +78,7 @@ export default {
         sceneNum: 0,// main scene, branches[1,2,3]
         vidPlayer: null,// Player elements
         interactionLayer: null,
-        progress: 0,// video currenttime
+        editorStyle: {},// set intro or scene
         //actualData = allData.introContent[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
         currentData: null,
@@ -96,6 +97,13 @@ export default {
             if (!this.sceneVisible) {
               this.currentData = this.allData.introContent[this.language];
               // console.log('-- watch Builder currentData:', this.currentData);
+              this.editorStyle = {
+                transform: 'translate(725px, 150px)'
+              };
+              this.$nextTick(function() {
+                document.querySelector('.editor-panel').setAttribute('data-x', 725);
+                document.querySelector('.editor-panel').setAttribute('data-y', 150);
+              });
             }
           }
           // a mutable copy of allData to update
@@ -115,15 +123,22 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-              console.log('sceneVisible currentData:', this.currentData);
+              // console.log('sceneVisible currentData:', this.currentData);
+              this.editorStyle = {
+                transform: 'translate(800px, 30px)'
+              };
+              this.$nextTick(function() {
+                document.querySelector('.editor-panel').setAttribute('data-x', 800);
+                document.querySelector('.editor-panel').setAttribute('data-y', 30);
+              });
             }
             // video player currenttime
             var comp = this;
             if (!this.vidPlayer) {
               this.vidPlayer = document.querySelector('.video-element');
-              this.vidPlayer.addEventListener('timeupdate', function () {
-                comp.progress = parseFloat(this.currentTime.toFixed(3));
-              });
+              // this.vidPlayer.addEventListener('timeupdate', function () {
+              //   comp.progress = parseFloat(this.currentTime.toFixed(3));
+              // });
             }
             if (!this.interactionLayer) {
               this.interactionLayer = document.querySelector('.interaction-overlay');
@@ -204,7 +219,8 @@ export default {
           console.log('Builder Add new:', data, 'currentData:', this.currentData[this.sceneNum]);
           var len = this.currentData[this.sceneNum].cueData.length;
           if (data) {
-            data.start = this.progress;
+            console.log('time:', this.vidPlayer.currentTime.toFixed(3));
+            data.start = parseFloat(this.vidPlayer.currentTime.toFixed(3));
             data.index = len;
             if (data.type !== 'fakeType') {
               this.currentData[this.sceneNum].cueData.push(data);

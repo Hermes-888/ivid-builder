@@ -105,17 +105,14 @@
 				userScore: 100,
 				/**
 				 * NOTE: this is only an example. You can build your scene as needed
-				 */
-				currentScene: 0,// current sceneData[index]
-				stepNum: 0,// current sceneData[index]
-				currentStep: {},// the data to display
-				/**
 				 * sceneData is an array of scene objects
 				 * each scene object describes what is visible on the screen
 				 * set currentStep to the this.sceneData[this.stepNum];
 				 * bind the template elements to currentStep
 				 */
-				isASL: false,// if true, there is no audio
+				currentScene: 0,// current sceneData[index]
+				stepNum: 0,// current sceneData[index]
+				currentStep: {},// the data to display
 
 				currentCues: [],// convert cueData to VTTCue, bound to ActiveVideo VTTCues
 				branches: [],// if length > branchCount then completed

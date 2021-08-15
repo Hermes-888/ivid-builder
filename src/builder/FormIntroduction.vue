@@ -3,9 +3,9 @@
       <div class="form-container">
         <div class="form-row">
             <label for="titleText">Title:</label>
-            <input id="titleText"
+            <input id="titleText" placeholder="edit me"
               v-show="updatedData.titleText"
-              v-model="updatedData.titleText" placeholder="edit me"
+              v-model="updatedData.titleText"
               @input="changeScreen"
             >
         </div>
@@ -111,7 +111,6 @@
 <script>
 import ColorPicker from './ColorPicker.vue';
 import BubbleEditor from "./BubbleEditor.vue";
-// import Vue from 'vue';// for editorNode instance
 
 export default {
     /**
@@ -144,15 +143,6 @@ export default {
             },// don't mutate the prop
         }
     },
-    // mounted () {
-    //     create a deep copy of data to mutate
-    //     this.$nextTick(function() {
-    //         this.updatedData = JSON.parse(JSON.stringify(this.formData));
-    //         this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
-    //         this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
-    //         console.log('FormIntroduction mounted updatedData:', this.updatedData);
-    //     });
-    // },
     watch: {
       formData: {
         immediate: true,
@@ -170,7 +160,7 @@ export default {
     },
     methods: {
         uploadFile: function(type) {
-          console.log('upload', type);
+          // console.log('upload', type);
           switch(type) {
             case 'audio':
               // updatedData.audio
@@ -181,7 +171,7 @@ export default {
           }
         },
         findFile: function(type) {
-          console.log('find', type);
+          // console.log('find', type);
           switch(type) {
             case 'audio':
               // updatedData.audio
@@ -235,16 +225,18 @@ export default {
             el = e.target.id;
             val = e.target.value;
           } else {
-            el = e;
+            el = e;// description from BubbleEditor
             val = html;
           }
 
           switch (el) {
             case 'titleText':
               document.querySelector('.titlebar').innerHTML = val;
+              this.updatedData.titleText = val;
               break;
             case 'description':
               document.querySelector('.intro-text').childNodes[1].innerHTML = val;
+              this.updatedData.text = val;
               break;
             // case 'btnHex':
             //   var color = val;// UNUSED

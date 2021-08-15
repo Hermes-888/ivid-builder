@@ -192,7 +192,6 @@ export default {
             activetab: 0,// first cueData
             sceneNum: 0,// main, branches are sceneData[1,2,3]
             showAddModal: false,
-            progress: 0,// video currenttime
             updatedData: [{
                 videoBackground: '',// required
                 captionsFile: '',// optional
@@ -201,7 +200,6 @@ export default {
                 cueData: []// array of interaction objects
             }],// don't mutate the prop
             vidPlayer: null,
-            // interactionLayer: null,// Player
             modalLayer: null,// elements container
             screenElements: [],// array of interactive elements
             element: null,// copy of the interactive element
@@ -249,11 +247,6 @@ export default {
           // watch immediate: false
           this.constructElements(this.updatedData[this.sceneNum].cueData, true);
 
-          // interactions container. class="interaction-overlay"
-          // this.modalLayer = document.querySelector('.modal-elements');
-          // this.interactionLayer = document.querySelector('.interaction-overlay');
-          // console.log('screen els:', this.interactionLayer);
-
           // video event listeners
           // toolbar sends play, pause, rewind stepBack to intro
           var comp = this;
@@ -269,13 +262,11 @@ export default {
                   comp.activetab = cue.index;
                 }
               });
-              // interactive element is on screen
-              // console.log('interactionLayer[0]:', comp.interactionLayer.children);
             }
           });
-          this.vidPlayer.addEventListener('timeupdate', function () {
-            comp.progress = parseFloat(this.currentTime.toFixed(3));
-          });
+          // this.vidPlayer.addEventListener('timeupdate', function () {
+          //   comp.progress = parseFloat(this.currentTime.toFixed(3));
+          // });
 
           // this.vidPlayer.addEventListener('canplaythrough', function() {
           //   //find cueTrack
@@ -322,7 +313,7 @@ export default {
           var comp = this;
           var len = this.updatedData[this.sceneNum].cueData.length;
           if (data) {
-            data.start = this.progress;
+            data.start = parseFloat(this.vidPlayer.currentTime.toFixed(3));
             data.index = len;
             // add to updatedData and inform EditorModal
             if (data.type !== 'fakeType') {

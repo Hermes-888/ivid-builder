@@ -6,9 +6,7 @@
     >
     </div>
     <div class="editor-panel" ref="editorPanel"
-      style="transform: translate(870px, 150px);"
-      data-x="870" data-y="150"
-      v-bind:style="editorStyle"
+      :style="editorStyle"
     >
       <div class="editor-header">
         <span class="editor-title"
@@ -128,8 +126,8 @@ import Interact from 'interactjs';
                 if (comp.canDrag) {
                   var target = event.target;
                   // keep the dragged position in the data-x/data-y attributes
-                  var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                  var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                  var x = (parseInt(target.getAttribute('data-x')) || 0) + event.dx;
+                  var y = (parseInt(target.getAttribute('data-y')) || 0) + event.dy;
 
                   // translate the element
                   target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
