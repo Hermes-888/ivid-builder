@@ -317,11 +317,7 @@ export default {
     }
     .textarea-editor {
       width: 100%;
-      max-width: 500px;
-      /* height: 80px; */
       resize: none;
-      /* contain: content; */
-      /* overflow-y: scroll; */
     }
     input[type="checkbox"] {
       width: 90px;

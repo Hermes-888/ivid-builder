@@ -68,8 +68,12 @@
 			},
 			language: {
 				type: Number,
-				default: 0
+				default: 0// used at alternateConclusion
 			},
+      isASL: {
+        type: Boolean,
+        default: false
+      },
 			audioVolume: {
 				type: Number,
 				required: false,
@@ -151,11 +155,10 @@
 							}
 
 							/**
-							 * if language is ASL there is no audio to end (language = 5)
-							 * add pointer to feedback-bubble and click it to advance to the next word
+							 * if language is ASL there is no audio to end
+							 * add pointer to feedback-bubble, click calls audioEnded
 							 */
-							// if (this.language === 5) {
-							// 	this.isASL = true;
+							// if (this.isASL) {
 							// 	document.querySelector('.feedback-bubble').style.cursor = 'pointer';
 							// }
 						});
@@ -296,8 +299,8 @@
 			},
 
 			/**
-			 * if language is ASL there is no audio to end (language = 5)
-			 * click the feedback-bubble to advance
+			 * if language is ASL there is no audio to end
+			 * click feedback-bubble to advance manually
 			 */
 			checkASL: function() {
 				if (this.isASL) {

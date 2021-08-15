@@ -26,6 +26,7 @@
 			:sceneVisible="showScene"
 			:sceneData="sceneData"
 			:language="language"
+      :isASL="isASL"
 			:audioVolume="audioVolume"
 			:audioPlaybackRate="audioPlaybackRate"
 			@announceCompleted="announceCompleted"
@@ -108,6 +109,7 @@
         		 * Scene sceneData[scenes] cueData must include the same languages in the same order
 				 * allData=rawdata for Builder, filled at mounted()
 				 */
+        isASL: false,// Scene prop
 				introContent: {},
 				sceneData: [],
 				allData: {}
@@ -142,8 +144,16 @@
 								me.audioPlaybackRate = e.data.playbackRate;
 								me.audioVolume = e.data.volume;
 
-								// set data from external json file
-								me.updateData();
+								// set data from server
+                if (e.data.hasOwnProperty('introContent')) {
+                  me.introContent = e.data.introContent;
+                }
+                if (e.data.hasOwnProperty('sceneData')) {
+                  me.sceneData = e.data.sceneData;
+                } else {
+                  // set data from external json file
+                  me.updateData();
+                }
 								me.displayIntro();
 								break;
 							case 'volumeUpdated':
@@ -173,6 +183,9 @@
 				if (this.language === -1) {
 					this.language = 0;// fallback to English if not found
 				}
+        if (this.language === 5) {
+        	this.isASL = true;
+        }
 
 				// set data from external json file
 				this.updateData();
