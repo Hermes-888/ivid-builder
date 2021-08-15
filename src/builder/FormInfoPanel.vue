@@ -82,7 +82,7 @@
             >
           </div>
           <div class="column-right">
-            <label for="titleColor" title="Panel background color">Text color:</label>
+            <label for="titleColor" title="Panel background color">Text Color:</label>
             <div class="color-swatch" id="titleColor"
                 ref="txtcolor" title="Click to open a color picker, click again to close it"
                 @click="showPalette('titleColor')"

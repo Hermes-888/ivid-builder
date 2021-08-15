@@ -219,7 +219,6 @@ export default {
           console.log('Builder Add new:', data, 'currentData:', this.currentData[this.sceneNum]);
           var len = this.currentData[this.sceneNum].cueData.length;
           if (data) {
-            console.log('time:', this.vidPlayer.currentTime.toFixed(3));
             data.start = parseFloat(this.vidPlayer.currentTime.toFixed(3));
             data.index = len;
             if (data.type !== 'fakeType') {

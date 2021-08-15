@@ -77,7 +77,7 @@
         return {
           headerText: 'Add New Interaction',
           selected: '',// type
-          types: ['Title Screen', 'Animated Message', 'Information Panel', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Custom'],
+          types: ['Title Screen', 'Animated Message', 'Information Panel', 'Multiple Choice Question', 'Multiple Answer Question', 'Image Button', 'Drag Image to Dropzone'],
           // $emit addNew w/ object for each type
           selectedObj: {"type":"fakeType"}
         }
@@ -85,7 +85,7 @@
     methods: {
       typeSelected: function(type) {
         console.log('typeSelected:', type);
-        this.selectedObj = {"type":"fake type"};
+        this.selectedObj = {"type":"fakeType"};
         // set selectedObj data
         switch (type) {
           case 'Animated Message':
@@ -101,7 +101,10 @@
 							"resumePlayback": true,
 							"removeMessage": true,
 							"messageText": "Your Message",
-							"duration": 1.5
+							"duration": 1.5,
+							"backgroundColor": "#ffffffCC",
+							"textColor": "#333333",
+							"panelWidth": "33%"
 						};
             break;
           case 'Information Panel':
@@ -116,7 +119,7 @@
 							"pauseVideo": true,
 							"resumePlayback": true,
 							"panelWidth": "40%",
-							"panelBkgColor": "rgba(3,117,163, 0.6)",
+							"panelBkgColor": "rgba(0,0,0, 0.2)",
 							"infoTitle": "Title",
 							"titleColor": "#ffffff",
 							"infoText": "Your information to display.",
@@ -137,19 +140,20 @@
 							"questionText": "Question",
 							"questionAudio": "",
 							"questionInstructions": "Choose an answer.",
+							"backgroundColor": "#ffffffB8",
 							"hintButtonText": "Hint?",
 							"hintButtonTextColor": "",
 							"hintButtonBackgroundColor": "",
 							"hintText": "Hint text",
 							"hintAudio": "",
-							"randomizeAnswers": true,
+							"randomizeAnswers": false,
 							"answers": [
 								{
 									"id": 0,
 									"correct": true,
-									"answerText": "Correct Anwer",
+									"answerText": "Correct Answer",
 									"answerAudio": "",
-									"feedbackText": "",
+									"feedbackText": "Correct feedback",
 									"feedbackAudio": ""
 								},
 								{
@@ -157,13 +161,13 @@
 									"correct": false,
 									"answerText": "Wrong Answer",
 									"answerAudio": "",
-									"feedbackText": "",
+									"feedbackText": "Wrong feedback",
 									"feedbackAudio": ""
 								}
 							]
 						}
             break;
-            // ToDo: TitleScreen, MultiAnswer
+            // ToDo: TitleScreen, MultiAnswer, DragImage, ImageButton
         }
       }
     }
