@@ -165,9 +165,28 @@
 									"feedbackAudio": ""
 								}
 							]
-						}
+						};
             break;
-            // ToDo: TitleScreen, MultiAnswer, DragImage, ImageButton
+          case 'Image Button':
+            this.selectedObj = {
+              "start": 18.8,
+              "type": "ImageButton",
+              "useBlur": true,
+              "useOverlay": false,
+              "animateIn": false,
+              "animateOut": false,
+              "pauseVideo": true,
+              "resumePlayback": true,
+              "branchTo": null,
+              "imagePath": "images/cookies.png",
+              "location": {
+                "top": 160,
+                "left": 200,
+                "width": 223,
+                "height": 154
+              }
+            };
+            // ToDo: TitleScreen, MultiAnswer, DragImage
         }
       }
     }

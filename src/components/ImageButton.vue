@@ -24,7 +24,23 @@ export default {
 			mcData: {
 				type: Object,
 				default() {
-					return {};
+					return {
+            "start": 18.8,
+            "type": "ImageButton",
+            "useOverlay": false,
+            "animateIn": false,
+            "animateOut": false,
+            "pauseVideo": true,
+            "resumePlayback": true,
+            "branchTo": null,// add if you branch
+            "imagePath": "",
+            "location": {
+              "top": 0,
+              "left": 0,
+              "width": 223,
+              "height": 154
+            }
+          };
 				}
 			}
 		},

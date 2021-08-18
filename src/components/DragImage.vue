@@ -69,7 +69,39 @@ export default {
 		mcData: {
 			type: Object,
 			default() {
-				return {}
+				return {
+          "start": 10.2,
+          "type": "DragImage",
+          "useBlur": false,
+          "useOverlay": false,
+          "animateIn": false,
+          "animateOut": false,
+          "animateTo": "",
+          "pauseVideo": true,
+          "resumePlayback": true,
+          "location": {"top":110, "left":210, "width":217, "height":132},
+          "imageFile": "images/hamburger_patties.png",
+          "textColor": "#3023ba",
+          "messageTop": "15%",
+          "message": "Drop the image onto the the word Open.",
+          "feedback": "<b>Correct</b> <p>Good Job</p>",
+          "wrongFeedback": "Sorry, you didn't find it.",
+          "points": 5,
+          "oneChance": false,
+          "dropzone": {
+            "dropzone": true,
+            "hotspots": [
+              {
+                "location": {
+                  "top": 300,
+                  "left": 500,
+                  "width": 360,
+                  "height": 150
+                }
+              }
+            ]
+          }
+        };
 			}
 		}
 	},

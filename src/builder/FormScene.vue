@@ -114,6 +114,11 @@
                     @itemChanged="changeFormData"
                     @toggleRepo="toggleRepoPanel"
                   />
+                  <form-image-button
+                    v-if="cue.type === 'ImageButton'"
+                    :formData="cue"
+                    @itemChanged="changeFormData"
+                  />
                   <!--other cue specific comps-->
               </div>
           </div>
@@ -145,11 +150,13 @@ import AddNewModal from './AddNewModal.vue';
 import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
 import FormMultiChoice from './FormMultiChoice.vue';
+import FormImageButton from './FormImageButton.vue';
 
 // modalLayer screenElements
 import AnimatedMessage from '../components/AnimatedMessage.vue';
 import InfoPanel from '../components/InfoPanel.vue';
 import MultiChoice from '../components/MultiChoice.vue';
+import ImageButton from '../components/ImageButton.vue';
 
 import Vue from 'vue';
 
@@ -177,7 +184,8 @@ export default {
         AddNewModal,
         FormMessage,
         FormInfoPanel,
-        FormMultiChoice
+        FormMultiChoice,
+        FormImageButton
     },
     props: {
         formData: {
@@ -397,6 +405,8 @@ export default {
                 this.element.querySelector('.multi-hint-button').style.color = val.hintButtonTextColor;
                 this.element.querySelector('.multi-hint-button').style.backgroundColor = val.hintButtonBackgroundColor;
                 break;
+              case 'ImageButton':
+                break;
             }
           } else {
             //console.log('scene:', val);
@@ -430,6 +440,10 @@ export default {
                 break;
               case 'MultipleChoice':
                 mcClass = Vue.extend(MultiChoice);
+                break;
+              case 'ImageButton':
+                mcClass = Vue.extend(ImageButton);
+                console.log('Add Image Button');
                 break;
             }
 
