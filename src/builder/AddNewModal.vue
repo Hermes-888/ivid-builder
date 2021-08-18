@@ -169,7 +169,7 @@
             break;
           case 'Image Button':
             this.selectedObj = {
-              "start": 18.8,
+              "start": 0,
               "type": "ImageButton",
               "useBlur": true,
               "useOverlay": false,
@@ -178,10 +178,10 @@
               "pauseVideo": true,
               "resumePlayback": true,
               "branchTo": null,
-              "imagePath": "images/cookies.png",
+              "imagePath": "",// "images/cookies.png"
               "location": {
-                "top": 160,
-                "left": 200,
+                "top": 0,
+                "left": 0,
                 "width": 223,
                 "height": 154
               }

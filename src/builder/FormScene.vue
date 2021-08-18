@@ -34,7 +34,7 @@
         <div class="form-row">
             <label for="branches">Branches:</label>
             <input id="branches" class="shorter-input" type="number" inputmode="numeric"
-                v-model="updatedData[sceneNum].branchCount" placeholder="Number of branches"
+                v-model="updatedData[sceneNum].branchCount" placeholder="#"
                 @change="changeFormData(updatedData[sceneNum])"
             >
             <button id="captionUpload" role="button" class="icon-button"
@@ -42,7 +42,8 @@
             >
                 <icon-plus title="Add new branch"/>
             </button>
-            <!-- v-for sceneData.length (scenes) add buttons to switch sceneNum -->
+            <!-- v-for sceneData.length (scenes) add buttons will switch sceneNum -->
+            <div v-text="updatedData[sceneNum]._comment"></div>
         </div>
         <div class="form-row"
           v-if="updatedData[sceneNum].branchCount > 0"
@@ -117,7 +118,9 @@
                   <form-image-button
                     v-if="cue.type === 'ImageButton'"
                     :formData="cue"
+                    :repoImage="repoImage"
                     @itemChanged="changeFormData"
+                    @toggleRepo="toggleRepoPanel"
                   />
                   <!--other cue specific comps-->
               </div>
@@ -156,7 +159,7 @@ import FormImageButton from './FormImageButton.vue';
 import AnimatedMessage from '../components/AnimatedMessage.vue';
 import InfoPanel from '../components/InfoPanel.vue';
 import MultiChoice from '../components/MultiChoice.vue';
-import ImageButton from '../components/ImageButton.vue';
+import ImageButton from '../components/ImageButton.vue';// use builder/DrageImagePanel.vue?
 
 import Vue from 'vue';
 
@@ -167,17 +170,6 @@ export default {
      * https://codepen.io/uzcho_/pen/bPZMez
      * https://vuejs.org/v2/guide/forms.html
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-     * 
-        "sceneData": [{
-            "_comment": "data for English",
-            "videoBackground": "",
-            "captionsFile": "",
-            "ccEnabled": false,
-            "returnTime": 0,
-            "branchCount": 0,
-            "played": false,
-            "cueData": []
-        }]
      */
     name: "FormScene",
     components: {
@@ -191,7 +183,16 @@ export default {
         formData: {
             type: Array,
             default() {
-                return []
+                return [{
+                  "_comment": "data for English",
+                  "videoBackground": "",
+                  "captionsFile": "",
+                  "ccEnabled": false,
+                  "returnTime": 0,
+                  "branchCount": 0,
+                  "played": false,
+                  "cueData": []
+                }]
             }
         }
     },
@@ -212,7 +213,8 @@ export default {
             screenElements: [],// array of interactive elements
             element: null,// copy of the interactive element
             mcInstance: null,// element instance
-            instances: []// test Are they being removed?
+            instances: [],// test Are they being removed?
+            repoImage: ''// if sent from repository selection
         }
     },
     watch: {
@@ -251,13 +253,29 @@ export default {
           this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
-          console.log('FormScene mounted updatedData:', this.updatedData);
+          // console.log('FormScene mounted updatedData:', this.updatedData[this.sceneNum]);
           // watch immediate: false
           this.constructElements(this.updatedData[this.sceneNum].cueData, true);
 
+          const comp = this;
+          this.$root.$on('repoImageSelected', function(filename) {
+            // console.log('repoImageSelected FormScene:', filename);
+            // let el = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
+            if (comp.element.getAttribute('data-type') === 'ImageButton') {
+              let index = parseInt(comp.element.getAttribute('data-index'));// activetab?
+              
+              comp.updatedData[comp.sceneNum].cueData[index].imagePath = filename;
+              // watch repoImage, move back to formImageButton?
+              comp.element.classList.remove('bordered');
+              comp.element.innerHTML = '';
+              comp.element.style.backgroundImage = "url('" + filename + "')";
+              comp.repoImage = filename;
+              console.log('set repoImage:', index, comp.element, comp.updatedData[comp.sceneNum].cueData[index]);
+              // update the form imagePath?
+            }
+          });
           // video event listeners
           // toolbar sends play, pause, rewind stepBack to intro
-          var comp = this;
           this.vidPlayer = document.querySelector('.video-element');
 
           this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
@@ -406,6 +424,7 @@ export default {
                 this.element.querySelector('.multi-hint-button').style.backgroundColor = val.hintButtonBackgroundColor;
                 break;
               case 'ImageButton':
+                console.log('changeFormData: image button', val);
                 break;
             }
           } else {
@@ -464,7 +483,17 @@ export default {
               comp.modalLayer.appendChild(mcInstance.$el);
               comp.screenElements.push(comp.modalLayer.children[count]);
               comp.instances.push(mcInstance);// save the instance
+              comp.element = mcInstance.$el;// set as selected
               count ++;
+
+              if (cue.type === 'ImageButton') {
+                mcInstance.$el.addEventListener('click', function(e) {
+                  console.log('construct: image btn:', e.target);
+                  // make it the selected one?
+                  comp.element = e.target;
+                });
+                // make it draggable/resizable
+              }
             }
           });
           // console.log('editor-modal:', document.querySelector('.editor-modal'));

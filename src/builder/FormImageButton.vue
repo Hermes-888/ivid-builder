@@ -112,6 +112,10 @@ export default {
             default() {
                 return {}
             }
+        },
+        repoImage: {
+          type: String,
+          default: ''
         }
     },
     data () {
@@ -133,6 +137,7 @@ export default {
                 "height": 154
               }
             }],// .index is added in FormScene
+            element: null,
             showBkgPalette: false
         }
     },
@@ -140,18 +145,32 @@ export default {
       this.updatedData = JSON.parse(JSON.stringify(this.formData));
       console.log('ImageButton:', this.updatedData.type, this.updatedData.index);
 
-      // find the dom element constructed in FormScene?
-      // ToDo: need to create the element here to
-      // drag and resize to set location
-      const comp = this;
-      Interact('.image-button')
-        .draggable({
+      // const comp = this;
+      // this.$root.$on('repoImageSelected', function(filename) {
+      //   console.log('repoImageSelected ImageButton:', filename);
+      //   if (comp.element) {
+      //     comp.updatedData.imagePath = filename;
+      //     comp.element.classList.remove('bordered');
+      //     comp.element.innerHTML = '';
+      //     comp.element.style.backgroundImage = "url('" + filename + "')";
+      //   }
+      // });
+
+      this.$nextTick(function() {
+        // console.log('target:', document.querySelectorAll('[data-type="ImageButton"]'));
+        // find the dom element constructed in FormScene
+        // drag and resize to set location
+        this.element = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
+        // console.log('IBtn:', this.element);
+        const comp = this;
+        Interact('[data-type="ImageButton"]').draggable({
           // enable inertial throwing
           inertia: true,
           // keep the element within the area of it's parent
           modifiers: [
             Interact.modifiers.restrictRect({
-              restriction: 'parent'
+              // restriction: 'parent'
+              restriction: document.querySelector('.editor-modal')
             })
           ],
 
@@ -174,9 +193,17 @@ export default {
               target.setAttribute('data-y', y);
             },
             // call this function on every dragend event
-            // end (event) {
-            //   console.log('drag end');
-            // }
+            end(event) {
+              console.log('ImageButton drag end:', event);
+              // set location? use builder/DrageImagePanel?
+              let index = parseInt(event.target.getAttribute('data-index'));
+              let bounds = event.target.getBoundingClientRect();
+              comp.updatedData.location.left = bounds.x;
+              comp.updatedData.location.top = bounds.y;// - toolbar?
+              comp.updatedData.location.width = bounds.width;
+              comp.updatedData.location.height = bounds.height;
+              console.log('updatedData:', index, bounds, comp.updatedData);
+            }
           }
         })
         // .styleCursor(false)
@@ -190,9 +217,31 @@ export default {
               Object.assign(event.target.style, {
                 width: `${event.rect.width}px`
               });
+            },
+            end(event) {
+              // set location.width/height? use builder/DrageImagePanel?
+              let index = parseInt(event.target.getAttribute('data-index'));
+              let bounds = event.target.getBoundingClientRect();
+              comp.updatedData.location.left = bounds.x;
+              comp.updatedData.location.top = bounds.y;// - toolbar?
+              comp.updatedData.location.width = bounds.width;
+              comp.updatedData.location.height = bounds.height;
+              console.log('updatedData:', index, bounds, comp.updatedData);
             }
           }
         });
+      });
+    },
+    watch: {
+      repoImage: {
+        immediate: true,
+        handler(newstate, oldstate) {
+          console.log('-- watch reopImage', newstate);
+          if (newstate !== oldstate) {
+            this.updatedData.imagePath = newstate;
+          }
+        }
+      }
     },
     methods: {
       // @keypress="isNumber($event)"
@@ -228,7 +277,9 @@ export default {
         }
       },
       changeBkgImage: function (image) {
-        // document.querySelector('.img').style.backgroundImage = "url('" + this.updatedData.imagePath + "')";
+        console.log('changeBkgImage:', image);
+        this.updatedData.imagePath = image;
+        this.element.style.backgroundImage = "url('" + this.updatedData.imagePath + "')";
       },
       /**
        * Color Picker

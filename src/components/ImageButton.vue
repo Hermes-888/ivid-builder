@@ -1,13 +1,13 @@
 <template>
 	<div class="image-button"
-			ref="imagebtn"
-			@click="$emit('imageSelected', mcData)"
-			:style="{
-				top: dtop,
-				left: dleft,
-				width: dwidth,
-				height: dheight
-			}"
+		ref="imagebtn"
+		@click="$emit('imageSelected', mcData)"
+		:style="{
+			top: dtop,
+			left: dleft,
+			width: dwidth,
+			height: dheight
+		}"
 	>
 	</div>
 </template>
@@ -16,6 +16,7 @@
 /**
  * imagePath is the url to the file
  * style is calculated to retain its location
+ * ToDo: add audio, play audio when clicked?
  */
 
 export default {
@@ -58,7 +59,12 @@ export default {
 				this.setPosition();
 				window.addEventListener('resize', this.setPosition);
 
-				this.$refs.imagebtn.style.backgroundImage = "url('" + this.mcData.imagePath + "')";
+				if (this.mcData.imagePath) {
+					this.$refs.imagebtn.style.backgroundImage = "url('" + this.mcData.imagePath + "')";
+				} else {
+					this.$refs.imagebtn.classList.add('bordered');
+					this.$refs.imagebtn.innerHTML = 'Add an image';
+				}
 			});
 		},
 		computed: {
@@ -96,7 +102,11 @@ export default {
 	}
 </script>
 
-<style>
+<style scoped>
+	.image-btn-container {
+		position: absolute;
+		width: 100%;
+	}
 	.image-button {
 		position: absolute;
 		padding: 8px;
@@ -113,5 +123,11 @@ export default {
 	.image-button:hover {
 		border-radius: 10px;
 		border: 2px solid #333333;
+	}
+	.bordered {
+		padding-top: 20px;
+		font-weight: bold;
+		color: #8d2a2a;
+		border: 2px solid #8d2a2a;
 	}
 </style>

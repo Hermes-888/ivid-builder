@@ -143,6 +143,17 @@ export default {
             },// don't mutate the prop
         }
     },
+    mounted() {
+      const comp = this;
+      this.$root.$on('repoImageSelected', function(filename) {
+        console.log('repoImageSelected Intro:', filename);
+        let intro = document.querySelector('.introduction');
+        if (intro) {
+          comp.updatedData.image = filename;
+          intro.style.backgroundImage = "url('" + filename + "')";
+        }
+      });
+    },
     watch: {
       formData: {
         immediate: true,

@@ -90,17 +90,17 @@ import Interact from 'interactjs';
       this.$nextTick(function() {
         var comp = this;
 
-        // ToDo: this still needs work
-        this.$root.$on('repoImageSelected', function(filename) {
-          if (comp.sceneVisible) {
-            console.log('repoImageSelected Scene:', filename);
-          } else {
-            console.log('repoImageSelected Intro:', filename);
-            comp.currentData.image = filename;
-            document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
-            comp.currentKey += 1;// rerender children w/new data
-          }
-        });
+        // ToDo: add listener to Forms that need use the repository
+        // this.$root.$on('repoImageSelected', function(filename) {
+        //   if (comp.sceneVisible) {
+        //     console.log('repoImageSelected Scene:', filename);
+        //   } else {
+        //     console.log('repoImageSelected Intro:', filename);
+        //     comp.currentData.image = filename;
+        //     // document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
+        //     // comp.currentKey += 1;// rerender children w/new data
+        //   }
+        // });
 
         // editor-panel is draggable, only if mouse is over editor-header
         // https://interactjs.io/
