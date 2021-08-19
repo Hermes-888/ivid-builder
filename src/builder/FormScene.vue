@@ -96,7 +96,13 @@
                   v-if="activetab === index"
               >
                   <div class="form-row">
-                    Type: {{cue.type}}
+                    <span>Type: </span><span v-text="cue.type"></span>
+                    <button id="deleteElement" role="button" class="icon-button right-button"
+                      title="Delete this interactive element"
+                      @click="deleteElement(index)"
+                    >
+                      <icon-delete title="Delete this interactive element"/>
+                    </button>
                   </div>
                   <!--<div class="form-row"><br> {{JSON.stringify(cue)}} </div>-->
                   <form-message
@@ -325,7 +331,12 @@ export default {
               break;
           }
         },
-
+        deleteElement: function(index) {
+          // console.log('delete cue:', index);
+          this.updatedData[this.sceneNum].cueData.splice(index, 1);
+          this.constructElements(this.updatedData[this.sceneNum].cueData);
+          this.activetab = 0;
+        },
         toggleRepoPanel(tab) {
           // upward to EditorModal
           this.$emit('toggleRepo', tab);
@@ -527,6 +538,11 @@ export default {
     .right {
       float: right;
     }
+    .right-button {
+      position: absolute;
+      right: 8px;
+    }
+
     input, textarea {
         width: 74%;
         float: right;

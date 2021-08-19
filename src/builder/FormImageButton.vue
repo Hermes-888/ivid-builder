@@ -77,6 +77,15 @@
         </div>
         <div class="form-row">
           <!-- location -->
+          <div class="loc-prop"
+            v-for="(value, propName) in updatedData.location"
+            :key="propName"
+          >
+            <span v-text="propName"></span>
+            <span>: </span>
+            <span v-text="value"></span>
+            <span> | </span>
+          </div>
         </div>
         <!-- <div class="form-row">
           <div class="column-half">
@@ -330,6 +339,10 @@ export default {
     }
     .input-long {
       width: 65%;
+    }
+    .loc-prop {
+      margin: 0 10px 0 5px;
+      /* margin-right: 10px; */
     }
     label {
       margin-right: 5px;
