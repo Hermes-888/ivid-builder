@@ -3,7 +3,7 @@
 		{
 			"_comment": "data for English",
 			"titleText": "EN Slide Title",
-			"text": "Introduction for Interactive Video.<br><br>(define what to put here, the viewer may need to click before the video can play.)",
+			"text": "<p>Introduction for Interactive Video.</p><p>(define what to put here, the viewer may need to click before the video can play.)</p>",
 			"audio": "audio/what_next.mp3",
 			"image": "images/allergen_platter_lt.png",
 			"buttonColor": "#333333",

@@ -11,80 +11,82 @@
       </div>
     </div>
     <div class="repo-description">
-      <p>The cloud based image repository will hold all the uploaded images. You will be able to filter and select an
-        image from the repository.</p>
+      <p>The cloud asset repository will hold all the uploaded files. You will be able to filter and search the repository.</p>
     </div>
 
     <div class="repo-container">
       <div id="tabs" class="tabs-container">
-          <div class="tabs">
-              <span
-                  v-for="(tab, index) in repoAssets"
-                  :key="index"
-              >
-                  <a :class="[activetab === index ? 'active' : '']"
-                      @click="activetab=index"
-                      v-text="tab"
-                  ></a>
-              </span>
-          </div>
-          <div class="tab-content"
-              :data-index="0"
-              v-if="activetab === 0"
+        <div class="tabs">
+          <span
+            v-for="(tab, index) in repoAssets"
+            :key="index"
           >
-              <div class="image-holder"
-                v-for="(aud, num) in repoSounds"
-                :key="num"
-              >
-                <play-audio-button :audioPath="repoSounds[num]"/>
-                <div class="repo-image-name"
-                  v-html="simplifyFilename(aud)"
-                ></div>
-              </div>
-          </div>
-          <div class="tab-content"
-              :data-index="1"
-              v-if="activetab === 1"
+            <a :class="[repotab === index ? 'active' : '']"
+              @click="repotab=index"
+              v-text="tab"
+            ></a>
+          </span>
+        </div>
+        <div class="tab-content"
+          :data-index="0"
+          v-if="repotab === 0"
+        >
+          <div class="image-holder"
+            v-for="(aud, num) in repoSounds"
+            :key="num"
           >
-            <div class="image-holder"
-                v-for="(vid, num) in repoVideos"
-                :key="num"
-              >
-                <div class="repo-image-name"
-                  v-html="simplifyFilename(vid)"
-                ></div>
-              </div>
+            <play-audio-button :audioPath="repoSounds[num]"/>
+            <div class="repo-image-name"
+              v-text="simplifyFilename(aud)"
+              :title="extractFilename(aud)"
+              @click="$emit('audioSelected', aud)"
+            ></div>
           </div>
-          <div class="tab-content"
-              :data-index="2"
-              v-if="activetab === 2"
+        </div>
+        <div class="tab-content"
+          :data-index="1"
+          v-if="repotab === 1"
+        >
+          <div class="image-holder"
+            v-for="(vid, num) in repoVideos"
+            :key="num"
           >
-              <div class="image-holder"
-                v-for="(img, num) in repoImages"
-                :key="num"
-              >
-                <img class="image-thumbs"
-                  :data-index="num"
-                  :src="img"
-                  :title="extractFilename(img)"
-                  @click="imageSelected"
-                />
-                <div class="repo-image-name"
-                  v-html="simplifyFilename(img)"
-                ></div>
-              </div>
+            <div class="repo-image-name"
+              v-text="simplifyFilename(vid)"
+              :title="extractFilename(vid)"
+              @click="$emit('videoSelected', vid)"
+            ></div>
           </div>
+        </div>
+        <div class="tab-content"
+          :data-index="2"
+          v-if="repotab === 2"
+        >
+          <div class="image-holder"
+            v-for="(img, num) in repoImages"
+            :key="num"
+            @click="$emit('imageSelected', img)"
+          >
+            <img class="image-thumbs"
+              :src="img"
+              :title="extractFilename(img)"
+            />
+            <div class="repo-image-name"
+              v-text="simplifyFilename(img)"
+            ></div>
+          </div>
+        </div>
       </div>
       <!-- <div class="repo-drag-handle"></div> -->
     </div>
     <div class="upload-button">
       <button role="button" class="icon-button"
-          title="Open a file on this device"
+        title="Open a file on this device"
       >
-          <icon-open title="Open a file on this device"/>
+        <icon-open title="Open a file on this device"/>
       </button>
       <span>UPLOAD NEW </span>
-      <span v-text="repoAssets[activetab]"></span>
+      <span v-text="repoAssets[repotab]"></span>
     </div>
   </div>
 </template>
@@ -104,8 +106,8 @@ export default {
   },
   data() {
     return {
-      activetab: 2,
-      // ToDo: read a folder? external data
+      repotab: 2,
+      // ToDo: populate from external data
       repoAssets: ['Sounds','Videos','Images'],
       repoSounds: [
         'audio/foundit.mp3', 
@@ -127,14 +129,21 @@ export default {
   },
   mounted() {
     const comp = this;
+    /**
+     * RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
+     * Component usage:
+     * this.$emit('toggleRepo', {tab:0, state:true});
+     * @param {tab:#, state:true = open the repository}
+     * Builder: this.$root.$emit('changeTab', repoState.tab);
+     * Toolbar: this.$emit('toggleRepo')
+     */
     this.$root.$on('changeTab', function(tab) {
-      // console.log('changeTab:', tab, comp.activetab);
       if (tab !== undefined) {
-        comp.activetab = tab;
+        comp.repotab = tab;
       }
     });
     /**
-     * Repo Panel can resize the width
+     * Repo Panel width is resizable
      */
     Interact('.repo-panel').resizable({
       edges: {top: false, left: false, bottom: false, right: true},
@@ -151,13 +160,6 @@ export default {
     });
   },
   methods: {
-    imageSelected(event) {
-      // index = repoImages[index] = filename
-      let index = event.target.getAttribute('data-index');
-      if (index) {
-        this.$emit('imageSelected', this.repoImages[index]);
-      }
-    },
     simplifyFilename: function (a) {
       let name = a.split('/');
       let n2 = name[1].split('.');
@@ -172,137 +174,136 @@ export default {
 </script>
 
 <style scoped>
-.repo-panel {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 27vw;
-  height: 95vh;
-  z-index: 11;
-  user-select: none;
-  border-top-right-radius: 18px;
-  border-bottom-right-radius: 18px;
-  border: 3px solid #333333;
-  background-color: #efefef;
-  box-sizing: border-box;
-  -ms-touch-action: none;
-  touch-action: none;
-  min-width: 25%;
-  max-width: 65%;
-}
+  .repo-panel {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 27vw;
+    height: 95vh;
+    z-index: 11;
+    user-select: none;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border: 3px solid #333333;
+    background-color: #efefef;
+    box-sizing: border-box;
+    -ms-touch-action: none;
+    touch-action: none;
+    min-width: 25%;
+    max-width: 65%;
+  }
 
-.repo-header {
-  width: 97%;
-  padding: 1% 0;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 600;
-}
+  .repo-header {
+    width: 97%;
+    padding: 1% 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+  }
 
-.close-button {
-  cursor: pointer;
-  float: right;
-  font-size: 27px;
-  margin-top: -4px;
-}
+  .close-button {
+    cursor: pointer;
+    float: right;
+    font-size: 27px;
+    margin-top: -4px;
+  }
 
-.repo-description {
-  padding: 0 5%;
-  font-size: smaller;
-}
+  .repo-description {
+    padding: 0 5%;
+    font-size: smaller;
+  }
 
-.repo-container {
-  margin-left: 2%;
-}
+  .repo-container {
+    margin-left: 2%;
+  }
 
-.repo-drag-handle {
-  position: absolute;
-  right: 0;
-  width: 15px;
-  height: 70%;
-}
+  .repo-drag-handle {
+    position: absolute;
+    right: 0;
+    width: 15px;
+    height: 70%;
+  }
 
-.repo-drag-handle:hover {
-  background-color: #dfdfdf;
-}
+  .repo-drag-handle:hover {
+    background-color: #dfdfdf;
+  }
 
-.image-holder {
-  width: 100px;
-  height: fit-content;
-  margin: 1%;
-  padding: 3px;
-  border-radius: 8px;
-  border: 2px solid #000000;
-  background-color: #ffffff;
-}
+  .image-holder {
+    width: 100px;
+    height: fit-content;
+    margin: 1%;
+    padding: 3px;
+    border-radius: 8px;
+    border: 2px solid #000000;
+    background-color: #ffffff;
+  }
 
-.image-thumbs {
-  cursor: pointer;
-  width: 100%;
-}
-
-.repo-image-name {
-  text-align: center;
-  font-size: smaller;
-  /*user-select: text;*/
-}
-
-.upload-button {
-  position: absolute;
-  bottom: 1%;
-  left: 2%;
-  width: 92%;
-  padding: 5px;
-  font-size: 16px;
-  color: #333;
-  text-align: center;
-  font-weight: 600;
-  line-height: 30px;
-  white-space: pre-wrap;
-  border-radius: 12px;
-  border: 3px solid #888888;
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-.upload-button:hover {
-  color: #fff;
-  background-color: #aaa;
-}
-
-.icon-button {
-  float: left;
-  margin: 0 5px;
-  padding: 0 10px;
-  cursor: pointer;
-  font-size: 22px;
-  color: #333333;
-  border-radius: 6px;
-  border: 1px solid  #000000;
-  background-color: #efefef;
-}
-.icon-button:hover {
-  background-color: #ccf1cc;
-}
-
-/* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
-.tabs-container {  
+  .image-thumbs {
+    cursor: pointer;
     width: 100%;
-    /* margin: 10px auto; */
-}
+  }
 
-/* Style the tabs */
-.tabs {
+  .repo-image-name {
+    text-align: center;
+    font-size: smaller;
+    /*user-select: text;*/
+  }
+
+  .upload-button {
+    position: absolute;
+    bottom: 1%;
+    left: 2%;
+    width: 92%;
+    padding: 5px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+    line-height: 30px;
+    white-space: pre-wrap;
+    border-radius: 12px;
+    border: 3px solid #888888;
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  .upload-button:hover {
+    color: #fff;
+    background-color: #aaa;
+  }
+
+  .icon-button {
+    float: left;
+    margin: 0 5px;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 22px;
+    color: #333333;
+    border-radius: 6px;
+    border: 1px solid  #000000;
+    background-color: #efefef;
+  }
+  .icon-button:hover {
+    background-color: #ccf1cc;
+  }
+
+  /* tabs https://vuejsexamples.com/tabbed-content-with-vue-js/ */
+  .tabs-container {  
+    width: 100%;
+  }
+
+  /* Style the tabs */
+  .tabs {
     overflow: hidden;
     margin-left: 20px;
     margin-bottom: -2px;/* hide bottom border */
-}
+  }
 
-.tabs ul {
+  .tabs ul {
     list-style-type: none;
     margin-left: 20px;
-}
+  }
 
-.tabs a {
+  .tabs a {
     float: left;
     cursor: pointer;
     padding: 5px 15px;
@@ -312,27 +313,27 @@ export default {
     background-color: #f1f1f1;
     border-radius: 6px 6px 0 0;
     font-weight: bold;
-}
-.tabs a:last-child { 
+  }
+  .tabs a:last-child { 
     border-right: 1px solid #888888;
-}
+  }
 
-/* Change background color of tabs on hover */
-.tabs a:hover {
+  /* Change background color of tabs on hover */
+  .tabs a:hover {
     background-color: #aaa;
     color: #fff;
-}
+  }
 
-/* Styling for active tab */
-.tabs a.active {
+  /* Styling for active tab */
+  .tabs a.active {
     background-color: #fff;
     color: #333333;
     border-bottom: 2px solid #fff;
     cursor: default;
-}
+  }
 
-/* Style the tab content */
-.tab-content {
+  /* Style the tab content */
+  .tab-content {
     display: flex;
     flex-wrap: wrap;
     width: 96%;
@@ -342,5 +343,5 @@ export default {
     border: 1px solid #888888;
     background-color: #ffffff;
     border-radius: 8px;
-}
+  }
 </style>

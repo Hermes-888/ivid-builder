@@ -57,12 +57,6 @@
         </div>
         <!-- element specific -->
         <div class="form-row">
-          <button id="imageUpload" role="button" class="icon-button"
-            title="Upload an image. It will also be added to the repository."
-            @click="uploadFile('image')"
-          >
-            <icon-upload-cloud title="Upload an image. It will also be added to the repository."/>
-          </button>
           <button role="button" class="icon-button"
             title="Search for image"
             @click="findFile('image')"
@@ -76,7 +70,6 @@
           >
         </div>
         <div class="form-row">
-          <!-- location -->
           <div class="loc-prop"
             v-for="(value, propName) in updatedData.location"
             :key="propName"
@@ -87,34 +80,14 @@
             <span> | </span>
           </div>
         </div>
-        <!-- <div class="form-row">
-          <div class="column-half">
-            <label for="bkgColor"
-              title="Image background color can have opacity. Click the color swatch to change the color">
-              Background Color:
-            </label>
-            <div class="color-swatch" id="bkgColor"
-              ref="bkgcolor" title="Click to open a color picker, click again to close it"
-              @click="showPalette('bkgColor')"
-            ></div>
-          </div>
-        </div>
-        <color-picker id="bkgClose"
-          v-if="showBkgPalette"
-          :color="updatedData.backgroundColor"
-          @changed="changeBkgColor"
-          @close="showPalette('bkgClose')"
-        /> -->
     </div>
 </template>
 
 <script>
-// import ColorPicker from './ColorPicker.vue';
 import Interact from 'interactjs';
 
 export default {
     name: "FormImageButton",
-    // components: {ColorPicker},
     props: {
         formData: {
             type: Object,
@@ -146,24 +119,12 @@ export default {
                 "height": 154
               }
             }],// .index is added in FormScene
-            element: null,
-            showBkgPalette: false
+            element: null
         }
     },
     mounted () {
       this.updatedData = JSON.parse(JSON.stringify(this.formData));
       console.log('ImageButton:', this.updatedData.type, this.updatedData.index);
-
-      // const comp = this;
-      // this.$root.$on('repoImageSelected', function(filename) {
-      //   console.log('repoImageSelected ImageButton:', filename);
-      //   if (comp.element) {
-      //     comp.updatedData.imagePath = filename;
-      //     comp.element.classList.remove('bordered');
-      //     comp.element.innerHTML = '';
-      //     comp.element.style.backgroundImage = "url('" + filename + "')";
-      //   }
-      // });
 
       this.$nextTick(function() {
         // console.log('target:', document.querySelectorAll('[data-type="ImageButton"]'));
@@ -204,14 +165,14 @@ export default {
             // call this function on every dragend event
             end(event) {
               console.log('ImageButton drag end:', event);
-              // set location? use builder/DrageImagePanel?
+              // set location use builder/DrageImagePanel?
               let index = parseInt(event.target.getAttribute('data-index'));
               let bounds = event.target.getBoundingClientRect();
-              comp.updatedData.location.left = bounds.x;
-              comp.updatedData.location.top = bounds.y;// - toolbar?
+              comp.updatedData.location.left = bounds.left;
+              comp.updatedData.location.top = bounds.top;// - toolbar?
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
-              console.log('updatedData:', index, bounds, comp.updatedData);
+              // console.log('updatedData:', index, bounds, comp.updatedData);
             }
           }
         })
@@ -228,14 +189,14 @@ export default {
               });
             },
             end(event) {
-              // set location.width/height? use builder/DrageImagePanel?
+              // set location use builder/DrageImagePanel?
               let index = parseInt(event.target.getAttribute('data-index'));
               let bounds = event.target.getBoundingClientRect();
-              comp.updatedData.location.left = bounds.x;
-              comp.updatedData.location.top = bounds.y;// - toolbar?
+              comp.updatedData.location.left = bounds.left;
+              comp.updatedData.location.top = bounds.top;// - toolbar?
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
-              console.log('updatedData:', index, bounds, comp.updatedData);
+              // console.log('updatedData:', index, bounds, comp.updatedData);
             }
           }
         });
@@ -245,7 +206,7 @@ export default {
       repoImage: {
         immediate: true,
         handler(newstate, oldstate) {
-          console.log('-- watch reopImage', newstate);
+          console.log('-- watch repoImage', newstate);
           if (newstate !== oldstate) {
             this.updatedData.imagePath = newstate;
           }
@@ -260,23 +221,12 @@ export default {
           evt.preventDefault();
         }
       },
-      uploadFile: function(type) {
-        // console.log('upload', type);
-        switch(type) {
-          // case 'audio':
-          //   // updatedData.audio
-          //   break;
-          case 'image':
-            // updatedData.image
-            break;
-        }
-      },
       findFile: function(type) {
         // console.log('find', type);
         switch(type) {
           // case 'audio':
           //   // RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
-          //   // {tab:#, state:true=open it}
+          //   // should an ImageButton play a sound when clicked?
           //   this.$emit('toggleRepo', {tab:0, state:true});
           //   break;
           case 'image':
@@ -289,120 +239,100 @@ export default {
         console.log('changeBkgImage:', image);
         this.updatedData.imagePath = image;
         this.element.style.backgroundImage = "url('" + this.updatedData.imagePath + "')";
-      },
-      /**
-       * Color Picker
-       * https://github.com/xiaokaike/vue-color
-       */
-      showPalette: function (e) {
-        let elem = e.toString().substr(0, 4);
-        if (elem === 'bkgC') {
-          this.showBkgPalette = !this.showBkgPalette;
-          if (this.showBkgPalette) {
-            this.$refs.bkgcolor.classList.add('swatch-glow');
-          } else {
-            this.$refs.bkgcolor.classList.remove('swatch-glow');
-          }
-        }
-      },
-      changeBkgColor: function (color) {
-        this.updatedData.backgroundColor = color.hex8;// .rgba is an object, reconstruct as string?
-        this.$refs.bkgcolor.style.backgroundColor = color.hex8;
-        this.$emit('itemChanged', this.updatedData);
       }
     }
 }
 </script>
 
 <style scoped>
-    .form-body {
-      width: 100%;
-    }
-    .form-row {
-      display: flex;
-      width: 100%;
-      margin: 5px 0;
-    }
-    .column-half {
-      width: 49%;
-      display: flex;
-      justify-content: flex-start;
-    }
-    .small-text {
-      font-size: 12px;
-    }
-    .input-short {
-      width: 45px;
-    }
-    .input-med {
-      width: 60px;
-    }
-    .input-long {
-      width: 65%;
-    }
-    .loc-prop {
-      margin: 0 10px 0 5px;
-      /* margin-right: 10px; */
-    }
-    label {
-      margin-right: 5px;
-    }
+  .form-body {
+    width: 100%;
+  }
+  .form-row {
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+  }
+  .column-half {
+    width: 49%;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .small-text {
+    font-size: 12px;
+  }
+  .input-short {
+    width: 45px;
+  }
+  .input-med {
+    width: 60px;
+  }
+  .input-long {
+    width: 75%;
+  }
+  .loc-prop {
+    margin: 0 10px 0 5px;
+  }
 
-    input, textarea {
-      font-family: sans-serif;
-      font-size: 16px;
-      box-sizing: border-box;
-      outline: none;
-      border-color: #333333;
-      border-top-width: 0;
-      border-right-width: 0;
-      border-bottom-width: 1px;
-      border-left-width: 0;
-    }
-    input:focus-visible, textarea:focus-visible {
-      outline: none;
-      border-color: #718871;
-      border-top-width: 0;
-      border-right-width: 0;
-      border-bottom-width: 3px;
-      border-left-width: 0;
-    }
-    textarea {
-      width: 100%;
-      height: 80px;
-      resize: none;
-      margin-bottom: 8px;
-    }
-    .bordered {
-      border-top: 2px solid #888888;
-      margin-top: 20px;
-      padding: 15px 0;
-    }
+  label {
+    margin-right: 5px;
+  }
 
-    .icon-button {
-      margin: 0 5px;
-      padding: 0 5px;
-      cursor: pointer;
-      float: right;
-      font-size: 16px;
-      color: #333333;
-      border-radius: 2px;
-      border: 1px solid  #000000;
-      background-color: #efefef;
-    }
-    .icon-button:hover {
-      background-color: #ccf1cc;
-    }
+  input, textarea {
+    font-family: sans-serif;
+    font-size: 16px;
+    box-sizing: border-box;
+    outline: none;
+    border-color: #333333;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    border-left-width: 0;
+  }
+  input:focus-visible, textarea:focus-visible {
+    outline: none;
+    border-color: #718871;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 3px;
+    border-left-width: 0;
+  }
+  textarea {
+    width: 100%;
+    height: 80px;
+    resize: none;
+    margin-bottom: 8px;
+  }
+  .bordered {
+    border-top: 2px solid #888888;
+    margin-top: 20px;
+    padding: 15px 0;
+  }
 
-    .color-swatch {
-      width: 30px;
-      height: 20px;
-      cursor: pointer;
-      border: 1px solid #333333;
-    }
-    .swatch-glow {
-      box-shadow: 0px 0px 20px 5px rgb(2, 64, 32);
-      /* in order: x offset, y offset, blur size, spread size, color */
-      /* blur size and spread size are optional (they default to 0) */
-    }
+  .icon-button {
+    margin: 0 5px;
+    padding: 0 5px;
+    cursor: pointer;
+    float: right;
+    font-size: 16px;
+    color: #333333;
+    border-radius: 2px;
+    border: 1px solid  #000000;
+    background-color: #efefef;
+  }
+  .icon-button:hover {
+    background-color: #ccf1cc;
+  }
+
+  .color-swatch {
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+    border: 1px solid #333333;
+  }
+  .swatch-glow {
+    box-shadow: 0px 0px 20px 5px rgb(2, 64, 32);
+    /* in order: x offset, y offset, blur size, spread size, color */
+    /* blur size and spread size are optional (they default to 0) */
+  }
 </style>

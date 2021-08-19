@@ -4,6 +4,8 @@
           <repo-panel name="cloud-repository"
             v-show="repoVisible"
             @closeRepo="repoVisible = !repoVisible"
+            @audioSelected="repoAudioSelected"
+            @videoSelected="repoVideoSelected"
             @imageSelected="repoImageSelected"
           />
         </transition>
@@ -98,7 +100,8 @@ export default {
               this.currentData = this.allData.introContent[this.language];
               // console.log('-- watch Builder currentData:', this.currentData);
               this.editorStyle = {
-                transform: 'translate(725px, 150px)'
+                transform: 'translate(725px, 150px)',
+                width: '400px'
               };
               this.$nextTick(function() {
                 document.querySelector('.editor-panel').setAttribute('data-x', 725);
@@ -125,7 +128,8 @@ export default {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
               // console.log('sceneVisible currentData:', this.currentData);
               this.editorStyle = {
-                transform: 'translate(800px, 30px)'
+                transform: 'translate(800px, 30px)',
+                width: '400px'
               };
               this.$nextTick(function() {
                 document.querySelector('.editor-panel').setAttribute('data-x', 800);
@@ -153,10 +157,9 @@ export default {
          * it animates in from left and is resizable
          * 
          * RepoPanel tabs: 0=Sounds, 1=Videos, 2=Images
-         * @param repoStat Object - {tab:#, state:true = open it}
+         * @param repoState Object - {tab:#, state:true = open it}
          */
         toggleRepoPanel: function (repoState) {
-          // console.log('B-tab:', repoState);
           if (repoState) {
             this.repoVisible = repoState.state;
             this.$root.$emit('changeTab', repoState.tab);
@@ -165,11 +168,17 @@ export default {
           }
         },
         /**
-         * selection from repo to specific row
-         * @param filename String image url
+         * audio, video or image selection from repository
+         * add $root listener to the components expecting repository access
+         * @param filename String audio file url
          */
+        repoAudioSelected: function (filename) {
+          this.$root.$emit('repoAudioSelected', filename);
+        },
+        repoVideoSelected: function (filename) {
+          this.$root.$emit('repoVideoSelected', filename);
+        },
         repoImageSelected: function (filename) {
-          console.log('repoImageSelected', filename);
           this.$root.$emit('repoImageSelected', filename);
         },
         editCurrentData: function() {

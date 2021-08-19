@@ -22,28 +22,16 @@
         <form-introduction
           v-if="!sceneVisible && currentData"
           :formData="currentData"
-          :key="currentKey"
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
         <form-scene
           v-if="sceneVisible && currentData"
           :formData="currentData"
-          :key="currentKey"
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
       </div>
-      <!-- <div class="editor-footer">
-        <div class="editor-footer-buttons">
-          <button role="button" class="icon-button"
-            title="Save changes"
-            @click="$emit('saveChanges',updatedData)"
-          >
-            Save Changes <icon-save-file/>
-          </button>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -79,7 +67,6 @@ import Interact from 'interactjs';
 		},
     data () {
         return {
-          currentKey: 0,// update data
           sceneVisible: false,// toggle Intro or Scene
           headerText: 'editor header',
           panelTop: 0,
@@ -89,19 +76,6 @@ import Interact from 'interactjs';
     mounted () {
       this.$nextTick(function() {
         var comp = this;
-
-        // ToDo: add listener to Forms that need use the repository
-        // this.$root.$on('repoImageSelected', function(filename) {
-        //   if (comp.sceneVisible) {
-        //     console.log('repoImageSelected Scene:', filename);
-        //   } else {
-        //     console.log('repoImageSelected Intro:', filename);
-        //     comp.currentData.image = filename;
-        //     // document.querySelector('.introduction').style.backgroundImage = "url('" + filename + "')";
-        //     // comp.currentKey += 1;// rerender children w/new data
-        //   }
-        // });
-
         // editor-panel is draggable, only if mouse is over editor-header
         // https://interactjs.io/
         Interact('.editor-panel')

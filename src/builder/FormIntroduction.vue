@@ -145,12 +145,20 @@ export default {
     },
     mounted() {
       const comp = this;
+      // handle audio or image selected from repository
+      //repoAudioSelected
+      this.$root.$on('repoAudioSelected', function(filename) {
+        if (document.querySelector('.introduction')) {
+          comp.updatedData.audio = filename;
+          // console.log('repoAudioSelected Intro:', filename);
+        }
+      });
       this.$root.$on('repoImageSelected', function(filename) {
-        console.log('repoImageSelected Intro:', filename);
         let intro = document.querySelector('.introduction');
         if (intro) {
           comp.updatedData.image = filename;
           intro.style.backgroundImage = "url('" + filename + "')";
+          // console.log('repoImageSelected Intro:', filename);
         }
       });
     },
