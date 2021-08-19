@@ -49,9 +49,11 @@
             >
             <label for="out" class="wide-label">Animate Out</label>
 
-            <label for="to">| Animate To:</label>
-            <input type="text" id="to" class="input-short"
-                v-model="updatedData.animateTo"
+            <label for="to" title="Branch to video time">
+              | Branch To:
+            </label>
+            <input type="text" id="branchTo" class="input-short"
+                v-model="updatedData.branchTo"
                 @input="$emit('itemChanged', updatedData)"
             >
         </div>
@@ -105,12 +107,13 @@ export default {
             updatedData: [{
               "start": 0,
               "type": "ImageButton",
+              "useBlur": false,
               "useOverlay": false,
               "animateIn": false,
               "animateOut": false,
               "pauseVideo": true,
               "resumePlayback": true,
-              "branchTo": 0,
+              "branchTo": null,
               "imagePath": "",
               "location": {
                 "top": 0,
@@ -118,6 +121,7 @@ export default {
                 "width": 223,
                 "height": 154
               }
+              // "audio" file to play when clicked?
             }],// .index is added in FormScene
             element: null
         }
@@ -131,9 +135,18 @@ export default {
         // find the dom element constructed in FormScene
         // drag and resize to set location
         this.element = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
+        // ToDo: figure out which one we want to drag
+        // let btns = Array.from(document.querySelectorAll('[data-type="ImageButton"]'));
+        // this.element = btns.filter(function(btn, index) {
+        //   console.log('filter:', parseInt(btn.getAttribute('data-index')), index, btn);
+        //   if (index === parseInt(btn.getAttribute('data-index'))) {
+        //     return btn;
+        //   }
+        //   //return index === parseInt(btn.getAttribute('data-index'));
+        // });
         // console.log('IBtn:', this.element);
         const comp = this;
-        Interact('[data-type="ImageButton"]').draggable({
+        Interact(comp.element).draggable({
           // enable inertial throwing
           inertia: true,
           // keep the element within the area of it's parent
@@ -165,14 +178,13 @@ export default {
             // call this function on every dragend event
             end(event) {
               console.log('ImageButton drag end:', event);
-              // set location use builder/DrageImagePanel?
-              let index = parseInt(event.target.getAttribute('data-index'));
+              // set location
               let bounds = event.target.getBoundingClientRect();
               comp.updatedData.location.left = bounds.left;
-              comp.updatedData.location.top = bounds.top;// - toolbar?
+              comp.updatedData.location.top = bounds.top;// -35 toolbar height
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
-              // console.log('updatedData:', index, bounds, comp.updatedData);
+              console.log('updatedData:', bounds, comp.updatedData.location);
             }
           }
         })
@@ -189,14 +201,13 @@ export default {
               });
             },
             end(event) {
-              // set location use builder/DrageImagePanel?
-              let index = parseInt(event.target.getAttribute('data-index'));
+              // set location
               let bounds = event.target.getBoundingClientRect();
               comp.updatedData.location.left = bounds.left;
-              comp.updatedData.location.top = bounds.top;// - toolbar?
+              comp.updatedData.location.top = bounds.top;// -35 toolbar height
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
-              // console.log('updatedData:', index, bounds, comp.updatedData);
+              console.log('updatedData:', bounds, comp.updatedData);
             }
           }
         });

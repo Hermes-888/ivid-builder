@@ -121,6 +121,19 @@
 							"buttonText": "I Agree"
 						},
 						{
+							"start": 32.081,
+							"type": "ImageButton",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": false,
+							"animateOut": false,
+							"pauseVideo": true,
+							"resumePlayback": true,
+							"branchTo": null,
+							"imagePath": "images/garlic_sauce.png",
+							"location": {"top":470, "left":860, "width":223, "height":154}
+						},
+						{
 							"start": 45.510,
 							"type": "MultipleChoice",
 							"useBlur": true,

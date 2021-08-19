@@ -185,11 +185,14 @@ export default {
           this.showEditorModal = !this.showEditorModal;
           if (this.showEditorModal) {
             document.querySelector('.builder-toolbar').style.backgroundColor = '#00000033';
+            if (this.interactionLayer) {
+              this.interactionLayer.style.display = 'none';
+            }
           } else {
             document.querySelector('.builder-toolbar').style.backgroundColor = 'transparent';
-          }
-          if (this.interactionLayer) {
-            this.interactionLayer.style.display = 'none';
+            if (this.interactionLayer) {
+              this.interactionLayer.style.display = 'block';
+            }
           }
           // console.log('editCurrentData', this.currentData);
         },
@@ -270,7 +273,7 @@ export default {
             var blob = new Blob([data], {type: 'text/plain'});
 
             var a = document.createElement('a');
-            a.download = "scenedata.json";
+            a.download = "slidedata.json";
             a.href = window.URL.createObjectURL(blob);
             a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
             //console.log('saveFile:', data);
