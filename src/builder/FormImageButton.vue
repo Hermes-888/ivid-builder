@@ -132,19 +132,18 @@ export default {
 
       this.$nextTick(function() {
         // console.log('target:', document.querySelectorAll('[data-type="ImageButton"]'));
-        // find the dom element constructed in FormScene
-        // drag and resize to set location
-        this.element = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
-        // ToDo: figure out which one we want to drag
-        // let btns = Array.from(document.querySelectorAll('[data-type="ImageButton"]'));
-        // this.element = btns.filter(function(btn, index) {
-        //   console.log('filter:', parseInt(btn.getAttribute('data-index')), index, btn);
-        //   if (index === parseInt(btn.getAttribute('data-index'))) {
-        //     return btn;
-        //   }
-        //   //return index === parseInt(btn.getAttribute('data-index'));
-        // });
-        // console.log('IBtn:', this.element);
+        // this.element = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
+        // determine which ImageButton to drag and resize to set location
+        let parentId = document.querySelector('[data-content]').getAttribute('data-content');
+        let btns = Array.from(document.querySelectorAll('[data-type="ImageButton"]'));
+        let elem = btns.filter(function(btn) {
+          if (parentId === btn.getAttribute('data-index')) {
+            return btn;
+          };
+        });
+        this.element = elem[0];
+        // console.log('btns:', btns);
+        console.log('parentId:', parentId, 'element:', this.element);
         const comp = this;
         Interact(comp.element).draggable({
           // enable inertial throwing
@@ -185,6 +184,7 @@ export default {
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
               console.log('updatedData:', bounds, comp.updatedData.location);
+              comp.$emit('itemChanged', comp.updatedData);
             }
           }
         })
@@ -208,6 +208,7 @@ export default {
               comp.updatedData.location.width = bounds.width;
               comp.updatedData.location.height = bounds.height;
               console.log('updatedData:', bounds, comp.updatedData);
+              comp.$emit('itemChanged', comp.updatedData);
             }
           }
         });

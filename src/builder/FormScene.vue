@@ -92,7 +92,7 @@
               :data-index="index"
           >
               <div class="tab-content"
-                  :data-index="index"
+                  :data-content="index"
                   v-if="activetab === index"
               >
                   <div class="form-row">
@@ -267,6 +267,9 @@ export default {
           this.$root.$on('repoImageSelected', function(filename) {
             // console.log('repoImageSelected FormScene:', filename);
             // let el = document.querySelector('.modal-elements').querySelector('[data-type="ImageButton"]');
+            // multiple, loop through All for index
+
+            // update the editor element
             if (comp.element.getAttribute('data-type') === 'ImageButton') {
               let index = parseInt(comp.element.getAttribute('data-index'));// activetab?
               
@@ -275,9 +278,18 @@ export default {
               comp.element.classList.remove('bordered');
               comp.element.innerHTML = '';
               comp.element.style.backgroundImage = "url('" + filename + "')";
-              comp.repoImage = filename;
+              comp.repoImage = filename;// update the form imagePath
               console.log('set repoImage:', index, comp.element, comp.updatedData[comp.sceneNum].cueData[index]);
-              // update the form imagePath?
+              // if actual element exists, update it too
+              let btns = Array.from(document.querySelectorAll('.image-button'));
+              // console.log('btns:', btns);
+              let filtered = btns.filter(function(btn, index) {
+                if (!btn.getAttribute('data-type')) {
+                  btn.style.backgroundImage = "url('" + filename + "')";
+                  return btn;
+                }
+              });
+              console.log('filtered:', filtered);
             }
           });
           // video event listeners
@@ -436,6 +448,21 @@ export default {
                 break;
               case 'ImageButton':
                 console.log('changeFormData: image button', val);
+                // console.log('FScene:', this.element);
+                // if actual element exists, update it too
+                let btns = Array.from(document.querySelectorAll('.image-button'));
+                // console.log('change btns:', btns);
+                let filtered = btns.filter(function(btn, index) {
+                  if (!btn.getAttribute('data-type')) {
+                    btn.style.backgroundImage = "url('" + val.imagePath + "')";
+                    btn.style.top = val.location.top+'px';
+                    btn.style.left = val.location.left+'px';
+                    btn.style.width = val.location.width+'px';
+                    btn.style.height = val.location.height+'px';
+                    return btn;
+                  }
+                });
+                console.log('change filtered:', filtered);
                 break;
             }
           } else {
@@ -499,7 +526,7 @@ export default {
 
               if (cue.type === 'ImageButton') {
                 mcInstance.$el.addEventListener('click', function(e) {
-                  console.log('construct: image btn:', e.target);
+                  // console.log('construct: image btn:', e.target);
                   // make it the selected one?
                   comp.element = e.target;
                 });
