@@ -171,14 +171,14 @@
             this.selectedObj = {
               "start": 0,
               "type": "ImageButton",
-              "useBlur": true,
+              "useBlur": false,
               "useOverlay": false,
               "animateIn": false,
               "animateOut": false,
               "pauseVideo": true,
               "resumePlayback": true,
               "branchTo": null,
-              "imagePath": "",// "images/cookies.png"
+              "imagePath": "",
               "location": {
                 "top": 0,
                 "left": 0,

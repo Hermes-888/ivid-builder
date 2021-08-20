@@ -126,7 +126,7 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-              // console.log('sceneVisible currentData:', this.currentData);
+              console.log('sceneVisible currentData:', this.currentData);
               this.editorStyle = {
                 transform: 'translate(800px, 30px)',
                 width: '400px'
@@ -137,9 +137,9 @@ export default {
               });
             }
             // video player currenttime
-            var comp = this;
             if (!this.vidPlayer) {
               this.vidPlayer = document.querySelector('.video-element');
+              // var comp = this;
               // this.vidPlayer.addEventListener('timeupdate', function () {
               //   comp.progress = parseFloat(this.currentTime.toFixed(3));
               // });
@@ -218,7 +218,7 @@ export default {
               // update introContent[language]
               this.actualData.introContent[this.language] = data;
             }
-            this.closeEditorModal();
+            // this.closeEditorModal();
             // send to App
             this.$emit('updateData', this.actualData);
             // console.log('saveChanges:', this.actualData);
@@ -229,29 +229,32 @@ export default {
          */
         addNewCue: function(data) {
           console.log('Builder Add new:', data, 'currentData:', this.currentData[this.sceneNum]);
-          var len = this.currentData[this.sceneNum].cueData.length;
-          if (data) {
+          if (!this.currentData) {
+            this.currentData = this.allData.sceneLanguage[this.language].sceneData;
+          }
+          if (!this.vidPlayer) {
+              this.vidPlayer = document.querySelector('.video-element');
+          }
+          if (data && data.type !== 'fakeType') {
             data.start = parseFloat(this.vidPlayer.currentTime.toFixed(3));
-            data.index = len;
-            if (data.type !== 'fakeType') {
-              this.currentData[this.sceneNum].cueData.push(data);
-              // sort cueData or call FormScene addNewCue(data)?
-              this.currentData[this.sceneNum].cueData.sort(function (a, b) {
-                return a.start - b.start;
-              });
-              this.currentData[this.sceneNum].cueData.forEach(function(cue, index) {
-                cue.index = index;// reset pointer to switch tabs on cuechange
-              });
-              this.actualData.sceneLanguage[this.language].sceneData = this.currentData;
-              // send to App
-              this.$emit('updateData', this.actualData);
-              // https://michaelnthiessen.com/force-re-render/
-              this.currentKey += 1;// force update to trigger '-- watch editor currentData
-              console.log('Builder Add new:', data, 
-                          'currentData:', this.currentData, 
-                          'actualData:', this.actualData
-              );
-            }
+            // data.index = this.currentData[this.sceneNum].cueData.length; // reset later
+            this.currentData[this.sceneNum].cueData.push(data);
+            // sort cueData or call FormScene addNewCue(data)?
+            this.currentData[this.sceneNum].cueData.sort(function (a, b) {
+              return a.start - b.start;
+            });
+            this.currentData[this.sceneNum].cueData.forEach(function(cue, index) {
+              cue.index = index;// reset pointer to switch tabs on cuechange
+            });
+            this.actualData.sceneLanguage[this.language].sceneData = this.currentData;
+            // send to App
+            this.$emit('updateData', this.actualData);
+            // https://michaelnthiessen.com/force-re-render/
+            this.currentKey += 1;// force update to trigger '-- watch editor currentData
+            console.log('Builder Add new:', data, 
+                        'currentData:', this.currentData, 
+                        'actualData:', this.actualData
+            );
           }
           // show Editor panel
           this.showEditorModal = true;
@@ -269,26 +272,30 @@ export default {
           try {
             var isBlobSupported = !!new Blob;
             //console.log('Blob supported:', isBlobSupported);// true
-            var data = JSON.stringify(this.allData);// allData=rawdata
-            var blob = new Blob([data], {type: 'text/plain'});
+            if (isBlobSupported) {
+              var data = JSON.stringify(this.allData);// allData=rawdata
+              var blob = new Blob([data], {type: 'text/plain'});
 
-            var a = document.createElement('a');
-            a.download = "slidedata.json";
-            a.href = window.URL.createObjectURL(blob);
-            a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-            //console.log('saveFile:', data);
-            //console.log('saveFile:', blob);
-            // window.localStorage.setItem('rawdata', data);
-            // console.log(JSON.parse(window.localStorage.getItem('rawdata')));
-            try {
-              a.dispatchEvent(new MouseEvent('click'));
-            } catch (e) {
-              var evt = document.createEvent('MouseEvents');
-              evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
-              a.dispatchEvent(evt);
+              var a = document.createElement('a');
+              a.download = "slidedata.json";
+              a.href = window.URL.createObjectURL(blob);
+              a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+              //console.log('saveFile:', data);
+              //console.log('saveFile:', blob);
+              // window.localStorage.setItem('rawdata', data);
+              // console.log(JSON.parse(window.localStorage.getItem('rawdata')));
+              try {
+                a.dispatchEvent(new MouseEvent('click'));
+              } catch (e) {
+                var evt = document.createEvent('MouseEvents');
+                evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
+                a.dispatchEvent(evt);
+              }
+            } else {
+              console.error('cannot save file. Blob is not supported in this browser.');
             }
           } catch (e) {
-            console.log('error:', e.toString());
+            console.error('error:', e.toString());
           }
         }
     }
@@ -300,7 +307,6 @@ export default {
         position: absolute;
         top: 0;
         width: 100vw;
-        /* border-bottom: 1px solid red; */
     }
 
     /* repoPanel transition */

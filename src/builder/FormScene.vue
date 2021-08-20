@@ -231,7 +231,7 @@ export default {
           this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
-          console.log('--- watch FormScene updatedData:', this.updatedData);
+          console.log('--- watch FormScene updatedData:', this.updatedData[this.sceneNum]);
           // construct screenElements
           this.constructElements(this.updatedData[this.sceneNum].cueData, true);
         }
@@ -259,7 +259,7 @@ export default {
           this.updatedData[this.sceneNum].cueData.forEach(function(cue, index) {
             cue.index = index;// inject a pointer to switch tabs on cuechange
           });
-          // console.log('FormScene mounted updatedData:', this.updatedData[this.sceneNum]);
+          console.log('FormScene mounted updatedData:', this.updatedData[this.sceneNum]);
           // watch immediate: false
           this.constructElements(this.updatedData[this.sceneNum].cueData, true);
 
@@ -285,6 +285,9 @@ export default {
               // console.log('btns:', btns);
               let filtered = btns.filter(function(btn, index) {
                 if (!btn.getAttribute('data-type')) {
+                  // adds to all, ToDo: only change one!
+                  btn.classList.remove('bordered');
+                  btn.innerHTML = '';
                   btn.style.backgroundImage = "url('" + filename + "')";
                   return btn;
                 }
@@ -361,11 +364,11 @@ export default {
         addNewCue: function(data) {
           var comp = this;
           var len = this.updatedData[this.sceneNum].cueData.length;
-          if (data) {
+          if (data && data.type !== 'fakeType') {
             data.start = parseFloat(this.vidPlayer.currentTime.toFixed(3));
-            data.index = len;
+            // data.index = len;
             // add to updatedData and inform EditorModal
-            if (data.type !== 'fakeType') {
+            // if (data.type !== 'fakeType') {
               this.updatedData[this.sceneNum].cueData.push(data);
               // sort data by start time and reset cue.index
               this.updatedData[this.sceneNum].cueData.sort(function (a, b) {
@@ -381,9 +384,9 @@ export default {
               // rebuild to sort screenElements
               this.constructElements(this.updatedData[this.sceneNum].cueData);
               //this.constructElements([data], false);// construct array of one, don't clearAll
-            }
+            // }
           }
-          console.log('Add new Interaction:', len, data);
+          console.log('Add new Interaction:', data);
         },
 
         /**
