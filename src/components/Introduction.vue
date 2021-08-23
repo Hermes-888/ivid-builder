@@ -15,8 +15,12 @@
 				@click="startClicked"
 			>
 				<svg viewBox="0 0 200 200">
-					<circle r="90" cy="100" cx="100" style="fill:none;stroke-width:5;stroke:#333"/>
-					<polygon points="70 55 70 145 145 100" fill="#333"/>
+					<circle r="90" cy="100" cx="100"
+						:style="{fill:introData.fillColor,
+						stroke:introData.buttonColor,
+						strokeWidth:5}"
+					/>
+					<polygon points="70 55 70 145 145 100" :fill="introData.buttonColor"/>
 				</svg>
 			</div>
 		</div>

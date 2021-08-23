@@ -186,7 +186,7 @@ export default {
 						this.addComponents(mcInstance);
 						// listen for completion, remove and continue
 						mcInstance.$on('imageSelected', function(mcData) {
-							//console.log('BranchImage selected:', mcData);
+							console.log('BranchImage selected:', mcData);
 							comp.removeComponents(mcData);
 						});
 						break;
@@ -306,13 +306,21 @@ export default {
 						}, {
 							duration: 500, // delay: 200, stagger: 200,
 							complete: function() {
+							try {
 								comp.interactionLayer.removeChild(instance.$el);
+							} catch(error) {
+								console.log('removeChild error:', error.toString());
+							}
 								comp.removeInteraction(data);
 							}
 						});
 					} else {
 						// remove immediately
-						comp.interactionLayer.removeChild(instance.$el);
+						try {
+							comp.interactionLayer.removeChild(instance.$el);
+						} catch(error) {
+							console.log('removeChild error:', error.toString());
+						}
 						comp.removeInteraction(data);
 					}
 				}

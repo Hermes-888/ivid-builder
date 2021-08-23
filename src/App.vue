@@ -23,6 +23,7 @@
 		/>
 		<Scene
 			v-if="showScene"
+      :key="currentKey"
 			:sceneVisible="showScene"
 			:sceneData="sceneData"
 			:language="language"
@@ -35,7 +36,7 @@
 			:sceneVisible="showScene"
 			:language="language"
 			:allData="allData"
-      @restart="showScene=false;showIntroduction=true"
+			@restart="displayIntro"
 			@updateData="updateData"
 		/>
 	</div>
@@ -62,7 +63,7 @@
 				 */
 				showIntroduction: false,
 				showScene: false,
-				showConclusion: false,
+				// showConclusion: false,
 				showWarning: false,
 
 				/**
@@ -106,10 +107,11 @@
 				/**
 				 * App titleText,
 				 * Introduction text, audio and image for this language
-        		 * Scene sceneData[scenes] cueData must include the same languages in the same order
+				 * Scene sceneData[scenes] cueData must include the same languages in the same order
 				 * allData=rawdata for Builder, filled at mounted()
 				 */
         isASL: false,// Scene prop
+				currentKey: 0,// refresh Scene if _data changes
 				introContent: {},
 				sceneData: [],
 				allData: {}
@@ -202,6 +204,8 @@
 					this.introContent = _data.introContent[this.language];
 					this.sceneData = _data.sceneLanguage[this.language].sceneData;
 					this.allData = _data;
+					console.log(' data:', _data);
+					this.currentKey += 1;
 				} else {
 					// console.log('introData:', rawdata.introContent[this.language]);
 					// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData);
@@ -215,6 +219,7 @@
 			 * show the fullscreen warning for 3 seconds before showing the introduction
 			 */
 			displayIntro: function() {
+				this.showScene = false;
 				if (window.innerHeight <= 310) {
 					var me = this;
 					this.showWarning = true;
@@ -263,10 +268,10 @@
 			/**
 			 * When the viewer completes a scene, show the Conclusion
 			 */
-			sceneCompleted: function() {
-				this.showScene = false;
-				this.showConclusion = true;
-			}
+			// sceneCompleted: function() {
+			// 	this.showScene = false;
+			// 	this.showConclusion = true;
+			// }
 		}
 	}
 </script>

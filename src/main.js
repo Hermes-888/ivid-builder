@@ -55,6 +55,8 @@ import iconHideLayers from 'vue-material-design-icons/LayersOff.vue';
 Vue.component('icon-hide-layers', iconHideLayers);
 import iconMarker from 'vue-material-design-icons/MapMarkerOutline.vue';
 Vue.component('icon-marker', iconMarker);
+import iconRefresh from 'vue-material-design-icons/Refresh.vue';
+Vue.component('icon-refresh', iconRefresh);
 
 Vue.config.productionTip = false;
 new Vue({

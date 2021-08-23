@@ -133,12 +133,12 @@
           </div>
       </div>
       <div class="form-row bordered">
-          <button role="button" class="icon-button"
+          <!-- <button role="button" class="icon-button"
               title="Search for images in repository"
               @click="$emit('toggleRepo')"
           >
               <icon-cloud-search title="Search for images in repository"/>
-          </button>
+          </button> -->
           <button role="button" class="icon-button right"
               title="Save changes"
               @click="$emit('saveChanges', updatedData)"
@@ -503,7 +503,6 @@ export default {
                 break;
               case 'ImageButton':
                 mcClass = Vue.extend(ImageButton);
-                console.log('Add Image Button');
                 break;
             }
 

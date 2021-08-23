@@ -295,6 +295,7 @@
 				// console.log('vidBounds:', vidBounds.width, 'barWidth:', barWidth);
 				// console.log(this.progressHolder);
 
+				document.querySelector('#markers').innerHTML = '';
 				cues.forEach(function(cue, index) {
 					var char = cue.id.substring(0, 1);
 					var mark = document.createElement('div');
@@ -302,6 +303,7 @@
 					mark.classList.add('marker');// * comp.size.width
 					mark.style.left = (((cue.startTime / duration) * barWidth)-18) + 'px';
 					mark.setAttribute('data-time', cue.startTime);
+					mark.setAttribute('title', cue.id);
 					mark.innerText = char.toUpperCase();//first Character
 					comp.$refs.markers.appendChild(mark);
 

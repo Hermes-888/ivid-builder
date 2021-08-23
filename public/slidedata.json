@@ -7,7 +7,7 @@
 			"audio": "audio/what_next.mp3",
 			"image": "images/allergen_platter_lt.png",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Spanish",
@@ -16,7 +16,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Mandarin",
@@ -25,7 +25,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Korean",
@@ -34,7 +34,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Vietnamese",
@@ -43,7 +43,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for ASL",
@@ -52,7 +52,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Tagalog",
@@ -61,7 +61,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		},
 		{
 			"_comment": "data for Serbo-Croatian",
@@ -70,7 +70,7 @@
 			"audio": "",
 			"image": "",
 			"buttonColor": "#333333",
-			"fillColor": "rgba(255,255,255, 0)"
+			"fillColor": "rgba(255,255,255, 0.4)"
 		}
 	],
 
