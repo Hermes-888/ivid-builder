@@ -1,0 +1,159 @@
+<template>
+    <div class="scoreboard-container">
+      <div class="score-group"
+        @click="hideScoreboard"
+        :style="{
+          width: mcData.panelWidth,
+          backgroundColor: mcData.panelBkgColor
+        }"
+      >
+        <div class="text" v-text="mcData.text"></div>
+        <div class="score" v-text="scoreNum"></div>
+        <div class="slash">/</div>
+        <div class="possible" v-text="mcData.possible"></div>
+      </div>
+    </div>
+</template>
+
+<script>
+/**
+ * Velocity v2 - animate
+ * https://github.com/julianshapiro/velocity/wiki
+ * https://github.com/julianshapiro/velocity/wiki/Advanced---Forcefeeding
+ * transform: ["to", "from"]
+ */
+// import Velocity from 'velocity-animate';// main.js
+
+export default {
+  /**
+   * Scoreboard text: score / possible
+   * animate in from, To
+   */
+  name: "Scoreboard",
+  components: {},
+  props: {
+    mcData: {
+      type: Object,
+      default() {
+        return {
+          start: 0,
+          type: "Scoreboard",
+          useBlur: false,
+          useOverlay: false,
+          animateIn: false,// comp internal?
+          animateOut: false,
+          animateTo: "10%",
+          animateFrom: "-10%",
+          pauseVideo: false,
+          resumePlayback: true,
+          removeMessage: true,// if clicked
+          panelWidth: '25%',
+          panelBkgColor: '#ffffffCC',
+          text: 'Found Score:',
+          score: 0,
+          possible: 12
+        };
+      }
+    }
+  },
+  data () {
+      return {
+        scoreNum: 0,// animate to mcData.score
+        interval: null,// timer
+        board: null// DOM element
+      }
+  },
+  // watch() {mcData.score, re-inc on change?}
+  mounted () {
+    this.$nextTick(function() {
+      this.showScoreboard();
+    });
+  },
+  methods: {
+    /**
+     * https://github.com/julianshapiro/velocity/wiki/Option---Easing
+     * 
+     * animate score-group
+     * easing: spring[tension,friction]
+     */
+    showScoreboard: function() {
+      let comp = this;
+      let tension = 800;
+      let friction = 20;
+      this.board = document.querySelector('.score-group');
+      this.board.style.opacity = 0.3;
+      this.board.style.top = '-10%';
+      // console.log('board:', this.board);
+      Velocity(this.board, {
+        opacity: [1, 0.3],
+        top: ['10%', '-10%']// comp.mcData.animateTo, .animateFrom?
+      }, {
+        easing: [tension, friction],//"easeInOut",//"easeInSine"//
+        duration: 600,
+        complete: function() {
+          // animate scoreNum 0 to score w/delay timer
+          comp.incScoreNum();
+        }
+      });
+    },
+    incScoreNum: function() {
+      let comp = this;
+      this.scoreNum = 0;
+      this.interval = setInterval(function() {
+        comp.scoreNum += 1;
+        if (comp.scoreNum === comp.mcData.score) {
+          clearInterval(comp.interval);
+        }
+      }, 60);
+    },
+
+    // animate off screen if clicked?
+    hideScoreboard: function() {
+      Velocity(this.board, {
+        opacity: [0, 1],
+        top: ['-10%', '10%']
+      }, {
+        easing: "easeInOut",
+        duration: 500
+      });
+      if (this.mcData.removeMessage) {
+        this.$emit('removeScoreboard', this.mcData);// to remove it
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .scoreboard-container {
+    width: 100%;
+  }
+  .score-group {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    /* width: 15%; */
+    /* top: 10%; */
+    right: 5%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #333333;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  .score-group:hover {
+    cursor: pointer;
+    border-color: #ff3434;
+  }
+  .text {
+    margin: 0 10px 0 0;
+  }
+  .score {
+    font-weight: 600;
+  }
+  .slash {
+    margin: 0 5px;
+  }
+  .possible {
+    font-weight: 600;
+  }
+</style>

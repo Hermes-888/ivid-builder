@@ -23,6 +23,7 @@ import InfoPanel from "@/components/InfoPanel.vue";
 import MultiAnswer from "@/components/MultiAnswer.vue";
 import MultiChoice from "@/components/MultiChoice.vue";
 import TitleScreen from "@/components/TitleScreen.vue";
+import Scoreboard from "@/components/Scoreboard.vue";
 
 import Vue from 'vue';
 
@@ -231,6 +232,21 @@ export default {
 						// listen for completion, remove and continue
 						mcInstance.$on('answerSelected', function(mcData) {
 							//console.log('MultipleChoice answer selected:', mcData);
+							comp.removeComponents(mcData);
+						});
+						break;
+					case 'Scoreboard':
+						mcClass = Vue.extend(Scoreboard);
+						mcInstance = new mcClass({
+							propsData: {
+								mcData: data
+							}
+						});
+
+						this.addComponents(mcInstance);
+						// listen for completion, remove and continue
+						mcInstance.$on('removeScoreboard', function(mcData) {
+							//console.log('removeScoreboard:', mcData);
 							comp.removeComponents(mcData);
 						});
 						break;

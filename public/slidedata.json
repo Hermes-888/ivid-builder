@@ -87,7 +87,25 @@
 					"played": false,
 					"cueData": [
 						{
-							"start": 7.3,
+							"start": 5.0,
+							"type": "Scoreboard",
+							"useBlur": false,
+							"useOverlay": false,
+							"animateIn": false,
+							"animateOut": false,
+							"animateTo": "10%",
+							"animateFrom": "-10%",
+							"pauseVideo": false,
+							"resumePlayback": true,
+							"removeMessage": true,
+							"panelWidth": "18%",
+							"panelBkgColor": "#ffffffCC",
+							"text": "Items Found Score:",
+							"score": 35,
+							"possible": 100
+						},
+						{
+							"start": 17.3,
 							"type": "AnimatedMessage",
 							"useBlur": false,
 							"useOverlay": false,
