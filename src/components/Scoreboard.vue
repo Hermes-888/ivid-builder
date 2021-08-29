@@ -1,18 +1,18 @@
 <template>
-    <div class="scoreboard-container">
-      <div class="score-group"
-        @click="hideScoreboard"
-        :style="{
-          width: mcData.panelWidth,
-          backgroundColor: mcData.panelBkgColor
-        }"
-      >
-        <div class="text" v-text="mcData.text"></div>
-        <div class="score" v-text="scoreNum"></div>
-        <div class="slash">/</div>
-        <div class="possible" v-text="mcData.possible"></div>
-      </div>
+  <div class="scoreboard-container">
+    <div class="score-group"
+      @click="hideScoreboard"
+      :style="{
+        width: mcData.panelWidth,
+        backgroundColor: mcData.panelBkgColor
+      }"
+    >
+      <div class="text" v-text="mcData.text"></div>
+      <div class="score" v-text="scoreNum"></div>
+      <div class="slash">/</div>
+      <div class="possible" v-text="mcData.possible"></div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -27,7 +27,7 @@
 export default {
   /**
    * Scoreboard text: score / possible
-   * animate in from, To
+   * animate internally?
    */
   name: "Scoreboard",
   components: {},
@@ -51,17 +51,17 @@ export default {
           panelBkgColor: '#ffffffCC',
           text: 'Found Score:',
           score: 0,
-          possible: 12
+          possible: 0
         };
       }
     }
   },
   data () {
-      return {
-        scoreNum: 0,// animate to mcData.score
-        interval: null,// timer
-        board: null// DOM element
-      }
+    return {
+      scoreNum: 0,// animate to mcData.score
+      interval: null,// timer
+      board: null// DOM element
+    }
   },
   // watch() {mcData.score, re-inc on change?}
   mounted () {
@@ -82,11 +82,11 @@ export default {
       let friction = 20;
       this.board = document.querySelector('.score-group');
       this.board.style.opacity = 0.3;
-      this.board.style.top = '-10%';
+      this.board.style.top = this.mcData.animateFrom;
       // console.log('board:', this.board);
       Velocity(this.board, {
         opacity: [1, 0.3],
-        top: ['10%', '-10%']// comp.mcData.animateTo, .animateFrom?
+        top: [comp.mcData.animateTo, comp.mcData.animateFrom]
       }, {
         easing: [tension, friction],//"easeInOut",//"easeInSine"//
         duration: 600,
@@ -109,9 +109,12 @@ export default {
 
     // animate off screen if clicked?
     hideScoreboard: function() {
+      if (!this.mcData.clickable) {return;}
+
+      let comp = this;
       Velocity(this.board, {
         opacity: [0, 1],
-        top: ['-10%', '10%']
+        top: [comp.mcData.animateFrom, comp.mcData.animateTo]
       }, {
         easing: "easeInOut",
         duration: 500

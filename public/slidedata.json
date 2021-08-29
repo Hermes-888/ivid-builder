@@ -98,14 +98,14 @@
 							"pauseVideo": false,
 							"resumePlayback": true,
 							"removeMessage": true,
-							"panelWidth": "18%",
+							"panelWidth": "12%",
 							"panelBkgColor": "#ffffffCC",
-							"text": "Items Found Score:",
+							"text": "Score:",
 							"score": 35,
 							"possible": 100
 						},
 						{
-							"start": 17.3,
+							"start": 14.318,
 							"type": "AnimatedMessage",
 							"useBlur": false,
 							"useOverlay": false,
@@ -122,7 +122,7 @@
 							"duration": 3
 						},
 						{
-							"start": 14.318,
+							"start": 17.4,
 							"type": "InfoPanel",
 							"useBlur": true,
 							"useOverlay": false,

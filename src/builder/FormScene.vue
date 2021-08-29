@@ -96,7 +96,7 @@
                   v-if="activetab === index"
               >
                   <div class="form-row">
-                    <span>Type: </span><span v-text="cue.type"></span>
+                    <span>Type:&nbsp;</span><span v-text="cue.type"></span>
                     <button id="deleteElement" role="button" class="icon-button right-button"
                       title="Delete this interactive element"
                       @click="deleteElement(index)"
@@ -127,6 +127,11 @@
                     :repoImage="repoImage"
                     @itemChanged="changeFormData"
                     @toggleRepo="toggleRepoPanel"
+                  />
+                  <form-scoreboard
+                    v-if="cue.type === 'Scoreboard'"
+                    :formData="cue"
+                    @itemChanged="changeFormData"
                   />
                   <!--other cue specific comps-->
               </div>
@@ -160,12 +165,14 @@ import FormMessage from './FormMessage.vue';
 import FormInfoPanel from './FormInfoPanel.vue';
 import FormMultiChoice from './FormMultiChoice.vue';
 import FormImageButton from './FormImageButton.vue';
+import FormScoreboard from './FormScoreboard.vue';
 
 // modalLayer screenElements
 import AnimatedMessage from '../components/AnimatedMessage.vue';
 import InfoPanel from '../components/InfoPanel.vue';
 import MultiChoice from '../components/MultiChoice.vue';
-import ImageButton from '../components/ImageButton.vue';// use builder/DrageImagePanel.vue?
+import ImageButton from '../components/ImageButton.vue';
+import Scoreboard from '../components/Scoreboard.vue';
 
 import Vue from 'vue';
 
@@ -183,7 +190,8 @@ export default {
         FormMessage,
         FormInfoPanel,
         FormMultiChoice,
-        FormImageButton
+        FormImageButton,
+        FormScoreboard
     },
     props: {
         formData: {
@@ -467,6 +475,13 @@ export default {
                 });
                 console.log('change filtered:', filtered);
                 break;
+              case 'Scoreboard':
+                // console.log('Change FormScoreboard', this.element, val);
+                this.element.querySelector('.score-group').style.backgroundColor = val.panelBkgColor;
+                this.element.querySelector('.score-group').style.width = val.panelWidth;
+                this.element.querySelector('.score-group').style.top = val.animateTo;
+                this.element.querySelector('.text').innerText = val.text;
+                break;
             }
           } else {
             //console.log('scene:', val);
@@ -503,6 +518,10 @@ export default {
                 break;
               case 'ImageButton':
                 mcClass = Vue.extend(ImageButton);
+                break;
+              case 'Scoreboard':
+                mcClass = Vue.extend(Scoreboard);
+                cue.clickable = false;// don't remove when clicked
                 break;
             }
 

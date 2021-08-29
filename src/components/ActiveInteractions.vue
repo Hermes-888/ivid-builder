@@ -272,7 +272,7 @@ export default {
 		addComponents: function(instance) {
 			var comp = this;
 			// turn off captions if not an AnimatedMessage
-			if (instance.mcData.type !== 'AnimatedMessage') {
+			if (instance.mcData.pauseVideo) {
 				this.$emit('showCaptions', false);
 			}
 			// added to all interaction types, some could have audio to play
@@ -285,10 +285,14 @@ export default {
 			//console.log('interactionLayer:', this.$refs.interactionLayer);
 			this.interactionLayer.appendChild(instance.$el);
 			// animate onto screen
+			let animateFrom = "60%";
+			// if (instance.mcData.hasOwnProperty('animateFrom')) {
+			// 	animateFrom = instance.mcData.animateFrom;
+			// }
 			if (instance.mcData.animateIn) {
 				Velocity(instance.$el, {
 					opacity: [1,0],
-					top: [instance.mcData.animateTo, "60%"]
+					top: [instance.mcData.animateTo, animateFrom]
 				}, {
 					duration: 500
 				});
