@@ -477,7 +477,9 @@ export default {
                 break;
               case 'Scoreboard':
                 // console.log('Change FormScoreboard', this.element, val);
+                // ToDo: border-color, border-size, border-radius?
                 this.element.querySelector('.score-group').style.backgroundColor = val.panelBkgColor;
+                this.element.querySelector('.score-group').style.color = val.textColor;
                 this.element.querySelector('.score-group').style.width = val.panelWidth;
                 this.element.querySelector('.score-group').style.top = val.animateTo;
                 this.element.querySelector('.text').innerText = val.text;

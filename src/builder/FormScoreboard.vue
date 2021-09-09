@@ -70,14 +70,16 @@
       >
     </div>
     <div class="form-row">
-      <div class="column-left">
-        <label for="panelWidth">Panel width:</label>
-        <input type="text" id="panelWidth" class="input-short"
-          v-model="updatedData.panelWidth"
-          @input="$emit('itemChanged', updatedData)"
-        >
+      <div class="column-third">
+        <label for="panelBkgColor" title="Panel background color can have opacity. Click the color swatch to change the color">
+          Text Color:
+        </label>
+        <div class="color-swatch" id="panelTxtColor"
+          ref="txtcolor" title="Click to open a color picker, click again to close it"
+          @click="showPalette('textColor')"
+        ></div>
       </div>
-      <div class="column-right">
+      <div class="column-third">
         <label for="panelBkgColor" title="Panel background color can have opacity. Click the color swatch to change the color">
           Panel Color:
         </label>
@@ -86,12 +88,25 @@
           @click="showPalette('panelColor')"
         ></div>
       </div>
+      <div class="column-third">
+        <label for="panelWidth">Width:</label>
+        <input type="text" id="panelWidth" class="input-short"
+          v-model="updatedData.panelWidth"
+          @input="$emit('itemChanged', updatedData)"
+        >
+      </div>
     </div>
     <color-picker
       v-if="showBkgPalette"
       :color="updatedData.panelBkgColor"
       @changed="changeBkgColor"
       @close="showPalette('panelClose')"
+    />
+    <color-picker
+      v-if="showTxtPalette"
+      :color="updatedData.textColor"
+      @changed="changeTxtColor"
+      @close="showPalette('textClose')"
     />
   </div>
 </template>
@@ -121,6 +136,7 @@ export default {
           removeMessage: true,// if clicked
           panelWidth: '25%',
           panelBkgColor: '#ffffffCC',
+          textColor: "#333333",
           text: 'Found Score:',
           score: 0,
           possible: 0
@@ -144,17 +160,23 @@ export default {
         removeMessage: true,// if clicked
         panelWidth: '25%',
         panelBkgColor: '#ffffffCC',
+        textColor: "#333333",
         text: 'Found Score:',
         score: 0,
         possible: 0
       }],// .index is added in FormScene
-      showBkgPalette: false,// text color?
+      showBkgPalette: false,
+      showTxtPalette: false,
       element: null
     }
   },
   mounted () {
     this.updatedData = JSON.parse(JSON.stringify(this.formData));
-    console.log('Scoreboard:', this.updatedData.type, this.updatedData.index);
+    // set color swatchs
+    this.$refs.bkgcolor.style.backgroundColor = this.updatedData.panelBkgColor;
+    this.$refs.txtcolor.style.backgroundColor = this.updatedData.textColor;
+    // ToDo: add border-color and border-size
+    // console.log('Scoreboard:', this.updatedData.type, this.updatedData.index);
 
     this.$nextTick(function() {
       this.element = document.querySelector('.modal-elements').querySelector('.score-group');
@@ -216,8 +238,8 @@ export default {
      * https://github.com/xiaokaike/vue-color
      */
     showPalette: function (e) {
-      let elem = e.toString().substr(0, 6);
-      if (elem === 'panelC') {
+      // let elem = e.toString().substr(0, 6);
+      if (e.substr(0, 6) === 'panelC') {
         this.showBkgPalette = !this.showBkgPalette;
         if (this.showBkgPalette) {
           this.$refs.bkgcolor.classList.add('swatch-glow');
@@ -225,18 +247,23 @@ export default {
           this.$refs.bkgcolor.classList.remove('swatch-glow');
         }
       }
-      // if (elem === 'titleC') {
-      //   this.showTxtPalette = !this.showTxtPalette;
-      //   if (this.showTxtPalette) {
-      //     this.$refs.txtcolor.classList.add('swatch-glow');
-      //   } else {
-      //     this.$refs.txtcolor.classList.remove('swatch-glow');
-      //   }
-      // }
+      if (e.substr(0, 5) === 'textC') {
+        this.showTxtPalette = !this.showTxtPalette;
+        if (this.showTxtPalette) {
+          this.$refs.txtcolor.classList.add('swatch-glow');
+        } else {
+          this.$refs.txtcolor.classList.remove('swatch-glow');
+        }
+      }
     },
     changeBkgColor: function (color) {
         this.updatedData.panelBkgColor = color.hex8;// .rgba is an object, reconstruct as string?
         this.$refs.bkgcolor.style.backgroundColor = color.hex8;
+        this.$emit('itemChanged', this.updatedData);
+    },
+    changeTxtColor: function (color) {
+        this.updatedData.textColor = color.hex8;
+        this.$refs.txtcolor.style.backgroundColor = color.hex8;
         this.$emit('itemChanged', this.updatedData);
     }
   }
@@ -256,6 +283,10 @@ export default {
     width: 49%;
     display: flex;
     justify-content: flex-start;
+  }
+  .column-third {
+    display: flex;
+    margin-right: 20px;
   }
   .column-left {
     width: 66%;

@@ -4,6 +4,7 @@
       @click="hideScoreboard"
       :style="{
         width: mcData.panelWidth,
+        color: mcData.textColor,
         backgroundColor: mcData.panelBkgColor
       }"
     >
@@ -49,6 +50,7 @@ export default {
           removeMessage: true,// if clicked
           panelWidth: '25%',
           panelBkgColor: '#ffffffCC',
+          textColor: '#333333',
           text: 'Found Score:',
           score: 0,
           possible: 0

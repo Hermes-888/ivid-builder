@@ -152,6 +152,36 @@ export default {
       },
     },
     methods: {
+      /**
+       * I will be able to use this app to create new slides.
+       * Keep a folder of template slide types to use.
+       * 
+       * ToDo: this needs a way to change/select the language and refresh the data upon selection
+       * Add a File Manager to upload assets, open/save/saveAs the data file. public/slidedata.json
+       * Save File downloads slidedata.json. 
+       * Add Instructions to copy to public|dist folder and refresh page?
+       * 
+       * Add tip-tap to other form fields (currently only in FormIntroduction)
+       * Add slicklist component
+       * Finish ImageButton component. should ImageButton have an optional sound that plays when clicked?
+       * should ImageButton be an array of multiple buttons?
+       * 
+       * Add border-color, border-size, border-radius -- to all elements?
+       * Add animateFrom, To  w/vertical slider? to Scoreboard & FormScoreboard. 
+       * https://vuejsexamples.com/a-highly-customized-slider-component-with-vue/
+       * 
+       * May be able to use round-slider for Oven Temperature controls
+       * https://vuejsexamples.com/a-highly-customizable-round-slider-for-vue-js-with-more-flexibility/
+       * 
+       * For the editor only. think about saving/watching to localStorage. It may refresh better?
+       * Possibly load slidedata.json into builder instead of sending a prop from App.
+       * saveChanges()
+       * Rethink using currentKey, it seems to add a second video to memory?
+       * or it loses the reference to the video?
+       * jump to marker doesn't work after adding a new component
+       */
+
+
         /**
          * RepoPanel is a drawer on the left side to select images from a library
          * it animates in from left and is resizable
@@ -169,7 +199,7 @@ export default {
         },
         /**
          * audio, video or image selection from repository
-         * add $root listener to the components expecting repository access
+         * add $root.$on('repoAudioSelected' listener to the components needing repository access
          * @param filename String audio file url
          */
         repoAudioSelected: function (filename) {
