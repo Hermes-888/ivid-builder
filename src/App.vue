@@ -204,8 +204,8 @@
 					this.introContent = _data.introContent[this.language];
 					this.sceneData = _data.sceneLanguage[this.language].sceneData;
 					this.allData = _data;
-					console.log(' data:', _data);
-					this.currentKey += 1;
+					console.log('App updateData:', _data);
+					// this.currentKey += 1;// causing multiple instances?
 				} else {
 					// console.log('introData:', rawdata.introContent[this.language]);
 					// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData);

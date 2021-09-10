@@ -46,7 +46,7 @@
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import EditorModal from "./EditorModal.vue";
-import FormIntroduction from './FormIntroduction.vue';
+import rawdata from '../../public/slidedata.json';
 
 export default {
     name: "Builder",
@@ -86,6 +86,9 @@ export default {
         currentData: null,
         currentKey: 0// force update in EditorModal
       }
+    },
+    mounted() {
+      console.log('Builder mounted rawdata:', rawdata);
     },
     watch: {
       /**
@@ -156,26 +159,42 @@ export default {
        * I will be able to use this app to create new slides.
        * Keep a folder of template slide types to use.
        * 
-       * ToDo: this needs a way to change/select the language and refresh the data upon selection
-       * Add a File Manager to upload assets, open/save/saveAs the data file. public/slidedata.json
-       * Save File downloads slidedata.json. 
-       * Add Instructions to copy to public|dist folder and refresh page?
+       * Expand Builder abilities to edit activities too.
+       * 
+       * ToDo: this needs a way to change/select the language and refresh the data upon selection.
+       * 
+       * Add a File Manager to upload assets, open/save/saveAs the data in public/slidedata.json
+       * 
+       * Add a panel to view, add & manage _comments of a data object?
        * 
        * Add tip-tap to other form fields (currently only in FormIntroduction)
-       * Add slicklist component
-       * Finish ImageButton component. should ImageButton have an optional sound that plays when clicked?
-       * should ImageButton be an array of multiple buttons?
+       * Message and InfoPanel, all text elements?, should have font-size & color options
+       * 
+       * Add slicksort list component
+       * https://github.com/Jexordexan/vue-slicksort
+       * 
+       * Finish ImageButton component. Should ImageButton have an optional sound that plays when clicked?
+       * Should ImageButton be an array of multiple buttons?
        * 
        * Add border-color, border-size, border-radius -- to all elements?
        * Add animateFrom, To  w/vertical slider? to Scoreboard & FormScoreboard. 
        * https://vuejsexamples.com/a-highly-customized-slider-component-with-vue/
        * 
-       * May be able to use round-slider for Oven Temperature controls
+       * Might be able to use round-slider for Oven Temperature controls
        * https://vuejsexamples.com/a-highly-customizable-round-slider-for-vue-js-with-more-flexibility/
+       * replaces assets/knob idea.
        * 
-       * For the editor only. think about saving/watching to localStorage. It may refresh better?
+       * For the editor only. think about saving to and watching localStorage. It may refresh better?
+       * OR rebuilding the video cues. 
+       * 
        * Possibly load slidedata.json into builder instead of sending a prop from App.
-       * saveChanges()
+       * Save would still pass the data to the App updateData(_data) method.
+       * App would refresh by rebuilding the Scene cueData
+       * 
+       * Save File currently downloads slidedata.json. 
+       * Add Instructions to copy to public|dist folder and refresh page?
+       * 
+       * saveChanges(), App updateData: function(_data)
        * Rethink using currentKey, it seems to add a second video to memory?
        * or it loses the reference to the video?
        * jump to marker doesn't work after adding a new component
