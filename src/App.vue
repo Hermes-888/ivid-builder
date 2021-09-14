@@ -120,10 +120,13 @@
 		mounted() {
 			/**
 			 * if this interactive is being display in the LMS, hide the title bar
-			 * the interactive loads into an iframe with the url of .../CourseAsset/...
+			 * the interactive loads into an iframe with the url of .../CourseAsset/ or /course-assets
 			 * you can also use this in the Scene if you need to adjust elements
 			 */
-			if (window.location.href.indexOf('CourseAsset') > -1) {
+			const path = window.location.href.indexOf('CourseAsset');
+			const newpath = window.location.href.indexOf('course-assets');
+
+			if (path > -1 || newpath > -1) {
 				document.querySelector('.titlebar').style.display = 'none';
 				document.querySelector('#app').style.height = '97.7vh';
 

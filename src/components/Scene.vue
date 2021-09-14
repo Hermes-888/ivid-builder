@@ -146,7 +146,10 @@
 							 * if not in the LMS display the titlebar
 							 * if in the LMS adjust the height
 							 */
-							if (window.location.href.indexOf('CourseAsset') > -1) {
+							const path = window.location.href.indexOf('CourseAsset');
+							const newpath = window.location.href.indexOf('course-assets');
+
+							if (path > -1 || newpath > -1) {
 								document.querySelector('.scene').style.height = '97.7vh';
 								document.querySelector('.scene-full').style.height = '97.7vh';
 							}
