@@ -1,32 +1,27 @@
 <template>
-	<div class="introduction">
-		<div class="intro-image" ref="introimage"></div>
-		<div class="intro-container">
-			<div class="intro-text">
-				<play-audio-button
-					ref="audioBtn"
-					v-if="introData.audio"
-					:audioPath="introData.audio"
-					:audioVolume="audioVolume"
-					:audioPlaybackRate="audioPlaybackRate"
-				/>
-				<span v-html="introData.text"></span>
-			</div>
-			<div class="start-button">
-				<div class="start-image"
-					@click="startClicked"
-				>
-					<svg viewBox="0 0 200 200">
-						<circle r="90" cy="100" cx="100"
-							stroke-width="5"
-							:stroke="introData.buttonColor"
-							:fill="introData.fillColor"
-						/>
-						<polygon points="70 55 70 145 145 100"
-							:fill="introData.buttonColor"
-						/>
-					</svg>
-				</div>
+	<div class="introduction" ref="introduction">
+		<div class="intro-text">
+			<play-audio-button
+				ref="audioBtn"
+				v-if="introData.audio"
+				:audioPath="introData.audio"
+				:audioVolume="audioVolume"
+				:audioPlaybackRate="audioPlaybackRate"
+			/>
+			<span v-html="introData.text"></span>
+		</div>
+		<div class="start-button">
+			<div class="start-image"
+				@click="startClicked"
+			>
+				<svg viewBox="0 0 200 200">
+					<circle r="90" cy="100" cx="100"
+						:style="{fill:introData.fillColor,
+						stroke:introData.buttonColor,
+						strokeWidth:5}"
+					/>
+					<polygon points="70 55 70 145 145 100" :fill="introData.buttonColor"/>
+				</svg>
 			</div>
 		</div>
 	</div>
@@ -54,7 +49,7 @@
 						text: '',
 						audio: '',
 						image: '',
-						buttonColor: '',
+            buttonColor: '',
 						fillColor: ''
 					}
 				}
@@ -73,7 +68,7 @@
 		mounted() {
 			this.$nextTick(function() {
 				if (this.introData.image) {
-					this.$refs.introimage.style.backgroundImage = "url('" + this.introData.image + "')";
+					this.$refs.introduction.style.backgroundImage = "url('" + this.introData.image + "')";
 				}
 			});
 		},
@@ -96,18 +91,9 @@
 		width: 90%;
 		min-height: 90%;
 		margin: 0 auto;
-	}
-	.intro-image {
-		min-height: 90vh;
 		background-repeat: no-repeat;
 		background-size: contain;
 		background-position: center;
-	}
-	.intro-container {
-		position: absolute;
-		top: 80px;
-		left: 0;
-		width: 99.5vw;
 	}
 	.intro-text {
 		width: 80%;
@@ -116,7 +102,7 @@
 		text-align: center;
 		padding: 1.5%;
 		border-radius: 8px;
-		border: 3px solid #333333;
+		border: 3px solid #808080;
 		background-color: rgba(255,255,255, 0.8);
 	}
 	.start-button {
@@ -131,21 +117,18 @@
 			margin-top: 2%;
 		}
 	}
-	/* tablet landscape */
-	/* @media (max-width: 1024px) and (min-height: 740px) and (max-height: 768px) {} */
-	@media (max-width: 830px) and (min-height: 360px) and (max-height: 380px) {
+	@media (max-width: 830px) {
 		.start-button {
 			margin-top: 2%;
 		}
 	}
-	/* tablet portrait */
-	@media (max-width: 768px) and (min-height: 1010px) and (max-height: 1024px) {
+	@media (max-width: 768px) and (max-height: 1024px) {
 		.start-button {
 			width: 25%;
+			/*margin-top: 20%;*/
 		}
 	}
-	/* Pixel2, Pixel4, iPhone 6/7/8 plus AND recover from tablet portrait */
-	@media (max-width: 750px) and (max-height: 420px) {
+	@media (max-width: 740px) {
 		.intro-text {
 			border-width: 2px;
 		}
@@ -153,6 +136,4 @@
 			margin-top: 2%;
 		}
 	}
-	/* iPhone 6/7/8 */
-	/* @media (max-width: 670px) {} */
 </style>

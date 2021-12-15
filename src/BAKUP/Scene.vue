@@ -18,12 +18,7 @@
 				@showCaptions="toggleCaptions"
 			/>
 <!-- Bubble for Course continues on the next slide -->
-			<transition
-				v-on:before-enter="speechBefore"
-				v-on:enter="speechEnter"
-				v-on:leave="speechLeave"
-				v-bind:css="false"
-			>
+			<transition name="showb">
 				<SpeechBubble
 					v-show="showFeedback"
 					class="feedback-bubble"
@@ -313,47 +308,8 @@
 			 * show a SpeechBubble with text: The course continues on the next slide.
 			 */
 			alternateConclusion: function() {
-				var altText = [
-					'The course continues on the next slide.',// english
-					'El curso continúa en la siguiente presentación.',// spanish
-					'课程在下一张幻灯片继续。',// mandarin
-					'다음 슬라이드에서 과정이 계속됩니다.',// korean
-					'Khóa học tiếp tục ở trang chiếu tiếp theo.',// vietnamese
-					'The course continues on the next slide.',// ASL
-					'Magpapatuloy ang kurso sa susunod na slide.',// tagalog
-					'Tečaj se nastavlja na sljedećoj sličici.'// serbo-croatian
-				];
-				this.feedbackText = altText[this.language];
+				this.feedbackText = this.sceneData[0].altConclusion;
 				this.showFeedback = true;
-			},
-			/**
-			 * Velocity v2 - animate the fadIn/fadeOut and answer buttons using
-			 * https://vuejs.org/v2/api/#transition
-			 * https://github.com/julianshapiro/velocity/wiki
-			 * https://github.com/julianshapiro/velocity/wiki/Advanced---Forcefeeding
-			 * transform: ["to", "from"]
-			 * https://github.com/julianshapiro/velocity/wiki/Option---Stagger
-			 * stagger won't work on answers because (el) is the specific element not a group
-			 * speech transition is used for customer and feedback
-			 */
-
-			speechBefore: function(el) {
-				el.style.opacity = 0;
-			},
-			speechEnter: function(el) {
-				Velocity(el, {
-					opacity: 1,
-					top: ['65%', '80%']
-				}, {
-					duration: 500
-				});
-			},
-			speechLeave: function(el) {
-				Velocity(el, {
-					opacity: 0
-				}, {
-					duration: 300
-				});
 			}
 		}
 	}
@@ -371,18 +327,31 @@
 		height: 95vh;
 		text-align: center;
 	}
-
 	.scene-content {
 		padding: 0;
 		/*padding: 1%;*/
 		/*border-radius: 15px;*/
 		/*background-color: #888888;*/
 	}
-
 	.feedback-bubble {
 		top: 65%;
 		margin: 0 25%;
 		font-size: larger;
+	}
+
+	/* bottom animated <transition name="showb"> */
+	.showb-leave-active,
+	.showb-enter-active {
+		transition: all .5s ease-in-out;
+	}
+	.showb-enter {
+		transform: translate(0, 130px);
+	}
+	.showb-enter-to {
+		transform: translate(0, 0);
+	}
+	.showb-leave-to {
+		transform: translate(0, 130px);
 	}
 
 	/* Laptop landscape 1366x768 */

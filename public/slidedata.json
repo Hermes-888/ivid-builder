@@ -1,5 +1,5 @@
 {
-	"introContent": [
+	"introLanguage": [
 		{
 			"_comment": "data for English",
 			"titleText": "EN Slide Title",
@@ -80,8 +80,20 @@
 				{
 					"_comment": "data for English",
 					"videoBackground": "https://course-assets.statefoodsafety.com/CourseAsset/get?id=60f5b0d6f3a4781f677c7edb",
-					"captionsFile": "",
 					"ccEnabled": true,
+					"captions":[
+						{
+							"language": "en",
+							"label": "English",
+							"file": "audio/sample.vtt",
+							"NOTE":"Array of multiple"
+						}
+					],
+					"progressbarOptions": {
+						"showProgressbar": true,
+						"showMarkers": true,
+						"enableMarkers": true
+					},	
 					"returnTime": 0,
 					"branchCount": 0,
 					"played": false,
@@ -93,7 +105,7 @@
 							"useOverlay": false,
 							"animateIn": false,
 							"animateOut": false,
-							"animateTo": "10%",
+							"animateTo": "15%",
 							"animateFrom": "-10%",
 							"pauseVideo": false,
 							"resumePlayback": true,
@@ -102,8 +114,15 @@
 							"panelBkgColor": "#ffffffCC",
 							"textColor": "#333333",
 							"text": "Score:",
-							"score": 35,
+							"clickable": false,
+							"score": 15,
 							"possible": 100
+						},
+						{
+							"start": 8.8,
+							"type": "Event",
+							"message": "updateScore",
+							"data": 10
 						},
 						{
 							"start": 14.318,
@@ -123,7 +142,7 @@
 							"duration": 3
 						},
 						{
-							"start": 17.4,
+							"start": 19.1,
 							"type": "InfoPanel",
 							"useBlur": true,
 							"useOverlay": false,
@@ -149,6 +168,8 @@
 							"pauseVideo": true,
 							"resumePlayback": true,
 							"branchTo": null,
+							"NOTE": "ARRAY OF MULTIPLE?",
+							"points": 5,
 							"imagePath": "images/garlic_sauce.png",
 							"location": {"top":470, "left":860, "width":223, "height":154}
 						},

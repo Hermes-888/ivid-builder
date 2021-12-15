@@ -17,6 +17,7 @@
  * imagePath is the url to the file
  * style is calculated to retain its location
  * ToDo: add audio, play audio when clicked?
+ * Should be an array of images with locations?
  */
 
 export default {
@@ -34,6 +35,7 @@ export default {
             "pauseVideo": true,
             "resumePlayback": true,
             "branchTo": null,// add if you branch
+						"points": 0,// interaction layer will update the Scoreboard
             "imagePath": "",
             "location": {
               "top": 0,

@@ -118,6 +118,8 @@ export default {
      * https://codepen.io/rickyeckhardt/pen/zYGwaKr
      * https://codepen.io/uzcho_/pen/bPZMez
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+     * 
+     * ToDo: text border-color, background-color opacity, width and margin-top properties
      */
     name: "FormIntroduction",
     components: {ColorPicker, BubbleEditor},
@@ -145,6 +147,7 @@ export default {
     },
     mounted() {
       const comp = this;
+      // console.log('formIntroduction mounted');
       // handle audio or image selected from repository
       //repoAudioSelected
       this.$root.$on('repoAudioSelected', function(filename) {
@@ -154,7 +157,7 @@ export default {
         }
       });
       this.$root.$on('repoImageSelected', function(filename) {
-        let intro = document.querySelector('.introduction');
+        let intro = document.querySelector('.intro-image');
         if (intro) {
           comp.updatedData.image = filename;
           intro.style.backgroundImage = "url('" + filename + "')";
@@ -166,13 +169,14 @@ export default {
       formData: {
         immediate: true,
         handler(newstate, oldstate) {
+          // FIXED?
           // ToDo: selecting a repoImage re-renders this component and overwrites any changes already made
           // store the changes in localStorage? and re-define them only if they exist in localStorage
           this.$nextTick(function() {
               this.updatedData = JSON.parse(JSON.stringify(newstate));
               this.$refs.btncolor.style.backgroundColor = this.updatedData.buttonColor;
               this.$refs.fillcolor.style.backgroundColor = this.updatedData.fillColor;
-              // console.log('FormIntroduction updated:', this.updatedData);
+              console.log('--watch: FormIntroduction updated:', this.updatedData);
           });
         }
       }
@@ -235,7 +239,7 @@ export default {
             document.querySelectorAll('circle')[0].style.fill = color.hex8;
         },
         changeBkgImage: function (image) {
-          document.querySelector('.introduction').style.backgroundImage = "url('" + this.updatedData.image + "')";
+          document.querySelector('.intro-image').style.backgroundImage = "url('" + this.updatedData.image + "')";
         },
         changeScreen: function(e, html) {
           // console.log(e, 'Intro changeScreen id:', e.target.id, 'input e:', e);

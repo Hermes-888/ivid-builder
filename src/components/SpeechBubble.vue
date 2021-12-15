@@ -35,7 +35,7 @@
 		text-align: center;
 		padding: 10px;
 		border-radius: 8px;
-		border: 3px solid grey;
+		border: 3px solid #333333;
 		background-color: rgba(255,255,255, 0.8);
 		user-select: none;
 		-moz-user-select: none;

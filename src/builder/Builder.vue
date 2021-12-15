@@ -35,11 +35,16 @@
 /**
  * Main Builder layer holds RepoPanel 
  * 
- * manage introContent and sceneData
+ * ToDo: dropdown selector for Scene types?
+ *  Think about adding FormIntroduction and FormScene here. instead of EditorModal?
+ *  It may be more manageable. Could determine which FormSene type to display?
+ * Get more granular for adding interaction types?
+ * 
+ * manage introLanguage and sceneData
  * to refresh data, $emit('updateData', actualData)
  * sceneVisible determines Intro or Scene
  * 
- * allData to select IntroContent or SceneData[num].cueData[]
+ * allData to select introLanguage or SceneData[num].cueData[]
  * 
  * video player controls: pause, play, restart intro, markers, progressbar
  */
@@ -81,7 +86,7 @@ export default {
         vidPlayer: null,// Player elements
         interactionLayer: null,
         editorStyle: {},// set intro or scene
-        //actualData = allData.introContent[language] || allData.sceneLanguage[language].sceneData
+        //actualData = allData.introLanguage[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
         currentData: null,
         currentKey: 0// force update in EditorModal
@@ -89,19 +94,23 @@ export default {
     },
     mounted() {
       console.log('Builder mounted rawdata:', rawdata);
+      // this.$nextTick(function () {
+      //   // allData is still not available
+      //   console.log('Builder mounted allData:', this.allData);
+      // });
     },
     watch: {
       /**
-       * set currentData to introContent, when allData is ready
+       * set currentData to introLanguage, when allData is ready
        */
       allData: {
         immediate: true,
         handler(newstate, oldstate) {
           // console.log('-- watch Builder allData:', newstate, oldstate);
-          if (newstate.hasOwnProperty('introContent')) {
+          if (newstate.hasOwnProperty('introLanguage')) {
             if (!this.sceneVisible) {
-              this.currentData = this.allData.introContent[this.language];
-              // console.log('-- watch Builder currentData:', this.currentData);
+              this.currentData = this.allData.introLanguage[this.language];
+              console.log('-- watch Builder currentData:', this.currentData);
               this.editorStyle = {
                 transform: 'translate(725px, 150px)',
                 width: '400px'
@@ -111,16 +120,17 @@ export default {
                 document.querySelector('.editor-panel').setAttribute('data-y', 150);
               });
             }
+
+            // create a mutable copy of allData to update
+            this.actualData = JSON.parse(JSON.stringify(this.allData));
+            //console.log('actualData:', this.actualData);
           }
-          // a mutable copy of allData to update
-          this.actualData = JSON.parse(JSON.stringify(this.allData));
-          //console.log('actualData:', this.actualData);
         }
       },
       /**
        * set currentData to sceneLanguage[language].sceneData
        * when the Scene becomes visible
-       * doesn't fire for intro, set introContent at watch allData
+       * doesn't fire for intro, set introLanguage at watch allData
        */
       sceneVisible: {
         immediate: true,
@@ -264,8 +274,8 @@ export default {
               this.currentData[this.sceneNum] = data;
               this.actualData.sceneLanguage[this.language].sceneData = data;
             } else {
-              // update introContent[language]
-              this.actualData.introContent[this.language] = data;
+              // update introLanguage[language]
+              this.actualData.introLanguage[this.language] = data;
             }
             // this.closeEditorModal();
             // send to App

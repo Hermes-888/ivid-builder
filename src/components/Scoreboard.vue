@@ -52,6 +52,7 @@ export default {
           panelBkgColor: '#ffffffCC',
           textColor: '#333333',
           text: 'Found Score:',
+          clickable: false,// true = hide scoreboard if clicked
           score: 0,
           possible: 0
         };
@@ -65,10 +66,17 @@ export default {
       board: null// DOM element
     }
   },
-  // watch() {mcData.score, re-inc on change?}
   mounted () {
     this.$nextTick(function() {
+      var comp = this;
       this.showScoreboard();
+
+      // increment/decrement the score from data and interactions layer
+      this.$on('updateScore', function(data) {
+        console.log('Scoreboard received data:', data);
+        data += comp.scoreNum;// add to current score
+        comp.incScoreNum(data);// data from interactions: comp.$emit(data.message, data.data); 
+      });
     });
   },
   methods: {
@@ -79,9 +87,9 @@ export default {
      * easing: spring[tension,friction]
      */
     showScoreboard: function() {
-      let comp = this;
-      let tension = 800;
-      let friction = 20;
+      var comp = this;
+      var tension = 800;
+      var friction = 20;
       this.board = document.querySelector('.score-group');
       this.board.style.opacity = 0.3;
       this.board.style.top = this.mcData.animateFrom;
@@ -94,16 +102,16 @@ export default {
         duration: 600,
         complete: function() {
           // animate scoreNum 0 to score w/delay timer
-          comp.incScoreNum();
+          comp.incScoreNum(comp.mcData.score);
         }
       });
     },
-    incScoreNum: function() {
-      let comp = this;
+    incScoreNum: function(score) {
+      var comp = this;
       this.scoreNum = 0;
       this.interval = setInterval(function() {
         comp.scoreNum += 1;
-        if (comp.scoreNum === comp.mcData.score) {
+        if (comp.scoreNum === score) {
           clearInterval(comp.interval);
         }
       }, 60);
@@ -113,7 +121,7 @@ export default {
     hideScoreboard: function() {
       if (!this.mcData.clickable) {return;}
 
-      let comp = this;
+      var comp = this;
       Velocity(this.board, {
         opacity: [0, 1],
         top: [comp.mcData.animateFrom, comp.mcData.animateTo]
@@ -137,8 +145,6 @@ export default {
     position: absolute;
     display: flex;
     justify-content: center;
-    /* width: 15%; */
-    /* top: 10%; */
     right: 5%;
     padding: 10px;
     border-radius: 8px;

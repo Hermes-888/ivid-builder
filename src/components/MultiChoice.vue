@@ -52,7 +52,7 @@
 				<div class="multi-hint-text"
 					v-show="showHint"
 				>
-					<span>Hint: </span>
+					<!-- <span>Hint: </span> -->
 					<span v-html="mcData.hintText"></span>
 				</div>
 			</div>
@@ -118,11 +118,11 @@
 			if (this.mcData.randomizeAnswers) {
 				this.answers = this.randomizeAnswers(this.answers);
 			}
-			if (this.mcData.questionAudio) {
-				this.$emit('playAudioFile', this.mcData.questionAudio);
-			}
 			if (this.mcData.backgroundColor) {
 				this.$refs.multicontainer.style.backgroundColor = this.mcData.backgroundColor;
+			}
+			if (this.mcData.questionAudio) {
+				this.$emit('playAudioFile', this.mcData.questionAudio);
 			}
 		},
 		methods: {
@@ -195,7 +195,8 @@
 <style scoped>
 	.multi-choice {
 		position: absolute;
-		width: 100%;
+		top: 0;
+		width: 99%;
 	}
 	.multi-container {
 		width: 60%;
@@ -268,7 +269,7 @@
 		background-color: #ffffff;
 	}
 	.multi-feedback-text {
-		width: 95%;
+		width: 100%;
 		padding-bottom: 10px;
 	}
 	.answer-text {
@@ -278,16 +279,18 @@
 	/* iPhone 12 532 x 1,170 px */
 	@media (max-width: 1170px) and (max-height: 532px) {
 		.multi-container {
-			width: 80%;
+			width: 70%;
 			margin-top: -65px;
 		}
 		.multi-answer {
 			width: 90%;
 		}
 	}
-	@media (max-width: 1024px) and (max-height: 768px) {
+	/* tablet landscape */
+	@media (max-width: 1024px) and (min-height: 740px) and (max-height: 768px) {
 		.multi-container {
-			margin-top: -40px;
+			width: 80%;
+			margin-top: -50px;
 		}
 		.multi-answer {
 			width: 90%;
@@ -297,21 +300,20 @@
 	@media (max-width: 830px) and (max-height: 420px) {
 		.multi-container {
 			width: 80%;
-			margin-top: -65px;
+			margin-top: -5%;
 			padding: 5px;
 		}
 		.multi-item {
 			margin-bottom: 10px;
 			padding: 5px;
 		}
-		.answer-text {
-			font-size: large;
-		}
 	}
 	/* tablet portrait */
-	@media (max-width: 768px) and (max-height: 1024px) {
+	@media (max-width: 768px) and (min-height: 1000px) and (max-height: 1024px) {
 		.multi-container {
+			width: 80%;
 			padding: 15px;
+			margin-top: 25%;
 		}
 		.multi-answer {
 			width: 90%;
@@ -320,8 +322,8 @@
 	/* Pixel2 iPhone 6/7/8 plus AND recover from tablet portrait */
 	@media (max-width: 740px) and (max-height: 420px) {
 		.multi-container {
-			width: 80%;
-			margin-top: -75px;
+			width: 90%;
+			margin-top: -8%;
 			padding: 5px;
 			border-width: 2px;
 		}
@@ -329,12 +331,18 @@
 			border-width: 2px;
 			padding: 10px;
 		}
+		.answer-text {
+			font-size: larger;
+		}
+		.multi-feedback-text {
+			font-size: large;
+		}
 	}
 
 	@media (max-width: 670px) {
 		.multi-container {
 			width: 90%;
-			margin-top: -70px;
+			margin-top: -8%;
 			border-width: 2px;
 		}
 		.multi-question {
@@ -342,6 +350,14 @@
 		}
 		.multi-item {
 			margin-bottom: 5px;
+		}
+	}
+	@media (max-width: 570px) {
+		.multi-container {
+			margin-top: -10%;
+		}
+		.answer-text {
+			font-size: unset;
 		}
 	}
 </style>

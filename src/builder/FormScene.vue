@@ -306,19 +306,20 @@ export default {
           // video event listeners
           // toolbar sends play, pause, rewind stepBack to intro
           this.vidPlayer = document.querySelector('.video-element');
+          console.log('vidPlayer:', this.vidPlayer);// no metadata cue track yet
 
-          this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
-            //console.log('cuechange: target', e.target);// cues, activeCues
-            if (e.target.activeCues.length > 0) {
-              console.log('cuechange:', e.target.activeCues[0].id);
-              // set activetab if cue is active
-              comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
-                if (cue.type === e.target.activeCues[0].id) {
-                  comp.activetab = cue.index;
-                }
-              });
-            }
-          });
+          // this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
+          //   //console.log('cuechange: target', e.target);// cues, activeCues
+          //   if (e.target.activeCues.length > 0) {
+          //     console.log('cuechange:', e.target.activeCues[0].id);
+          //     // set activetab if cue is active
+          //     comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
+          //       if (cue.type === e.target.activeCues[0].id) {
+          //         comp.activetab = cue.index;
+          //       }
+          //     });
+          //   }
+          // });
           // this.vidPlayer.addEventListener('timeupdate', function () {
           //   comp.progress = parseFloat(this.currentTime.toFixed(3));
           // });
@@ -489,6 +490,22 @@ export default {
             //console.log('scene:', val);
             this.updatedData[this.sceneNum] = val;
           }
+
+          // cant do this in mounted, tracks NA add once
+          console.log('vidPlayer:', this.vidPlayer);// no metadata cue track yet
+
+          // this.vidPlayer.textTracks[0].addEventListener('cuechange', function(e) {
+          //   //console.log('cuechange: target', e.target);// cues, activeCues
+          //   if (e.target.activeCues.length > 0) {
+          //     console.log('cuechange:', e.target.activeCues[0].id);
+          //     // set activetab if cue is active
+          //     comp.updatedData[comp.sceneNum].cueData.forEach(function(cue) {
+          //       if (cue.type === e.target.activeCues[0].id) {
+          //         comp.activetab = cue.index;
+          //       }
+          //     });
+          //   }
+          // });
         },
         constructElements: function(cues, clearAll=true) {
           // instance each element to edit
