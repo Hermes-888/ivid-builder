@@ -31,6 +31,10 @@
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
+        <json-editor
+          :key="key"
+          :dataInput="currentData"
+        />
       </div>
     </div>
   </div>
@@ -44,6 +48,7 @@
  */
 import FormIntroduction from './FormIntroduction.vue';
 import FormScene from './FormScene.vue';
+import JsonEditor from './json-editor.vue';
 
 import Interact from 'interactjs';
 // import Vue from 'vue';
@@ -52,7 +57,8 @@ import Interact from 'interactjs';
 		name: 'EditorModal',
     components: {
       FormIntroduction,
-      FormScene
+      FormScene,
+      JsonEditor
     },
 		props: {
 			editorStyle: {
@@ -67,6 +73,7 @@ import Interact from 'interactjs';
 		},
     data () {
         return {
+          key: 1,// force json-editor to rerender
           sceneVisible: false,// toggle Intro or Scene
           headerText: 'editor header',
           panelTop: 0,
@@ -143,13 +150,14 @@ import Interact from 'interactjs';
       currentData: {
         immediate: true,
         handler(newstate, oldstate) {
-          // console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
+          console.log('-- watch editor currentData:', this.currentData, Array.isArray(newstate));
           if (!newstate) { return; }
 
           this.sceneVisible = Array.isArray(newstate);
           this.headerText = this.sceneVisible ? 'Edit Scene Data' : 'Edit Introduction Data';
           // adjust icons
           document.querySelector('.toolbar-header').style.justifyContent = this.sceneVisible ? 'space-around' : 'flex-start';
+          this.key += 1;// force json-editor to rerender
         }
       },
     },

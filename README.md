@@ -1,3 +1,3 @@
 # Interactive Video Builder
 
-layered component to edit scenedata.
+Builder component to edit slidedata. WIP

@@ -51,7 +51,7 @@
 import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import EditorModal from "./EditorModal.vue";
-import rawdata from '../../public/slidedata.json';
+// import rawdata from '../../public/slidedata.json';
 
 export default {
     name: "Builder",
@@ -93,7 +93,7 @@ export default {
       }
     },
     mounted() {
-      console.log('Builder mounted rawdata:', rawdata);
+      console.log('Builder mounted rawdata:', this.allData);
       // this.$nextTick(function () {
       //   // allData is still not available
       //   console.log('Builder mounted allData:', this.allData);

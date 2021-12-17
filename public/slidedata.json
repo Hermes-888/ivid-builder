@@ -97,6 +97,7 @@
 					"returnTime": 0,
 					"branchCount": 0,
 					"played": false,
+					"NOTE": "Each cueData object is converted to a vtt cue.",
 					"cueData": [
 						{
 							"start": 5.0,
