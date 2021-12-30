@@ -279,12 +279,13 @@ export default {
     cursor: pointer;
   }
   .icon-button {
+    height: 30px;
     margin: 0 5px;
     padding: 0 5px;
     cursor: pointer;
     font-size: 18px;
     color: #333333;
-    border-radius: 2px;
+    border-radius: 6px;
     border: 1px solid  #000000;
     background-color: #efefef;
   }

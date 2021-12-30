@@ -19,12 +19,12 @@
         </span>
       </div>
       <div class="editor-body">
-        <form-introduction
+        <!-- <form-introduction
           v-if="!sceneVisible && currentData"
           :formData="currentData"
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
-        />
+        /> -->
         <form-scene
           v-if="sceneVisible && currentData"
           :formData="currentData"
@@ -32,8 +32,9 @@
           @toggleRepo="toggleRepoPanel"
         />
         <json-editor
+          v-if="!sceneVisible && currentData"
           :key="key"
-          :dataInput="currentData"
+          :formData="currentData"
         />
       </div>
     </div>
@@ -157,6 +158,7 @@ import Interact from 'interactjs';
           this.headerText = this.sceneVisible ? 'Edit Scene Data' : 'Edit Introduction Data';
           // adjust icons
           document.querySelector('.toolbar-header').style.justifyContent = this.sceneVisible ? 'space-around' : 'flex-start';
+          // is there another way?
           this.key += 1;// force json-editor to rerender
         }
       },
@@ -228,12 +230,13 @@ import Interact from 'interactjs';
   }
 
   .icon-button {
+    height: 30px;
     margin: 0 auto;
     padding: 0 8px;
     cursor: pointer;
     font-size: 18px;
     color: #333333;
-    border-radius: 2px;
+    border-radius: 6px;
     border: 1px solid  #000000;
     background-color: #efefef;
   }

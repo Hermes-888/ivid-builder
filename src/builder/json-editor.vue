@@ -1,8 +1,7 @@
 <template>
   <div class="json-editor">
     <div class="object-view object-view_list">
-      <!-- <div v-show="!item.collapsed" class="object-view__value"> -->
-      <div class="object-view__value">
+      <div v-show="!item.collapsed" class="object-view__value">
         <item-view
           v-if="item.type === 'object' || item.type === 'array'"
           v-model="item.value"
@@ -15,7 +14,7 @@
         </item-view>
         <template v-else>
           <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
-          <input
+          <!-- <input
             v-if="item.type === 'string'"
             v-model.trim="item.value"
             type="text"
@@ -26,7 +25,7 @@
             v-model.number="item.value"
             type="number"
             class="json-editor__input value__input"
-            step="0.1e-100"
+            step="0.1"
           />
           <select
             v-if="item.type === 'boolean'"
@@ -35,7 +34,7 @@
           >
             <option :value="true">true</option>
             <option :value="false">false</option>
-          </select>
+          </select> -->
         </template>
       </div>
     </div>
@@ -46,7 +45,7 @@
 import Item from '../helpers/item';
 import ItemView from './item-view.vue';
 
-const typesList = ['object', 'array', 'string', 'number', 'boolean', 'null'];
+const typesList = ['object', 'array', 'string', 'number', 'boolean', 'color', 'file', 'null'];
 
 export default {
   name: 'JsonEditor',
@@ -60,7 +59,7 @@ export default {
     };
   },
   props: {
-    dataInput: {
+    formData: {
       type: [String, Number, Boolean, Array, Object],
       default() {
         return null;
@@ -76,7 +75,7 @@ export default {
   },
   data() {
     return {
-      item: new Item({ key: 'current dataInput', value: this.dataInput }, 'object'),
+      item: new Item({ key: 'current formData', value: this.formData }, 'object'),
       cache: {
         value: null,
         type: 'null',
@@ -91,39 +90,52 @@ export default {
       handler() {
         const newValue = JSON.stringify(this.item.value);
 
-        if (newValue === JSON.stringify(this.cache.value) && this.item.type === this.cache.type)
+        if (newValue === JSON.stringify(this.cache.value) && this.item.type === this.cache.type) {
+          console.log('no change');
           return;
+        }
 
         this.cache.type = `${this.item.type}`;
         this.cache.value = JSON.parse(newValue);
         // console.log('-watch item cache:', this.cache.type, this.cache.value);
         // console.log('-watch item key:', JSON.stringify(this.item.type));
 
-        // NOTE: changes the whole object on every key
+        // NOTE: changes the whole object on every key stroke.
         // console.log('-watch item value:', newValue);
 
+        /**
+         * Rebuild the data
+         */
         // this.$emit('data-output', this.item.buildItem());
+        let obj = this.item.buildItem();
+        console.log('-- json-edit rebuild item:', obj);
       }
     },
-    dataInput: {
+    formData: {
       immediate: true,
       handler() {
-        // debugging
-        console.log('dataInput', this.dataInput);// slidedata
+        // debugging, correct data
+        console.log('formData', this.formData);// slidedata
       }
     }
-  }
+  },
+  // mounted() {
+  //   this.$root.$on('repoImageSelected', function(filename) {
+  //     console.log('-repoImageSelected', filename);
+  //   });
+  // }
+  // methods: {}
 };
 </script>
 
 <style>
-.editor-panel {
+/* .editor-panel {
   width: 65%;
   max-width: 65% !important;
 }
 .tabs-container {
   display: none;
-}
+} */
 
   .json-editor {
     max-height: 65vh;

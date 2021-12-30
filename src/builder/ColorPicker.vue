@@ -46,7 +46,8 @@ export default {
     methods: {
       changeValue: function(color) {
         // console.log('picker color:', color);
-        this.$emit('changed', color);
+        // this.$emit('changed', color);
+        this.$emit('changed', {'name':this.$attrs.name, 'color':color});
       }
     }
 }
@@ -59,6 +60,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 2;
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.2);
   }

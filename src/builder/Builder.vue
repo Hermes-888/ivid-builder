@@ -28,6 +28,11 @@
           @saveChanges="saveChanges"
           @toggleRepo="toggleRepoPanel"
         />
+        <data-panel
+          v-if="actualData"
+          :key="currentKey+1"
+          :allData="actualData"
+        />
     </div>
 </template>
 
@@ -52,13 +57,15 @@ import RepoPanel from "./RepoPanel.vue";
 import BuilderToolbar from "./BuilderToolbar.vue";
 import EditorModal from "./EditorModal.vue";
 // import rawdata from '../../public/slidedata.json';
+import DataPanel from "./DataPanel.vue";
 
 export default {
     name: "Builder",
     components: {
         RepoPanel,
         BuilderToolbar,
-        EditorModal
+        EditorModal,
+        DataPanel
     },
     props: {
         sceneVisible: {
@@ -89,11 +96,20 @@ export default {
         //actualData = allData.introLanguage[language] || allData.sceneLanguage[language].sceneData
         actualData: null,// modified allData
         currentData: null,
+        selectedKey: null,// file key,value
         currentKey: 0// force update in EditorModal
       }
     },
     mounted() {
       console.log('Builder mounted rawdata:', this.allData);
+      const comp = this;
+      this.$root.$on('addArrayItem', this.addArrayItem);
+      this.$root.$on('changeColor', this.changeColor);
+      this.$root.$on('findFile', this.findFile);
+      this.$root.$on('repoImageSelected', function(filename) {
+        console.log('-repoImageSelected', comp.selectedKey, filename);
+        // set the currentData.selectedKey = filename
+      });
       // this.$nextTick(function () {
       //   // allData is still not available
       //   console.log('Builder mounted allData:', this.allData);
@@ -111,13 +127,14 @@ export default {
             if (!this.sceneVisible) {
               this.currentData = this.allData.introLanguage[this.language];
               console.log('-- watch Builder currentData:', this.currentData);
-              this.editorStyle = {
-                transform: 'translate(725px, 150px)',
-                width: '400px'
-              };
+
               this.$nextTick(function() {
-                document.querySelector('.editor-panel').setAttribute('data-x', 725);
-                document.querySelector('.editor-panel').setAttribute('data-y', 150);
+                this.editorStyle = {
+                  transform: 'translate(730px, 170px)',
+                  width: '580px'
+                };
+                document.querySelector('.editor-panel').setAttribute('data-x', 730);
+                document.querySelector('.editor-panel').setAttribute('data-y', 170);
               });
             }
 
@@ -139,14 +156,20 @@ export default {
             console.log('-- watch Builder sceneVisible:', newstate);
             if (this.allData.hasOwnProperty('sceneLanguage')) {
               this.currentData = this.allData.sceneLanguage[this.language].sceneData;
-              console.log('sceneVisible currentData:', this.currentData);
-              this.editorStyle = {
-                transform: 'translate(800px, 30px)',
-                width: '400px'
-              };
+
+              let cueData = this.currentData[0].cueData;
+              //let tf = delete this.currentData[0].cueData;
+              // console.log('-- tf:', tf);// true
+              console.log('-- cueData:', cueData);// separated
+              console.log('-- sceneVisible currentData:', this.currentData);
+
               this.$nextTick(function() {
-                document.querySelector('.editor-panel').setAttribute('data-x', 800);
-                document.querySelector('.editor-panel').setAttribute('data-y', 30);
+                this.editorStyle = {
+                  transform: 'translate(680px, 40px)',
+                  width: '650px'
+                };
+                document.querySelector('.editor-panel').setAttribute('data-x', 680);
+                document.querySelector('.editor-panel').setAttribute('data-y', 40);
               });
             }
             // video player currenttime
@@ -226,6 +249,18 @@ export default {
             this.repoVisible = !this.repoVisible;
           }
         },
+        findFile: function(key, asset) {
+          // console.log('findFile:', key, asset);// key
+          // open the repository panel
+          let assetTypes = ['audio','video','image','vtt'];
+          let repoState = {
+            tab: assetTypes.indexOf(asset), 
+            state: true
+          }
+          this.toggleRepoPanel(repoState);
+          this.selectedKey = key;
+          console.log('findFile repoState:', key, asset, repoState);
+        },
         /**
          * audio, video or image selection from repository
          * add $root.$on('repoAudioSelected' listener to the components needing repository access
@@ -238,7 +273,33 @@ export default {
           this.$root.$emit('repoVideoSelected', filename);
         },
         repoImageSelected: function (filename) {
-          this.$root.$emit('repoImageSelected', filename);
+          // this.$root.$emit('repoImageSelected', filename);
+          let comp = this;
+          let objEntries;
+          console.log('currentData:', this.currentData);
+
+          if (this.sceneVisible) {
+            objEntries = Object.entries(this.currentData[0]);// sceneData array[0]
+          } else {
+            objEntries = Object.entries(this.currentData);// Introduction object
+          }
+          console.log(objEntries);
+
+          let val = objEntries.find(([key, value]) => {
+            return key === comp.selectedKey;
+          });
+          console.log(val, comp.selectedKey);
+          if (val) { val[1] = filename; }
+
+          if (this.sceneVisible) {
+            this.currentData[0] = Object.fromEntries(objEntries);
+            this.actualData.sceneLanguage[this.language].sceneData = this.currentData;
+          } else {
+            this.currentData = Object.fromEntries(objEntries);
+            this.actualData.introLanguage[this.language] = this.currentData;
+          }
+          console.log('currentData:', this.currentData);
+          this.currentKey += 1;// force re-render
         },
         editCurrentData: function() {
           this.showEditorModal = !this.showEditorModal;
@@ -281,6 +342,50 @@ export default {
             // send to App
             this.$emit('updateData', this.actualData);
             // console.log('saveChanges:', this.actualData);
+        },
+        changeColor: function(picker) {
+          console.log('changeColor:', picker.name, picker.color.hex8);
+          // update the color-swatch
+          document.body.querySelector(".color-swatch[id='"+picker.name+"']").style.backgroundColor = picker.color.hex8;
+          switch(picker.name) {
+            // Introduction
+            case 'buttonColor':
+              this.currentData.buttonColor = picker.color.hex8;
+              // update this.allData ???
+              document.querySelectorAll('circle')[0].style.stroke = picker.color.hex8;
+              document.querySelectorAll('polygon')[1].style.fill = picker.color.hex8;
+              break;
+            case 'fillColor':
+              this.currentData.fillColor = picker.color.hex8;
+              document.querySelectorAll('circle')[0].style.fill = picker.color.hex8;
+              break;
+            // Scene
+            // textColor, titleColor, panelBkgColor, backgroundColor, 
+            // hintButtonTextColor, hintButtonBackgroundColor, 
+            // unique names!
+          }
+          // console.log('changeColor:', this.currentData);
+        },
+        addArrayItem: function(type) {
+          console.log('addArrayItem:', type);
+          // slidedata.sceneLanguage[language].sceneData[currentScene]
+          // console.log('currentData', this.currentData[0]);
+          switch(type) {
+            case 'captions':
+              // instance of a global?
+              let caption = {
+                language: '',
+                label: '',
+                file: ''
+              };
+              this.currentData[0].captions.push(caption);
+              this.currentKey += 1;// rerender
+              console.log('currentData', this.currentData[0].captions);// slidedata
+              // up again?
+              break;
+            case 'cueData':
+              break;
+          }
         },
         /**
          * Add a new cue to sceneData.cueData

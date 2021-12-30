@@ -1,7 +1,8 @@
 {
 	"introLanguage": [
 		{
-			"_comment": "data for English",
+			"contentType": "Introduction",
+			"_comment": "English data. Select the start button to play the scene.",
 			"titleText": "EN Slide Title",
 			"text": "<p>Introduction for Interactive Video.</p><p>(define what to put here, the viewer may need to click before the video can play.)</p>",
 			"audio": "audio/what_next.mp3",
@@ -78,15 +79,15 @@
 		{
 			"sceneData": [
 				{
-					"_comment": "data for English",
+					"contentType": "Interactive Video",
+					"_comment": "English data. Interactive Video Scene[0]. Branches = scene:[ ,1,2,3]",
 					"videoBackground": "audio/1000190_en_02_grocery2_hb.mp4",
 					"ccEnabled": true,
-					"captions":[
+					"captions": [
 						{
 							"language": "en",
 							"label": "English",
-							"file": "audio/sample.vtt",
-							"NOTE":"Array of multiple"
+							"file": "audio/sample.vtt"
 						}
 					],
 					"progressbarOptions": {
@@ -94,10 +95,12 @@
 						"showMarkers": true,
 						"enableMarkers": true
 					},	
+					"played": false,
 					"returnTime": 0,
 					"branchCount": 0,
-					"played": false,
-					"NOTE": "Each cueData object is converted to a vtt cue.",
+					"firstName" : "",
+					"conclusionText": "",
+					"conclusionAudio": "",
 					"cueData": [
 						{
 							"start": 5.0,
@@ -168,7 +171,7 @@
 							"animateOut": false,
 							"pauseVideo": true,
 							"resumePlayback": true,
-							"branchTo": null,
+							"branchTo": "",
 							"NOTE": "ARRAY OF MULTIPLE?",
 							"points": 5,
 							"imagePath": "images/garlic_sauce.png",

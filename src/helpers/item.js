@@ -12,11 +12,50 @@ class Item {
   constructor(item, parentType) {
     this.key = parentType === 'object' ? item.key : null;
     this.value = Item.processValue(item.value, Item.getType(item.value));
-    // this.type = item.type ?? this.#processType(Item.getType(item.value));// nullishCoalescingOperator
-    // this.type = item.type ? item.type : this.#processType(Item.getType(item.value));
     this.type = item.type ? item.type : this.processType(Item.getType(item.value));
     this.collapsed = false;// always?
     this.placeholder = this.#text.placeholder.key.default;
+    // console.log('Item:', this.key, this.value, this.type);
+
+    /**
+     * Display a color-swatch & Color Picker
+     * There are multiple color values. rgb, rgba, hex
+     * Always use Color in the name. ie: ButtonColor, fillColor, borderColor
+     */
+    if (this.type === 'string') {
+      let keyString = this.type === 'string' ? this.key.toLowerCase() : '';
+      if (keyString.indexOf('color') > -1) {
+        this.type = 'color';
+        this.visible = false;
+      }
+      /**
+       * Display a file selector button
+       */
+      if (keyString.indexOf('audio') > -1) {
+        this.type = 'file';
+        this.asset = 'audio';
+      }
+      if (keyString.indexOf('video') > -1) {
+        this.type = 'file';
+        this.asset = 'video';
+      }
+      if (keyString.indexOf('image') > -1) {
+        this.type = 'file';
+        this.asset = 'image';
+      }
+      if (keyString.indexOf('file') > -1) {
+        this.type = 'file';
+        this.asset = 'vtt';
+      }
+    }
+    /**
+     * cueData: []
+     * Display array in tabs or accordion
+     */
+    // if (this.key === 'cueData') {
+    //   this.type = 'tabs';
+    //   console.log('Item:', this.key, this.type, this.value);
+    // }
   }
 
   static parseItem(data, parentType) {

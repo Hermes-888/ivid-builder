@@ -128,6 +128,7 @@
 				currentKey: 0,// refresh Scene if _data changes
 				introData: {},
 				sceneData: [],
+				conclusionData: {},
 				allData: {}
 			}
 		},
@@ -166,13 +167,15 @@
                 if (e.data.hasOwnProperty('introData')) {
                   me.introData = e.data.introData;
                 }
+                if (e.data.hasOwnProperty('conclusionData')) {
+                  me.conclusionData = e.data.conclusionData;
+                }
                 if (e.data.hasOwnProperty('sceneData')) {
                   me.sceneData = e.data.sceneData;
 									me.sceneData[0].language = me.language;
 									me.sceneData[0].firstName = e.data.firstName;
 									// add additional conclusion text here if needed
 									me.sceneData[0].altConclusion = me.altConclusion[me.language];
-									// possibly add conclusion?
 									// me.allData = rawdata;// blank template for data?
                 } else {
                   // set data from external json file
@@ -240,12 +243,13 @@
 					// console.log('sceneData:', rawdata.sceneLanguage[this.language].sceneData);
 					this.introData = rawdata.introLanguage[this.language];
 					this.sceneData = rawdata.sceneLanguage[this.language].sceneData;
-					this.sceneData[0].language = this.language;
+					// this.sceneData[0].language = this.language;
 					this.sceneData[0].firstName = this.firstName;
 					// add additional conclusion text here if needed
-					this.sceneData[0].altConclusion = this.altConclusion[this.language];
-					// possibly add conclusion?
+					// this.sceneData[0].altConclusion = this.altConclusion[this.language];
 					this.allData = rawdata;
+					// possibly add conclusion?
+					// if rawdata.conclusionLanguage
 				}
 			},
 			/**
@@ -305,7 +309,9 @@
 				}
 				//console.log('announceCompleted: userScore:', this.userScore, 'timeSpent:', this.timeSpent, 'seconds');
 				parent.postMessage({'type':'completed', 'version':1, 'time':this.timeSpent}, '*');
-				//this.sceneCompleted();// show conclusion
+				if (this.conclusionData) {
+					this.sceneCompleted();// show conclusion
+				}
 			},
 			/**
 			 * When the viewer completes a scene, show the Conclusion
